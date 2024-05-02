@@ -23,9 +23,11 @@ public class MyFrame extends JFrame implements ActionListener {
     JPanel menuPanel;
     JPanel mapPanel;
     JPanel deckPanel;
+    JPanel inventoryPanel;
 
     JButton[][] mapButtons = new JButton[6][11];
-    JButton[] deckButtons = new JButton[8];
+    JButton[] deckButtons = new JButton[7];
+    JButton[] inventoryButtons = new JButton[10];
 
     JButton startButton;
     JButton helpButton;
@@ -85,6 +87,7 @@ public class MyFrame extends JFrame implements ActionListener {
         currentFrame = 1;
         menuButton.setVisible(true);
         deckPanel.setVisible(true);
+        inventoryPanel.setVisible(true);
         readyButton.setVisible(true);
 
     }
@@ -108,6 +111,7 @@ public class MyFrame extends JFrame implements ActionListener {
         else if (currentFrame == 1) {
             menuButton.setVisible(false);
             deckPanel.setVisible(false);
+            inventoryPanel.setVisible(false);
             readyButton.setVisible(false);    
         }
         else if (currentFrame == 2) {
@@ -121,8 +125,9 @@ public class MyFrame extends JFrame implements ActionListener {
     public void SetPanels() {
 
         menuPanel = CreatePanel(160, 210, LARLGE_WIDTH, LARLGE_HEIGHT*4 + 30);
+        deckPanel = CreatePanel(10, 10, TILE_WIDTH * 7, TILE_HEIGHT);
+        inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 5);
         mapPanel = CreatePanel(50, 80, TILE_WIDTH * 11, TILE_HEIGHT * 6);
-        deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8, TILE_HEIGHT);
 
     }
 
@@ -137,7 +142,29 @@ public class MyFrame extends JFrame implements ActionListener {
 
         menuButton = CreateButton(530, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "MENU");
 
-        readyButton = CreateButton(50, 400, LARLGE_WIDTH, LARLGE_HEIGHT, BUTTON_COLOR, "READY");
+        for (int i = 0; i < 7; i++) {
+            if (i == 0) {
+                deckButtons[i] = CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, deckPanel);
+                deckButtons[i].setEnabled(false);
+            }
+            else if (i % 2 == 0) {
+                deckButtons[i] = CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, deckPanel);
+            }
+            else {
+                deckButtons[i] = CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, deckPanel);
+            }
+        }
+
+        for (int i = 0; i < 10; i++) {
+            if (i % 2 == 0) {
+                inventoryButtons[i] = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel);
+            }
+            else {
+                inventoryButtons[i] = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, inventoryPanel);
+            }
+        }
+
+        readyButton = CreateButton(40, 390, LARLGE_WIDTH, LARLGE_HEIGHT, BUTTON_COLOR, "READY");
 
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 11; j++) {
@@ -154,19 +181,6 @@ public class MyFrame extends JFrame implements ActionListener {
                 else {
                     mapButtons[i][j] = CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, mapPanel);
                 }
-            }
-        }
-
-        for (int i = 0; i < 8; i++) {
-            if (i == 0 || i == 7) {
-                deckButtons[i] = CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, deckPanel);
-                deckButtons[i].setEnabled(false);
-            }
-            else if (i % 2 == 0) {
-                deckButtons[i] = CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, deckPanel);
-            }
-            else {
-                deckButtons[i] = CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, deckPanel);
             }
         }
 
