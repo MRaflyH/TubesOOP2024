@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 
 public class MyFrame extends JFrame implements ActionListener {
@@ -25,9 +26,9 @@ public class MyFrame extends JFrame implements ActionListener {
     JPanel deckPanel;
     JPanel inventoryPanel;
 
-    JButton[][] mapButtons = new JButton[6][11];
-    JButton[] deckButtons = new JButton[7];
-    JButton[] inventoryButtons = new JButton[10];
+    ArrayList<ArrayList<JButton>> mapButtons = new ArrayList<ArrayList<JButton>>(6);
+    ArrayList<JButton> deckButtons = new ArrayList<JButton>(7);
+    ArrayList<JButton> inventoryButtons = new ArrayList<JButton>(10);
 
     JButton startButton;
     JButton helpButton;
@@ -144,44 +145,46 @@ public class MyFrame extends JFrame implements ActionListener {
 
         for (int i = 0; i < 7; i++) {
             if (i == 0) {
-                deckButtons[i] = CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, deckPanel);
-                deckButtons[i].setEnabled(false);
+                deckButtons.add(CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, deckPanel));
+                deckButtons.get(i).setEnabled(false);
             }
             else if (i % 2 == 0) {
-                deckButtons[i] = CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, deckPanel);
+                deckButtons.add(CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, deckPanel));
             }
             else {
-                deckButtons[i] = CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, deckPanel);
+                deckButtons.add(CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, deckPanel));
             }
         }
 
         for (int i = 0; i < 10; i++) {
             if (i % 2 == 0) {
-                inventoryButtons[i] = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel);
+                inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel));
             }
             else {
-                inventoryButtons[i] = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, inventoryPanel);
+                inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, inventoryPanel));
             }
         }
 
         readyButton = CreateButton(40, 390, LARLGE_WIDTH, LARLGE_HEIGHT, BUTTON_COLOR, "READY");
 
         for (int i = 0; i < 6; i++) {
+            ArrayList<JButton> tempMapRow = new ArrayList<JButton>(11);
             for (int j = 0; j < 11; j++) {
                 if (j == 0 || j == 10) {
-                    mapButtons[i][j] = CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, mapPanel);
-                    mapButtons[i][j].setEnabled(false);
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, mapPanel));
+                    tempMapRow.get(j).setEnabled(false);
                 }
                 else if (i == 2 || i == 3) {
-                    mapButtons[i][j] = CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, WATER_COLOR, null, mapPanel);
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, WATER_COLOR, null, mapPanel));
                 }
                 else if ((i + j) % 2 == 0) {
-                    mapButtons[i][j] = CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, mapPanel);
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, mapPanel));
                 }
                 else {
-                    mapButtons[i][j] = CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, mapPanel);
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, mapPanel));
                 }
             }
+            mapButtons.add(tempMapRow);
         }
 
     }
