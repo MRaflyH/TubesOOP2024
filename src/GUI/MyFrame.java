@@ -1,3 +1,4 @@
+package GUI;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -193,7 +194,7 @@ public class MyFrame extends JFrame implements ActionListener {
 
         pvzLogo = new JLabel();
         pvzLogo.setBounds(160, 40, 320, 150);
-        pvzLogo.setIcon(new ImageIcon(new ImageIcon("Media/Plants_vs_Zombies_logo.png").getImage().getScaledInstance(pvzLogo.getWidth(), pvzLogo.getHeight(), Image.SCALE_DEFAULT)));
+        pvzLogo.setIcon(new ImageIcon(new ImageIcon("../assets/Plants_vs_Zombies_logo.png").getImage().getScaledInstance(pvzLogo.getWidth(), pvzLogo.getHeight(), Image.SCALE_DEFAULT)));
         pvzLogo.setHorizontalAlignment(JLabel.CENTER);
         pvzLogo.setVerticalAlignment(JLabel.CENTER);
         pvzLogo.setVisible(true);
