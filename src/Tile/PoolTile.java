@@ -1,3 +1,3 @@
-public class PoolTile() extends Tile {
+public class PoolTile extends Tile {
     
 }

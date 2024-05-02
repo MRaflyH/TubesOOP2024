@@ -1,3 +1,3 @@
-public class DolphinRiderZombie() implements Zombie {
+public class DolphinRiderZombie extends Zombie {
     
 }

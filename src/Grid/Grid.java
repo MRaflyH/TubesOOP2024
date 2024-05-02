@@ -1,3 +1,3 @@
-public interface Grid() {
+public interface Grid {
     
 }

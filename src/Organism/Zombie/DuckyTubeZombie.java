@@ -1,3 +1,3 @@
-public class DuckyTubeZombie() implements Zombie {
+public class DuckyTubeZombie extends Zombie {
     
 }

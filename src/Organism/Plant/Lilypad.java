@@ -1,3 +1,3 @@
-public class Lilypad() extends Plant {
+public class Lilypad extends Plant {
     
 }

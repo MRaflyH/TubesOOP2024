@@ -1,3 +1,3 @@
-public abstract class Organism() {
+public abstract class Organism {
 
 }

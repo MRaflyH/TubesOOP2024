@@ -1,3 +1,3 @@
-public class Map() implements Grid {
+public class Map implements Grid {
     
 }

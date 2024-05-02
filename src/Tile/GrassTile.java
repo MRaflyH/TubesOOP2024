@@ -1,3 +1,3 @@
-public class GrassTile() extends Tile {
+public class GrassTile extends Tile {
     
 }

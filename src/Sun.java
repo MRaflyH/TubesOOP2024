@@ -1,3 +1,3 @@
-public class Sun() {
+public class Sun {
     
 }

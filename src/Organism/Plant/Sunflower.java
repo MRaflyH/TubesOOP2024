@@ -1,3 +1,3 @@
-public class Sunflower() extends Plant {
+public class Sunflower extends Plant {
     
 }

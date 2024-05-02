@@ -1,3 +1,3 @@
-public class NormalZombie() implements Zombie {
+public class NormalZombie extends Zombie {
     
 }

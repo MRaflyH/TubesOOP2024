@@ -1,3 +1,3 @@
-public class Deck() implements Grid {
+public class Deck implements Grid {
     
 }

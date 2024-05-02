@@ -1,3 +1,3 @@
-public class BucketheadZombie() implements Zombie {
+public class BucketheadZombie extends Zombie {
     
 }

@@ -1,3 +1,3 @@
-public class Squash() extends Plant {
+public class Squash extends Plant {
     
 }

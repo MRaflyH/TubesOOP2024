@@ -1,3 +1,3 @@
-public abstract class Zombie() extends Organism {
+public abstract class Zombie extends Organism {
     
 }

@@ -1,3 +1,3 @@
-public class Inventory() implements Grid {
+public class Inventory implements Grid {
     
 }

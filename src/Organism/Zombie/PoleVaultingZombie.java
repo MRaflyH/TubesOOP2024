@@ -1,3 +1,3 @@
-public class PoleVaultingZombie() implements Zombie {
+public class PoleVaultingZombie extends Zombie {
     
 }
