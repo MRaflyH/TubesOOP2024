@@ -50,7 +50,7 @@ public abstract class Organism {
     }
 
     public void attack(){
-        
+        currentAttackCooldown = attackSpeed;
     }
 
     public void loseHealth(Integer damageTaken){
@@ -58,6 +58,10 @@ public abstract class Organism {
     }
 
     public void updateState(){
+        currentAttackCooldown -= 1;
 
+        if (currentAttackCooldown == 0) {
+            attack();
+        }
     }
 }
