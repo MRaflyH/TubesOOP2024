@@ -15,13 +15,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    // Use JUnit test framework.
-    testImplementation(libs.junit)
-
-    // This dependency is used by the application.
-    implementation(libs.guava)
-}
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
@@ -32,5 +25,19 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "src.Main"
+    mainClass = "Main"
+}
+
+sourceSets {
+    main {
+        java {
+            setSrcDirs(listOf("src"))
+        }
+    }
+
+    test {
+        java {
+            setSrcDirs(listOf("test"))
+        }
+    }
 }
