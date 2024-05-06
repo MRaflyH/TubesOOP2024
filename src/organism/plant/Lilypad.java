@@ -1,7 +1,19 @@
 package organism.plant;
 
 public class Lilypad extends Plant {
-    public Lilypad(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic, Integer cost, Integer range, Integer cooldown){
-        super(name, health, attackDamage, attackSpeed, isAquatic, cost, range, cooldown);
+    
+    private Plant plant;
+
+    public Lilypad() {
+        super("Lilypad", 100, 0, 0, true, 25, 0, 10);
     }
+
+    public Plant getPlant() {
+        return plant;
+    }
+
+    public void setPlant(Plant plant) {
+        this.plant = plant;
+    }
+
 }

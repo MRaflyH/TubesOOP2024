@@ -1,7 +1,9 @@
 package organism.plant;
 
 public class SnowPea extends Plant {
-    public SnowPea(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic, Integer cost, Integer range, Integer cooldown){
-        super(name, health, attackDamage, attackSpeed, isAquatic, cost, range, cooldown);
+        
+    public SnowPea() {
+        super("Snow Pea", 100, 25, 4, false, 175, -1, 10);
     }
+
 }
