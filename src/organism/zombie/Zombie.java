@@ -3,13 +3,13 @@ package organism.zombie;
 import organism.Organism;
 
 public abstract class Zombie extends Organism {
-    private Integer currentMoveCooldown;
+    private Integer moveCooldown;
     private Integer currentSlow;
     private Boolean isSeen;
 
     public Zombie(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic, Boolean isSeen) {
         super(name, health, attackDamage, attackSpeed, isAquatic);
-        this.currentMoveCooldown = 5;
+        this.moveCooldown = 5;
         this.currentSlow = 0;
         this.isSeen = isSeen;
     }
@@ -18,12 +18,12 @@ public abstract class Zombie extends Organism {
 
     }
 
-    public Integer getCurrentMoveCooldown(){
-        return currentMoveCooldown;
+    public Integer getMoveCooldown(){
+        return moveCooldown;
     }
 
-    public void setCurrentMoveCooldown(Integer moveCDValue){
-        currentMoveCooldown = moveCDValue;
+    public void setMoveCooldown(Integer moveCDValue){
+        moveCooldown = moveCDValue;
     }
 
     public Integer getcurrentSlow(){
