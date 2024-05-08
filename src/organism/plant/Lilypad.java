@@ -120,7 +120,7 @@ public class Lilypad extends Plant {
     }
 
     public void setPlant(Plant plant) {
-        if (!hasPlant()) {
+        if (!hasPlant() && !plant.getIsAquatic()) {
             plant.addHealth(getHealth());
             this.plant = plant;
         }
