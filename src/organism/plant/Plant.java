@@ -32,4 +32,13 @@ public abstract class Plant extends Organism {
         return plantingCooldown;
     }
 
+    public void updatePlantingCooldown() {
+        if (plantingCooldown > 0) plantingCooldown--;
+    }
+
+    public void plant() {
+        if (plantingCooldown == 0) plantingCooldown = plantingSpeed;
+        else; // exception
+    }
+
 }
