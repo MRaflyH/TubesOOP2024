@@ -1,4 +1,8 @@
+import exception.*;
+import grid.*;
 import gui.*;
+import organism.*;
+import tile.*;
 
 public class Main {
     public static void main(String[] args) {
