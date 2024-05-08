@@ -17,24 +17,6 @@ public class Lilypad extends Plant {
         }
     }
 
-    public Integer getCooldown() {
-        if (hasPlant() == true) {
-            return plant.getCooldown();
-        }
-        else {
-            return super.getCooldown();
-        }
-    }
-
-    public Integer getCurrentCooldown() {
-        if (hasPlant() == true) {
-            return plant.getCurrentCooldown();
-        }
-        else {
-            return super.getCurrentCooldown();
-        }
-    }
-
     public Plant getPlant() {
         return plant;
     }
