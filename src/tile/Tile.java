@@ -9,7 +9,9 @@ public abstract class Tile {
     private Plant plant;
     private ArrayList<Zombie> zombies;
 
-    public Tile() {
+    public Tile(String name) {
+        this.name = name;
+        plant = null;
         zombies = new ArrayList<Zombie>();
     }
 
