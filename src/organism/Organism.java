@@ -5,7 +5,7 @@ public abstract class Organism {
     private Integer health;
     private Integer attackDamage;
     private Integer attackSpeed;
-    private Integer currentAttackCooldown;
+    private Integer attackCooldown;
     private Boolean isAquatic;
 
     public Organism(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic) {
@@ -13,7 +13,7 @@ public abstract class Organism {
         this.health = health;
         this.attackDamage = attackDamage;
         this.attackSpeed = attackSpeed;
-        this.currentAttackCooldown = 0;
+        this.attackCooldown = 0;
         this.isAquatic = isAquatic;
     }
 
@@ -33,12 +33,12 @@ public abstract class Organism {
         return attackSpeed;
     }
 
-    public Integer getCurrentAttackCooldown(){
-        return currentAttackCooldown;
+    public Integer getAttackCooldown(){
+        return attackCooldown;
     }
 
-    public void setCurrentAttackCooldown(Integer attackCDValue){
-        currentAttackCooldown = attackCDValue;
+    public void setAttackCooldown(Integer attackCDValue){
+        attackCooldown = attackCDValue;
     }
 
     public Boolean getIsAquatic() {
@@ -50,7 +50,7 @@ public abstract class Organism {
     }
 
     public void attack(){
-        currentAttackCooldown = attackSpeed;
+        attackCooldown = attackSpeed;
     }
 
     public void loseHealth(Integer damageTaken){
@@ -58,9 +58,9 @@ public abstract class Organism {
     }
 
     public void updateState(){
-        currentAttackCooldown -= 1;
+        attackCooldown -= 1;
 
-        if (currentAttackCooldown == 0) {
+        if (attackCooldown == 0) {
             attack();
         }
     }
