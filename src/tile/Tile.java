@@ -23,7 +23,12 @@ public abstract class Tile {
     }
 
     public void removePlant() {
-        plant = null;
+        if (hasPlant()) {
+            plant = null;
+        }
+        else {
+            // exception
+        }
     }
 
     public void addZombie(Zombie zombie) {
