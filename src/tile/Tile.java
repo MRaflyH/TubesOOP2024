@@ -62,4 +62,16 @@ public abstract class Tile {
     public boolean hasZombie() {
         return !zombies.isEmpty();
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public Plant getPlant() {
+        return plant;
+    }
+
+    public ArrayList<Zombie> getZombies() {
+        return zombies;
+    }
 }
