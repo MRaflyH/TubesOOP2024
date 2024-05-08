@@ -32,11 +32,20 @@ public abstract class Tile {
     }
 
     public void addZombie(Zombie zombie) {
-        zombies.add(zombie);
-    }
+        if (!zombies.contains(zombie)) {
+            zombies.add(zombie);
+        }
+        else {
+            // exception
+        }    }
 
     public void removeZombie(Zombie zombie) {
-        zombies.remove(zombie);
+        if (zombies.contains(zombie)) {
+            zombies.remove(zombie);
+        }
+        else {
+            // exception
+        }
     }
 
     public void moveZombie(Zombie zombie, Tile tile) {
