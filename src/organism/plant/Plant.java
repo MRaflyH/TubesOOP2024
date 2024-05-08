@@ -28,7 +28,7 @@ public abstract class Plant extends Organism {
         return plantingSpeed;
     }
 
-    public Integer getplantingCooldown() {
+    public Integer getPlantingCooldown() {
         return plantingCooldown;
     }
 
