@@ -5,15 +5,15 @@ import organism.Organism;
 public abstract class Plant extends Organism {
     private Integer cost;
     private Integer range;
-    private Integer cooldown;
-    private Integer currentCooldown;
+    private Integer plantingSpeed;
+    private Integer plantingCooldown;
 
-    public Plant(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic, Integer cost, Integer range, Integer cooldown) {
+    public Plant(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic, Integer cost, Integer range, Integer plantingSpeed) {
         super(name, health, attackDamage, attackSpeed, isAquatic);
         this.cost = cost;
         this.range = range;
-        this.cooldown = cooldown;
-        currentCooldown = cooldown;
+        this.plantingSpeed = plantingSpeed;
+        plantingCooldown = plantingSpeed;
     }
 
     public Integer getCost() {
@@ -24,12 +24,15 @@ public abstract class Plant extends Organism {
         return range;
     }
 
-    public Integer getCooldown() {
-        return cooldown;
+    public Integer getPlantingSpeed() {
+        return plantingSpeed;
     }
 
-    public Integer getCurrentCooldown() {
-        return currentCooldown;
+    public Integer getPlantingCooldown() {
+        return plantingCooldown;
     }
 
+    public void setPlantingCooldown(Integer plantingCooldown) {
+        this.plantingCooldown = plantingCooldown;
+    }
 }

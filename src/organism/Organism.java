@@ -5,7 +5,7 @@ public abstract class Organism {
     private Integer health;
     private Integer attackDamage;
     private Integer attackSpeed;
-    private Integer currentAttackCooldown;
+    private Integer attackCooldown;
     private Boolean isAquatic;
 
     public Organism(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic) {
@@ -13,54 +13,59 @@ public abstract class Organism {
         this.health = health;
         this.attackDamage = attackDamage;
         this.attackSpeed = attackSpeed;
-        this.currentAttackCooldown = 0;
+        this.attackCooldown = 0;
         this.isAquatic = isAquatic;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public Integer getHealth(){
+    public Integer getHealth() {
         return health;
     }
 
-    public Integer getAttackDamage(){
+    public Integer getAttackDamage() {
         return attackDamage;
     }
 
-    public Integer getAttackSpeed(){
+    public Integer getAttackSpeed() {
         return attackSpeed;
     }
 
-    public Integer getCurrentAttackCooldown(){
-        return currentAttackCooldown;
+    public Integer getAttackCooldown() {
+        return attackCooldown;
     }
 
-    public void setCurrentAttackCooldown(Integer attackCDValue){
-        currentAttackCooldown = attackCDValue;
+    public void setAttackCooldown(Integer attackCDValue) {
+        if (attackCDValue < 0) attackCDValue = 0;
+        attackCooldown = attackCDValue;
     }
 
     public Boolean getIsAquatic() {
         return isAquatic;
     }
 
-    public Boolean isDead(){
+    public Boolean isDead() {
         return (health == 0);
     }
 
-    public void attack(){
-        currentAttackCooldown = attackSpeed;
+    public void attack() {
+        attackCooldown = attackSpeed;
     }
 
-    public void loseHealth(Integer damageTaken){
+    public void loseHealth(Integer damageTaken) {
         health -= damageTaken;
     }
 
-    public void updateState(){
-        currentAttackCooldown -= 1;
+    public void addHealth(Integer healthAdded) {
+        health += healthAdded;
+    }
 
-        if (currentAttackCooldown == 0) {
+    public void updateState() {
+        setAttackCooldown(attackCooldown - 1);
+
+        if (attackCooldown == 0) {
             attack();
         }
     }
