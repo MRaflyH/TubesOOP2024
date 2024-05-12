@@ -1,14 +1,17 @@
 package gui;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import java.awt.Color;
-import java.awt.Image;
+import javax.sound.sampled.Line;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+
+import thread.RunnableGenerateSun;
+import thread.RunnableGenerateSun.*;
+
+import sun.Sun;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.awt.*;
 
 
 public class MyFrame extends JFrame implements ActionListener {
@@ -38,8 +41,10 @@ public class MyFrame extends JFrame implements ActionListener {
     JButton exitButton;
     JButton menuButton;
     JButton readyButton;
+    JButton deckButton;
 
     JLabel pvzLogo;
+    JLabel numSun;
 
     static final int FRAME_WIDTH = 640;
     static final int FRAME_HEIGHT = 480;
@@ -55,6 +60,7 @@ public class MyFrame extends JFrame implements ActionListener {
     static final Color GRASS1_COLOR = new Color(0x4C8C2B);
     static final Color GRASS2_COLOR = new Color(0x6CC24A);
     static final Color WATER_COLOR = new Color(0x59CBE8);
+    static final Color BORDER_DECK_COLOR = new Color(0x855200);
 
 
     public MyFrame() {
@@ -68,7 +74,6 @@ public class MyFrame extends JFrame implements ActionListener {
         SetPanels();
         SetButtons();
         SetLabels();
-
         SwitchToMenuFrame();
 
         setVisible(true);
@@ -95,12 +100,11 @@ public class MyFrame extends JFrame implements ActionListener {
     }
 
     public void SwitchToGameFrame() {
-
         currentFrame = 2;
         menuButton.setVisible(true);
         mapPanel.setVisible(true);
         deckPanel.setVisible(true);
-
+        
     }
 
     public void RemoveButtons() {
@@ -125,9 +129,8 @@ public class MyFrame extends JFrame implements ActionListener {
     }
 
     public void SetPanels() {
-
         menuPanel = CreatePanel(160, 210, LARLGE_WIDTH, LARLGE_HEIGHT*4 + 30);
-        deckPanel = CreatePanel(10, 10, TILE_WIDTH * 7, TILE_HEIGHT);
+        deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8, TILE_HEIGHT);
         inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 5);
         mapPanel = CreatePanel(50, 80, TILE_WIDTH * 11, TILE_HEIGHT * 6);
 
@@ -141,19 +144,28 @@ public class MyFrame extends JFrame implements ActionListener {
         zombieListButton = CreateButton(0, (LARLGE_HEIGHT + 10) * 3, LARLGE_WIDTH, LARLGE_HEIGHT, BUTTON_COLOR, "ZOMBIES LIST", menuPanel);
 
         exitButton = CreateButton(10, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "EXIT");
-
+       
         menuButton = CreateButton(530, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "MENU");
 
         for (int i = 0; i < 7; i++) {
             if (i == 0) {
-                deckButtons.add(CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, deckPanel));
-                deckButtons.get(i).setEnabled(false);
+                deckButton = CreateButton(TILE_WIDTH * i, 0, 50, 100, BUTTON_COLOR, null, deckPanel, 
+                        new ImageIcon("src/assets/sun.png"));
+                numSun = new JLabel();
+                numSun.setBounds(200, 250, 300,200);
+                numSun.setText(Integer.toString(Sun.getTotalSun()));
+                numSun.setVisible(true);
+                numSun.setOpaque(false);
+                deckButton.add(numSun);
+                deckButtons.add(deckButton);
+                
+                deckButtons.get(i).setEnabled(true);
+                
             }
-            else if (i % 2 == 0) {
-                deckButtons.add(CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, deckPanel));
-            }
-            else {
-                deckButtons.add(CreateButton(TILE_WIDTH * i, 0, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, deckPanel));
+            else{
+                deckButton = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH + 10, TILE_HEIGHT, BORDER_DECK_COLOR, null, deckPanel, new ImageIcon("src/assets/deck.png"));
+                deckButtons.add(deckButton);
+                
             }
         }
 
@@ -194,13 +206,14 @@ public class MyFrame extends JFrame implements ActionListener {
 
         pvzLogo = new JLabel();
         pvzLogo.setBounds(160, 40, 320, 150);
-        pvzLogo.setIcon(new ImageIcon(new ImageIcon("../assets/Plants_vs_Zombies_logo.png").getImage().getScaledInstance(pvzLogo.getWidth(), pvzLogo.getHeight(), Image.SCALE_DEFAULT)));
+        pvzLogo.setIcon(new ImageIcon(new ImageIcon("src/assets/Plants_vs_Zombies_logo.png").getImage().getScaledInstance(pvzLogo.getWidth(), pvzLogo.getHeight(), Image.SCALE_DEFAULT)));
         pvzLogo.setHorizontalAlignment(JLabel.CENTER);
         pvzLogo.setVerticalAlignment(JLabel.CENTER);
         pvzLogo.setVisible(true);
         add(pvzLogo);
 
     }
+
 
     public JPanel CreatePanel(int x, int y, int width, int height) {
         
@@ -244,6 +257,21 @@ public class MyFrame extends JFrame implements ActionListener {
 
     }
 
+    public JButton CreateButton(int x, int y, int width, int height, Color color, String text, JPanel panel, ImageIcon i) {
+
+        JButton newButton = new JButton(i);
+        newButton.setBounds(x, y, width, height);
+        newButton.addActionListener(this);
+        newButton.setOpaque(false);
+        newButton.setContentAreaFilled(false);
+        newButton.setBorderPainted(false);
+        newButton.setFocusPainted(false);
+        newButton.setVisible(true);
+        panel.add(newButton);
+        return newButton;
+
+    }
+
     public JLabel CreateLabel() {return new JLabel();}
 
     @Override
@@ -263,6 +291,25 @@ public class MyFrame extends JFrame implements ActionListener {
         else if (e.getSource() == readyButton) {
             RemoveButtons();
             SwitchToGameFrame();
+            Runnable RunnableGenerateSun = new RunnableGenerateSun();
+            Thread t = new Thread(RunnableGenerateSun);
+            t.start();
+            new Thread(() -> {
+            int count = 200;
+            while (count >= 0) {
+                int innerCount = count;
+                    // update the label text with the remaining time
+                    SwingUtilities.invokeLater(() -> {
+                       numSun.setText(Integer.toString(Sun.getTotalSun()));
+                    });
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                count--;
+            }}).start();
         }
         else if(e.getSource() == menuButton) {
             RemoveButtons();
