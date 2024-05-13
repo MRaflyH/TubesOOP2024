@@ -8,13 +8,13 @@ import exception.*;
 import grid.*;
 import gui.*;
 import organism.*;
+import organism.zombie.DolphinRiderZombie;
 import tile.*;
 
 public class Main {
     public static void main(String[] args) {
-        new Sun();
-        MyFrame m = new MyFrame();
-        
-        
+        new MyFrame();
+        DolphinRiderZombie d = new DolphinRiderZombie();
+        System.out.println(d.getHealth());
     }
 }
