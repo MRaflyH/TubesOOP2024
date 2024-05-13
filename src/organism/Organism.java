@@ -1,12 +1,12 @@
 package organism;
 
 public abstract class Organism {
-    private String name;
-    private Integer health;
-    private Integer attackDamage;
-    private Integer attackSpeed;
-    private Integer attackCooldown;
-    private Boolean isAquatic;
+    protected String name;
+    protected Integer health;
+    protected Integer attackDamage;
+    protected Integer attackSpeed;
+    protected Integer attackCooldown;
+    protected Boolean isAquatic;
 
     public Organism(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic) {
         this.name = name;

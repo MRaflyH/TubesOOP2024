@@ -1,11 +1,12 @@
 package organism.zombie;
 
 import organism.Organism;
+import tile.Tile;
 
 public abstract class Zombie extends Organism {
-    private Integer moveCooldown;
-    private Integer currentSlow;
-    private Boolean isVisible;
+    protected Integer moveCooldown;
+    protected Integer currentSlow;
+    protected Boolean isVisible;
 
     public Zombie(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic, Boolean isVisible) {
         super(name, health, attackDamage, attackSpeed, isAquatic);
@@ -14,7 +15,11 @@ public abstract class Zombie extends Organism {
         this.isVisible = isVisible;
     }
 
-    public void move() {
+    public void move(Tile prev, Tile next) {
+        // ini sementara dibuat gini, asumsinya:
+        // Method ini dipanggil dari main dan
+        // tile zombie saat ini dan tile zombie selanjutnya disediakan dari main
+        prev.moveZombie(this, next);
         moveCooldown = 5;
     }
 
