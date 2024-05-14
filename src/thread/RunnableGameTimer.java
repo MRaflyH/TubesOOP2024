@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.Timer;
 
 public class RunnableGameTimer implements Runnable{
-    public static int gametimer;
+    public int gametimer;
    
 
     public RunnableGameTimer(int gametime){
@@ -24,11 +24,11 @@ public class RunnableGameTimer implements Runnable{
                 } 
         }
     }
-    public static int getCurrentGameTime(){
+    public int getCurrentGameTime(){
         return gametimer;
     }
 
-    public static void endCurrentGameTime() {
+    public void endCurrentGameTime() {
         gametimer = 0;
     }
     

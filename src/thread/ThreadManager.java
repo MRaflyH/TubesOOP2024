@@ -27,10 +27,13 @@ public class ThreadManager {
     }
 
     public synchronized static void stopAllThreads(){
-            RunnableGenerateSun.getCurrentSundrop();
-            RunnableGenerateSun.endCurrentSundrop();
-            RunnableGameTimer.getCurrentGameTime();
-            RunnableGameTimer.endCurrentGameTime();
+        for(Runnable run : ThreadList){
+            if(run instanceof RunnableGameTimer){
+                ((RunnableGameTimer)run).endCurrentGameTime();
+            } else if(run instanceof RunnableGenerateSun){
+                ((RunnableGenerateSun)run).endCurrentSundrop();
+            }
+        }
         for(int i = 0; i < ThreadList.size(); i++){
             ThreadManager.removeThread(i);
         }

@@ -2,17 +2,22 @@ package organism.plant;
 import java.util.Random;
 
 import sun.Sun;
-import thread.RunnableGameTimer;
+import thread.*;
 public class Sunflower extends Plant {
-    
+    private int remainingTime;
     public Sunflower() {
         super("Sunflower", 100, 0, 0, false, 50, 0, 10);
         System.out.println("Sunflower Planted!");
+        for(Runnable run : ThreadManager.getList()){
+            if(run instanceof RunnableGenerateSun){
+                remainingTime = ((RunnableGenerateSun)run).getCurrentSundrop();
+            }
+        }
     }
 
     public void produceSun(){
         Thread t = new Thread(new Runnable(){
-            int remainingTime = RunnableGameTimer.getCurrentGameTime();
+            
             @Override
             public void run() {
                 try {

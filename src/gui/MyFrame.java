@@ -289,9 +289,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 @Override
                 public void run() {
                     // TODO Auto-generated method stub
-
                     ThreadManager.stopAllThreads();
-                    System.out.println(Thread.activeCount());
                     System.out.println("Thread Interrupted");
 
                 }
@@ -318,7 +316,6 @@ public class MyFrame extends JFrame implements ActionListener {
             ThreadManager.addThread(new RunnableGameTimer(200));
             ThreadManager.startAllThreads();
             new Sun();
-
             new Thread(() -> {
             int count = 100;
             while (count >= 0) {

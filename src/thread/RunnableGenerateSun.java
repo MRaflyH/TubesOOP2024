@@ -5,7 +5,7 @@ import gui.*;
 import sun.*;
 
 public class RunnableGenerateSun implements Runnable {
-    private static int sundrop;
+    private int sundrop;
     
     public RunnableGenerateSun(int sundrop){
         this.sundrop = sundrop;
@@ -29,11 +29,11 @@ public class RunnableGenerateSun implements Runnable {
         } 
     }  }  
 
-    public static int getCurrentSundrop(){
+    public int getCurrentSundrop(){
         return sundrop;
     }
 
-    public static void endCurrentSundrop() {
+    public void endCurrentSundrop() {
         sundrop = 0;
     }
 }
