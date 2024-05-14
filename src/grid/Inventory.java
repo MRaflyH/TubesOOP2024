@@ -2,17 +2,7 @@ package grid;
 import java.util.ArrayList;
 import java.util.List;
 
-import organism.plant.CherryBomb;
-import organism.plant.Chomper;
-import organism.plant.Lilypad;
-import organism.plant.Peashooter;
-import organism.plant.Plant;
-import organism.plant.Repeater;
-import organism.plant.SnowPea;
-import organism.plant.Squash;
-import organism.plant.Sunflower;
-import organism.plant.TangleKelp;
-import organism.plant.Wallnut;
+import organism.plant.*;
 
 public class Inventory {
     private List<Plant> allPlants;
@@ -31,11 +21,23 @@ public class Inventory {
         allPlants.add(new Wallnut());
     }
     
-    public void addPlant(Plant plant, Deck deck) {
+    public void addPlant(Plant plant, Deck deck, int slot) {
         if (allPlants.contains(plant)) {
-            deck.addPlantToDeck(plant);
+            deck.addPlantToDeck(plant, slot);
             allPlants.remove(plant);
         }
-        
+        else {
+            //exception
+        }
+    }
+
+    public void removePlant(Plant plant, Deck deck, int slot) {
+        if (deck.getPlants().contains(plant)) {
+            deck.removePlantDeck(plant, slot);
+            allPlants.add(plant);
+        }
+        else {
+            //exception
+        }
     }
 }
