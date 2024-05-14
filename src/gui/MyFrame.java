@@ -3,9 +3,11 @@ import javax.sound.sampled.Line;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
+import organism.plant.Sunflower;
+import thread.RunnableGameTimer;
 import thread.RunnableGenerateSun;
 import thread.RunnableGenerateSun.*;
-
+import thread.ThreadManager;
 import sun.Sun;
 
 import java.awt.event.ActionEvent;
@@ -130,10 +132,10 @@ public class MyFrame extends JFrame implements ActionListener {
 
     public void SetPanels() {
         menuPanel = CreatePanel(160, 210, LARLGE_WIDTH, LARLGE_HEIGHT*4 + 30);
+        JPanel timerPanel = CreatePanel(130, 210, LARLGE_WIDTH, LARLGE_HEIGHT * 4 + 30);
         deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8, TILE_HEIGHT);
         inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 5);
         mapPanel = CreatePanel(50, 80, TILE_WIDTH * 11, TILE_HEIGHT * 6);
-
     }
 
     public void SetButtons() {
@@ -149,23 +151,23 @@ public class MyFrame extends JFrame implements ActionListener {
 
         for (int i = 0; i < 7; i++) {
             if (i == 0) {
-                deckButton = CreateButton(TILE_WIDTH * i, 0, 50, 100, BUTTON_COLOR, null, deckPanel, 
+                deckButton = CreateButton(TILE_WIDTH * i -10, 0, 70, 60, BUTTON_COLOR, null, deckPanel, 
                         new ImageIcon("src/assets/sun.png"));
                 numSun = new JLabel();
-                numSun.setBounds(200, 250, 300,200);
                 numSun.setText(Integer.toString(Sun.getTotalSun()));
+                numSun.setAlignmentX(0.6f);
+                numSun.setHorizontalTextPosition(JLabel.CENTER);
+                numSun.setVerticalTextPosition(JLabel.CENTER);
                 numSun.setVisible(true);
                 numSun.setOpaque(false);
                 deckButton.add(numSun);
                 deckButtons.add(deckButton);
-                
                 deckButtons.get(i).setEnabled(true);
                 
             }
             else{
                 deckButton = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH + 10, TILE_HEIGHT, BORDER_DECK_COLOR, null, deckPanel, new ImageIcon("src/assets/deck.png"));
                 deckButtons.add(deckButton);
-                
             }
         }
 
@@ -203,7 +205,6 @@ public class MyFrame extends JFrame implements ActionListener {
     }
 
     public void SetLabels() {
-
         pvzLogo = new JLabel();
         pvzLogo.setBounds(160, 40, 320, 150);
         pvzLogo.setIcon(new ImageIcon(new ImageIcon("src/assets/Plants_vs_Zombies_logo.png").getImage().getScaledInstance(pvzLogo.getWidth(), pvzLogo.getHeight(), Image.SCALE_DEFAULT)));
@@ -212,6 +213,8 @@ public class MyFrame extends JFrame implements ActionListener {
         pvzLogo.setVisible(true);
         add(pvzLogo);
 
+        JLabel timerLabel = new JLabel();
+        add(timerLabel);
     }
 
 
@@ -280,7 +283,26 @@ public class MyFrame extends JFrame implements ActionListener {
         if(e.getSource() != null) {
             // jika button apapun dipress
         }
+        if (e.getSource() == menuButton) {
+            new Thread(new Runnable() {
 
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+
+                    ThreadManager.stopAllThreads();
+                    System.out.println(Thread.activeCount());
+                    System.out.println("Thread Interrupted");
+
+                }
+
+            }).start();
+            RemoveButtons();
+            SwitchToMenuFrame();
+            
+            
+
+        }
         if(e.getSource() == startButton) {
             RemoveButtons();
             SwitchToDeckFrame();
@@ -289,15 +311,17 @@ public class MyFrame extends JFrame implements ActionListener {
             dispose();
         }
         else if (e.getSource() == readyButton) {
+            
             RemoveButtons();
             SwitchToGameFrame();
-            Runnable RunnableGenerateSun = new RunnableGenerateSun();
-            Thread t = new Thread(RunnableGenerateSun);
-            t.start();
+            ThreadManager.addThread(new RunnableGenerateSun(100));
+            ThreadManager.addThread(new RunnableGameTimer(200));
+            ThreadManager.startAllThreads();
+            new Sun();
+
             new Thread(() -> {
-            int count = 200;
+            int count = 100;
             while (count >= 0) {
-                int innerCount = count;
                     // update the label text with the remaining time
                     SwingUtilities.invokeLater(() -> {
                        numSun.setText(Integer.toString(Sun.getTotalSun()));
@@ -310,11 +334,9 @@ public class MyFrame extends JFrame implements ActionListener {
                 }
                 count--;
             }}).start();
+            
         }
-        else if(e.getSource() == menuButton) {
-            RemoveButtons();
-            SwitchToMenuFrame();
-        }
+        
 
     }
 

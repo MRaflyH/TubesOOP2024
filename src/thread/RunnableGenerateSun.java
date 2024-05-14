@@ -5,24 +5,35 @@ import gui.*;
 import sun.*;
 
 public class RunnableGenerateSun implements Runnable {
-    private int sundrop = 100;
-   
+    private static int sundrop;
     
+    public RunnableGenerateSun(int sundrop){
+        this.sundrop = sundrop;
+    }
     @Override
     public void run() {
         // TODO Auto-generated method stub
-        try {
+        
             while(sundrop > 0){
+                try {
                 Random rand = new Random();
                 int berkurang = rand.nextInt(5000, 10000);
                 Thread.sleep(berkurang);
                 Sun.generateSun();
-                System.out.println(Sun.getTotalSun());
-                System.out.println(sundrop);
                 sundrop -= (berkurang/1000);
+                
             }
-        } catch (InterruptedException e) {
+            
+        catch (InterruptedException e) {
             e.printStackTrace();
-        }
-    }    
+        } 
+    }  }  
+
+    public static int getCurrentSundrop(){
+        return sundrop;
+    }
+
+    public static void endCurrentSundrop() {
+        sundrop = 0;
+    }
 }
