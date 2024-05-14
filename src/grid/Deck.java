@@ -13,7 +13,7 @@ public class Deck {
         playablePlants = new ArrayList<>();
     }
 
-    public List<Plant> getPlants() {
+    public List<Plant> getPlayablePlants() {
         return this.playablePlants;
     }
 
@@ -32,19 +32,6 @@ public class Deck {
         }
         else {
             // exception
-        }
-    }
-
-    public void addPlantToDeck(Plant plant, int slot) {
-        if (playablePlants.get(slot) == null) {
-            playablePlants.add(slot, plant);
-        }
-        
-    }
-
-    public void removePlantDeck(Plant plant, int slot) {
-        if () {
-            
         }
     }
 }

@@ -1,5 +1,6 @@
 package grid;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import organism.plant.*;
@@ -21,20 +22,39 @@ public class Inventory {
         allPlants.add(new Wallnut());
     }
     
+    //harus diurus apakah akan add plant atau swap plant
     public void addPlant(Plant plant, Deck deck, int slot) {
-        if (allPlants.contains(plant)) {
-            deck.addPlantToDeck(plant, slot);
-            allPlants.remove(plant);
+        if (!deck.getPlayablePlants().contains(plant)) {
+            deck.getPlayablePlants().add(slot, plant);
         }
         else {
             //exception
         }
     }
 
-    public void removePlant(Plant plant, Deck deck, int slot) {
-        if (deck.getPlants().contains(plant)) {
-            deck.removePlantDeck(plant, slot);
-            allPlants.add(plant);
+    public void swapPlant(Plant plant, Deck deck, int slotDeck) {
+        if (!deck.getPlayablePlants().get(slotDeck).equals(plant) && deck.getPlayablePlants().get(slotDeck) != null) {
+            Iterator<Plant> iterInv = allPlants.iterator();
+            int count = 0, slotInv = 0;
+            while (iterInv.hasNext()) {
+                Plant temp = iterInv.next();
+                count++;
+                if (temp.equals(plant)) {
+                    iterInv.remove();
+                    slotInv = count;
+                }
+            }
+            Plant plantswap = deck.getPlayablePlants().get(slotDeck);
+            deck.getPlayablePlants().remove(slotDeck);
+            deck.getPlayablePlants().add(slotDeck, plant);
+            allPlants.add(slotInv, plantswap);
+        }
+        
+    }
+
+    public void removePlant(Deck deck, int slot) {
+        if (deck.getPlayablePlants().get(slot) != null) {
+            deck.getPlayablePlants().remove(slot);
         }
         else {
             //exception
