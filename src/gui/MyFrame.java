@@ -133,7 +133,7 @@ public class MyFrame extends JFrame implements ActionListener {
     public void SetPanels() {
         menuPanel = CreatePanel(160, 210, LARLGE_WIDTH, LARLGE_HEIGHT*4 + 30);
         JPanel timerPanel = CreatePanel(130, 210, LARLGE_WIDTH, LARLGE_HEIGHT * 4 + 30);
-        deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8, TILE_HEIGHT);
+        deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8 + 10, TILE_HEIGHT);
         inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 5);
         mapPanel = CreatePanel(50, 80, TILE_WIDTH * 11, TILE_HEIGHT * 6);
     }
@@ -166,7 +166,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 
             }
             else{
-                deckButton = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH + 10, TILE_HEIGHT, BORDER_DECK_COLOR, null, deckPanel, new ImageIcon("src/assets/deck.png"));
+                deckButton = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH, TILE_HEIGHT, BORDER_DECK_COLOR, null, deckPanel, new ImageIcon("src/assets/decktile.png"));
                 deckButtons.add(deckButton);
             }
         }
@@ -185,18 +185,22 @@ public class MyFrame extends JFrame implements ActionListener {
         for (int i = 0; i < 6; i++) {
             ArrayList<JButton> tempMapRow = new ArrayList<JButton>(11);
             for (int j = 0; j < 11; j++) {
-                if (j == 0 || j == 10) {
-                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, mapPanel));
-                    tempMapRow.get(j).setEnabled(false);
+                if (j == 0) {
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, mapPanel, new ImageIcon("src/assets/bricktile.png")));
+                } else if(j == 10){
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR,
+                            null, mapPanel, new ImageIcon("src/assets/gravetile.png")));
                 }
                 else if (i == 2 || i == 3) {
-                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, WATER_COLOR, null, mapPanel));
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, WATER_COLOR, null, mapPanel, 
+                            new ImageIcon("src/assets/watertile.png")));
                 }
                 else if ((i + j) % 2 == 0) {
-                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, mapPanel));
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, mapPanel, new ImageIcon("src/assets/grasstile1.png")));
                 }
                 else {
-                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, mapPanel));
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, mapPanel, 
+                            new ImageIcon("src/assets/grasstile2.png")));
                 }
             }
             mapButtons.add(tempMapRow);
