@@ -35,18 +35,28 @@ public class Inventory {
     public void swapPlant(Plant plant, Deck deck, int slotDeck) {
         if (!deck.getPlayablePlants().get(slotDeck).equals(plant) && deck.getPlayablePlants().get(slotDeck) != null && slotDeck < deck.getMaxPlants()) {
             Iterator<Plant> iterInv = allPlants.iterator();
-            int count = 0, slotInv = 0;
+            int count = 0, idxPlant = 0;
             while (iterInv.hasNext()) {
                 Plant temp = iterInv.next();
                 count++;
                 if (temp.equals(plant)) {
-                    iterInv.remove();
-                    slotInv = count-1;
+                    idxPlant = count-1;
                 }
             }
-            Plant plantswap = deck.getPlayablePlants().get(slotDeck);
+            Plant plantSwap = deck.getPlayablePlants().get(slotDeck);
+            iterInv = allPlants.iterator();
+            count = 0;
+            int idxPlantSwap = 0;
+            while (iterInv.hasNext()) {
+                Plant temp = iterInv.next();
+                count++;
+                if (temp.equals(plantSwap)) {
+                    idxPlantSwap = count-1;
+                }
+            }
             deck.getPlayablePlants().set(slotDeck, plant);
-            allPlants.add(slotInv, plantswap);
+            allPlants.set(idxPlant, plantSwap);
+            allPlants.set(idxPlantSwap, plant);
         }
         
     }
