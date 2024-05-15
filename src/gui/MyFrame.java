@@ -10,9 +10,13 @@ import thread.RunnableGenerateSun.*;
 import thread.ThreadManager;
 import sun.Sun;
 
+import grid.*;
+
+import organism.zombie.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.*;
 import java.awt.*;
 
 
@@ -322,9 +326,12 @@ public class MyFrame extends JFrame implements ActionListener {
             new Sun();
             new Thread(() -> {
             int count = 100;
+            int zombieCount = 0;
             while (count >= 0) {
-                    // update the label text with the remaining time
-                    SwingUtilities.invokeLater(() -> {
+                // BERARTI MAIN GAME LOOP DI SINI YA? ~Dama
+
+                // update the label text with the remaining time
+                SwingUtilities.invokeLater(() -> {
                        numSun.setText(Integer.toString(Sun.getTotalSun()));
                     });
                 try {
@@ -333,8 +340,37 @@ public class MyFrame extends JFrame implements ActionListener {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
+
+                Lawn mainlawn = new Lawn();
+                
+
+                // !! Ini Logic untuk Zombie Spawn !! 
+
+                // Random spawn zombie
+                Random rand = new Random();
+                int max = 10, min = 1;
+
+                System.out.println();
+                for (int i = 0; i < 6; i ++) {
+                    System.out.print("Row" + i + ": ");
+                    if (((rand.nextInt(max-min + 1) + min) > 3) && (zombieCount < 10)) {
+                        System.out.println("Zombie spawned");
+                        mainlawn.getLand().get(i).get(8).addZombie(new NormalZombie());
+                        zombieCount++;
+                        System.out.println("This row has zombie? " + mainlawn.getLand().get(i).get(8).hasZombie());
+                    }
+                    else {
+                        System.out.println("Zombie not spawned");
+                    }
+                }
+                System.out.println("Zombie Count: " + zombieCount);
+                System.out.println();
+                
+
+
                 count--;
             }}).start();
+
             
         }
         

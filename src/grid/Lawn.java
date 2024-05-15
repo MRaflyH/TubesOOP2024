@@ -8,12 +8,13 @@ import tile.PoolTile;
 import tile.SpawnTile;
 import tile.Tile;
 
-public class Map {
+public class Lawn {
     private ArrayList<ArrayList<Tile>> land;
 
-    public Map() {
+    public Lawn() {
         land = new ArrayList<ArrayList<Tile>>();
         for (int i = 0; i < 6; i++) {
+            land.add(new ArrayList<Tile>());
             land.get(i).add(new HomeTile());
         }
         for (int i = 0; i < 9; i++) {
@@ -29,5 +30,7 @@ public class Map {
         }
     }
 
-    public void
+    public ArrayList<ArrayList<Tile>> getLand() {
+        return land;
+    }
 }
