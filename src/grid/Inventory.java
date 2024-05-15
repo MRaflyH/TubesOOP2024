@@ -22,10 +22,10 @@ public class Inventory {
         allPlants.add(new Wallnut());
     }
     
-    //harus diurus apakah akan add plant atau swap plant
+    //harus diurus apakah akan add plant atau swap plant di main
     public void addPlant(Plant plant, Deck deck, int slot) {
-        if (!deck.getPlayablePlants().contains(plant) && slot < 6) {
-            deck.getPlayablePlants().add(slot, plant);
+        if (!deck.getPlayablePlants().contains(plant) && slot < deck.getMaxPlants()) {
+            deck.getPlayablePlants().set(slot, plant);
         }
         else {
             //exception
@@ -33,7 +33,7 @@ public class Inventory {
     }
 
     public void swapPlant(Plant plant, Deck deck, int slotDeck) {
-        if (!deck.getPlayablePlants().get(slotDeck).equals(plant) && deck.getPlayablePlants().get(slotDeck) != null) {
+        if (!deck.getPlayablePlants().get(slotDeck).equals(plant) && deck.getPlayablePlants().get(slotDeck) != null && slotDeck < deck.getMaxPlants()) {
             Iterator<Plant> iterInv = allPlants.iterator();
             int count = 0, slotInv = 0;
             while (iterInv.hasNext()) {
@@ -41,12 +41,11 @@ public class Inventory {
                 count++;
                 if (temp.equals(plant)) {
                     iterInv.remove();
-                    slotInv = count;
+                    slotInv = count-1;
                 }
             }
             Plant plantswap = deck.getPlayablePlants().get(slotDeck);
-            deck.getPlayablePlants().remove(slotDeck);
-            deck.getPlayablePlants().add(slotDeck, plant);
+            deck.getPlayablePlants().set(slotDeck, plant);
             allPlants.add(slotInv, plantswap);
         }
         
@@ -54,7 +53,7 @@ public class Inventory {
 
     public void removePlant(Deck deck, int slot) {
         if (deck.getPlayablePlants().get(slot) != null) {
-            deck.getPlayablePlants().remove(slot);
+            deck.getPlayablePlants().set(slot, null);
         }
         else {
             //exception

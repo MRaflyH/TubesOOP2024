@@ -39,7 +39,8 @@ public abstract class Tile {
         }
         else {
             // exception
-        }    }
+        }    
+    }
 
     public void removeZombie(Zombie zombie) {
         if (zombies.contains(zombie)) {
