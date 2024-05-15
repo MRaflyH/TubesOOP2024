@@ -16,7 +16,6 @@ public class RunnableGameTimer implements Runnable{
             while(gametimer > 0){
                 try {
                 Thread.sleep(1000);
-                System.out.println("Game tersisa: " + gametimer);
                 gametimer -= 1;
                 }
                 catch (InterruptedException e) {

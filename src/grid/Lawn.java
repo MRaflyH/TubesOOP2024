@@ -7,6 +7,7 @@ import tile.HomeTile;
 import tile.PoolTile;
 import tile.SpawnTile;
 import tile.Tile;
+import organism.zombie.*;
 
 public class Lawn {
     private ArrayList<ArrayList<Tile>> land;
@@ -32,5 +33,5 @@ public class Lawn {
 
     public ArrayList<ArrayList<Tile>> getLand() {
         return land;
-    }
+    }   
 }

@@ -39,13 +39,15 @@ public class ThreadManager {
         }
     }
 
-    public static void notifyAllThreads() {
-        for (Runnable run : ThreadList) {
+    public static RunnableGameTimer getRunnableGameTimer() {
+        RunnableGameTimer r = null;
+        for (Runnable run : ThreadManager.getList()) {
             {
-                synchronized (run) {
-                    run.notify();
+                if(run instanceof RunnableGameTimer){
+                    r = (RunnableGameTimer) run;
                 }
             }
         }
+        return r;
     }
 }

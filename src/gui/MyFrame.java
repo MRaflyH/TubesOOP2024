@@ -6,6 +6,7 @@ import javax.swing.border.LineBorder;
 import organism.plant.Sunflower;
 import thread.RunnableGameTimer;
 import thread.RunnableGenerateSun;
+import thread.RunnableZombieSpawn;
 import thread.RunnableGenerateSun.*;
 import thread.ThreadManager;
 import sun.Sun;
@@ -22,6 +23,8 @@ import java.awt.*;
 
 public class MyFrame extends JFrame implements ActionListener {
     private int currentFrame;
+    private int count;
+    Thread GUIThread;
     /*
      * 0: menu
      * 1: deck
@@ -48,7 +51,6 @@ public class MyFrame extends JFrame implements ActionListener {
     JButton menuButton;
     JButton readyButton;
     JButton deckButton;
-
     JLabel pvzLogo;
     JLabel numSun;
 
@@ -56,8 +58,8 @@ public class MyFrame extends JFrame implements ActionListener {
     static final int FRAME_HEIGHT = 480;
     static final int TILE_WIDTH = 50;
     static final int TILE_HEIGHT = 60;
-    static final int LARLGE_WIDTH = 320;
-    static final int LARLGE_HEIGHT = 50;
+    static final int LARGE_WIDTH = 320;
+    static final int LARGE_HEIGHT = 50;
     static final int SMALL_WIDTH = 100;
     static final int SMALL_HEIGHT = 30;
     
@@ -68,6 +70,7 @@ public class MyFrame extends JFrame implements ActionListener {
     static final Color WATER_COLOR = new Color(0x59CBE8);
     static final Color BORDER_DECK_COLOR = new Color(0x855200);
 
+    ArrayList<JButton> tempMapRow = new ArrayList<JButton>(11);
 
     public MyFrame() {
 
@@ -76,15 +79,14 @@ public class MyFrame extends JFrame implements ActionListener {
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setResizable(false);
         getContentPane().setBackground(BACKGROUND_COLOR);
-
         SetPanels();
         SetButtons();
         SetLabels();
         SwitchToMenuFrame();
-
         setVisible(true);
 
     }
+
 
     public void SwitchToMenuFrame() {
 
@@ -135,19 +137,18 @@ public class MyFrame extends JFrame implements ActionListener {
     }
 
     public void SetPanels() {
-        menuPanel = CreatePanel(160, 210, LARLGE_WIDTH, LARLGE_HEIGHT*4 + 30);
-        JPanel timerPanel = CreatePanel(130, 210, LARLGE_WIDTH, LARLGE_HEIGHT * 4 + 30);
+        menuPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
         deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8 + 10, TILE_HEIGHT);
         inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 5);
-        mapPanel = CreatePanel(50, 80, TILE_WIDTH * 11, TILE_HEIGHT * 6);
+        mapPanel = CreatePanel(50, 90, TILE_WIDTH * 11, TILE_HEIGHT * 6);
     }
 
     public void SetButtons() {
 
-        startButton = CreateButton(0, 0, LARLGE_WIDTH, LARLGE_HEIGHT, BUTTON_COLOR, "START", menuPanel);
-        helpButton = CreateButton(0, LARLGE_HEIGHT + 10, LARLGE_WIDTH, LARLGE_HEIGHT, BUTTON_COLOR, "HELP", menuPanel);
-        plantsListButton = CreateButton(0, (LARLGE_HEIGHT + 10) * 2, LARLGE_WIDTH, LARLGE_HEIGHT, BUTTON_COLOR, "PLANTS LIST", menuPanel);
-        zombieListButton = CreateButton(0, (LARLGE_HEIGHT + 10) * 3, LARLGE_WIDTH, LARLGE_HEIGHT, BUTTON_COLOR, "ZOMBIES LIST", menuPanel);
+        startButton = CreateButton(0, 0, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "START", menuPanel);
+        helpButton = CreateButton(0, LARGE_HEIGHT + 10, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "HELP", menuPanel);
+        plantsListButton = CreateButton(0, (LARGE_HEIGHT + 10) * 2, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "PLANTS LIST", menuPanel);
+        zombieListButton = CreateButton(0, (LARGE_HEIGHT + 10) * 3, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "ZOMBIES LIST", menuPanel);
 
         exitButton = CreateButton(10, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "EXIT");
        
@@ -176,24 +177,20 @@ public class MyFrame extends JFrame implements ActionListener {
         }
 
         for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel));
-            }
-            else {
-                inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, inventoryPanel));
-            }
+     
+                inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel, new ImageIcon("src/assets/decktile.png")));
         }
 
-        readyButton = CreateButton(40, 390, LARLGE_WIDTH, LARLGE_HEIGHT, BUTTON_COLOR, "READY");
+        readyButton = CreateButton(40, 390, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "READY");
 
         for (int i = 0; i < 6; i++) {
-            ArrayList<JButton> tempMapRow = new ArrayList<JButton>(11);
             for (int j = 0; j < 11; j++) {
                 if (j == 0) {
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, mapPanel, new ImageIcon("src/assets/bricktile.png")));
                 } else if(j == 10){
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR,
                             null, mapPanel, new ImageIcon("src/assets/gravetile.png")));
+                    
                 }
                 else if (i == 2 || i == 3) {
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, WATER_COLOR, null, mapPanel, 
@@ -205,13 +202,24 @@ public class MyFrame extends JFrame implements ActionListener {
                 else {
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, mapPanel, 
                             new ImageIcon("src/assets/grasstile2.png")));
-                }
+                } 
             }
+            
             mapButtons.add(tempMapRow);
         }
 
     }
-
+    public void setZombies(){
+        JLabel zombie = new JLabel();
+        zombie.setBounds(TILE_WIDTH, TILE_HEIGHT, Image.SCALE_DEFAULT * 25, Image.SCALE_DEFAULT * 60);
+        zombie.setHorizontalTextPosition(JLabel.CENTER);
+        zombie.setVerticalTextPosition(JLabel.CENTER);
+        zombie.setVisible(true);
+        zombie.setOpaque(false);
+        zombie.setIcon(new ImageIcon(new ImageIcon("src/assets/normalzombie.png").getImage()
+                .getScaledInstance(zombie.getWidth(), zombie.getHeight(), Image.SCALE_DEFAULT)));
+        tempMapRow.get(10).add(zombie);
+    }
     public void SetLabels() {
         pvzLogo = new JLabel();
         pvzLogo.setBounds(160, 40, 320, 150);
@@ -220,9 +228,6 @@ public class MyFrame extends JFrame implements ActionListener {
         pvzLogo.setVerticalAlignment(JLabel.CENTER);
         pvzLogo.setVisible(true);
         add(pvzLogo);
-
-        JLabel timerLabel = new JLabel();
-        add(timerLabel);
     }
 
 
@@ -298,7 +303,9 @@ public class MyFrame extends JFrame implements ActionListener {
                 public void run() {
                     // TODO Auto-generated method stub
                     ThreadManager.stopAllThreads();
+                    count = -1;
                     System.out.println("Thread Interrupted");
+                    new MenuFrame();
 
                 }
 
@@ -320,19 +327,43 @@ public class MyFrame extends JFrame implements ActionListener {
             
             RemoveButtons();
             SwitchToGameFrame();
+            Lawn mainlawn = new Lawn();
             ThreadManager.addThread(new RunnableGenerateSun(100));
             ThreadManager.addThread(new RunnableGameTimer(200));
+            ThreadManager.addThread(new RunnableZombieSpawn(200, mainlawn));
             ThreadManager.startAllThreads();
+            
             new Sun();
+            GUIThread =
             new Thread(() -> {
-            int count = 100;
-            int zombieCount = 0;
+            count = 200;
             while (count >= 0) {
-                // BERARTI MAIN GAME LOOP DI SINI YA? ~Dama
+                // BERARTI MAIN GAME LOOP DI SINI YA? ~Dama yes ini thread buat swing (GUI thread only)
 
-                // update the label text with the remaining time
+                // update the every text here
                 SwingUtilities.invokeLater(() -> {
                        numSun.setText(Integer.toString(Sun.getTotalSun()));
+                       for(Runnable r : ThreadManager.getList()){
+                            if(r instanceof RunnableGameTimer){
+                                if(((RunnableGameTimer) r).getCurrentGameTime() != 0){
+                                            this.setTitle("Game "
+                                                    + String.valueOf(((RunnableGameTimer) r).getCurrentGameTime())
+                                                    + " seconds remaining");
+                                } else {
+                                            this.setTitle("Game paused");
+                                }
+                                
+                            }
+                                    for (int i = 0; i < mainlawn.getLand().size(); i++) {
+                                        for (int j = 0; j < mainlawn.getLand().size(); j++) {
+                                            if (mainlawn.getLand().get(i).get(j).hasZombie()) {
+                                                setZombies();
+                                            }
+                                        }
+                                    }
+                       }
+                      
+                       
                     });
                 try {
                     Thread.sleep(1000);
@@ -340,36 +371,12 @@ public class MyFrame extends JFrame implements ActionListener {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-
-                Lawn mainlawn = new Lawn();
-                
-
-                // !! Ini Logic untuk Zombie Spawn !! 
-
-                // Random spawn zombie
-                Random rand = new Random();
-                int max = 10, min = 1;
-
-                System.out.println();
-                for (int i = 0; i < 6; i ++) {
-                    System.out.print("Row" + i + ": ");
-                    if (((rand.nextInt(max-min + 1) + min) > 3) && (zombieCount < 10)) {
-                        System.out.println("Zombie spawned");
-                        mainlawn.getLand().get(i).get(8).addZombie(new NormalZombie());
-                        zombieCount++;
-                        System.out.println("This row has zombie? " + mainlawn.getLand().get(i).get(8).hasZombie());
-                    }
-                    else {
-                        System.out.println("Zombie not spawned");
-                    }
-                }
-                System.out.println("Zombie Count: " + zombieCount);
-                System.out.println();
                 
 
 
                 count--;
-            }}).start();
+            }});
+            GUIThread.start();
 
             
         }
