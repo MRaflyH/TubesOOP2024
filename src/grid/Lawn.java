@@ -2,11 +2,7 @@ package grid;
 import java.util.ArrayList;
 
 import organism.plant.Plant;
-import tile.GrassTile;
-import tile.HomeTile;
-import tile.PoolTile;
-import tile.SpawnTile;
-import tile.Tile;
+import tile.*;
 
 public class Lawn {
     private ArrayList<ArrayList<Tile>> land;

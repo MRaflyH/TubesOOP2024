@@ -17,9 +17,9 @@ public class Deck {
         return this.playablePlants;
     }
 
-    public void addPlantToMap(Plant plant, Tile tile) {
-        if (playablePlants.contains(plant) && plant.getPlantingCooldown()==0) {
-            tile.addPlant(plant);
+    public void addPlantToMap(int slot, Lawn lawn, int x, int y) {
+        if (playablePlants.get(slot) != null && playablePlants.get(slot).getPlantingCooldown()==0) {
+            lawn.getLand().
         }
         else {
             // exception

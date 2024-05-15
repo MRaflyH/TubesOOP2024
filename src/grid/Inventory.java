@@ -24,7 +24,7 @@ public class Inventory {
     
     //harus diurus apakah akan add plant atau swap plant
     public void addPlant(Plant plant, Deck deck, int slot) {
-        if (!deck.getPlayablePlants().contains(plant)) {
+        if (!deck.getPlayablePlants().contains(plant) && slot < 6) {
             deck.getPlayablePlants().add(slot, plant);
         }
         else {
