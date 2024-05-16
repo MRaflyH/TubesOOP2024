@@ -22,10 +22,10 @@ public class Inventory {
         allPlants.add(new Wallnut());
     }
     
-    //harus diurus apakah akan add plant atau swap plant
+    //harus diurus apakah akan add plant atau swap plant di main
     public void addPlant(Plant plant, Deck deck, int slot) {
-        if (!deck.getPlayablePlants().contains(plant) && slot < 6) {
-            deck.getPlayablePlants().add(slot, plant);
+        if (!deck.getPlayablePlants().contains(plant) && slot < deck.getMaxPlants()) {
+            deck.getPlayablePlants().set(slot, plant);
         }
         else {
             //exception
@@ -33,28 +33,37 @@ public class Inventory {
     }
 
     public void swapPlant(Plant plant, Deck deck, int slotDeck) {
-        if (!deck.getPlayablePlants().get(slotDeck).equals(plant) && deck.getPlayablePlants().get(slotDeck) != null) {
+        if (!deck.getPlayablePlants().get(slotDeck).equals(plant) && deck.getPlayablePlants().get(slotDeck) != null && slotDeck < deck.getMaxPlants()) {
             Iterator<Plant> iterInv = allPlants.iterator();
-            int count = 0, slotInv = 0;
+            int count = 0, idxPlant = 0;
             while (iterInv.hasNext()) {
                 Plant temp = iterInv.next();
                 count++;
                 if (temp.equals(plant)) {
-                    iterInv.remove();
-                    slotInv = count;
+                    idxPlant = count-1;
                 }
             }
-            Plant plantswap = deck.getPlayablePlants().get(slotDeck);
-            deck.getPlayablePlants().remove(slotDeck);
-            deck.getPlayablePlants().add(slotDeck, plant);
-            allPlants.add(slotInv, plantswap);
+            Plant plantSwap = deck.getPlayablePlants().get(slotDeck);
+            iterInv = allPlants.iterator();
+            count = 0;
+            int idxPlantSwap = 0;
+            while (iterInv.hasNext()) {
+                Plant temp = iterInv.next();
+                count++;
+                if (temp.equals(plantSwap)) {
+                    idxPlantSwap = count-1;
+                }
+            }
+            deck.getPlayablePlants().set(slotDeck, plant);
+            allPlants.set(idxPlant, plantSwap);
+            allPlants.set(idxPlantSwap, plant);
         }
         
     }
 
     public void removePlant(Deck deck, int slot) {
         if (deck.getPlayablePlants().get(slot) != null) {
-            deck.getPlayablePlants().remove(slot);
+            deck.getPlayablePlants().set(slot, null);
         }
         else {
             //exception

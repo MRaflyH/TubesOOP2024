@@ -2,11 +2,7 @@ package grid;
 import java.util.ArrayList;
 
 import organism.plant.Plant;
-import tile.GrassTile;
-import tile.HomeTile;
-import tile.PoolTile;
-import tile.SpawnTile;
-import tile.Tile;
+import tile.*;
 import organism.zombie.*;
 
 public class Lawn {
@@ -34,5 +30,5 @@ public class Lawn {
 
     public ArrayList<ArrayList<Tile>> getLand() {
         return land;
-    }   
+    }
 }
