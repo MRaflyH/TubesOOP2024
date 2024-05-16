@@ -42,6 +42,7 @@ public class MyFrame extends JFrame implements ActionListener {
     ArrayList<ArrayList<JButton>> mapButtons = new ArrayList<ArrayList<JButton>>(6);
     ArrayList<JButton> deckButtons = new ArrayList<JButton>(7);
     ArrayList<JButton> inventoryButtons = new ArrayList<JButton>(10);
+    Queue<Zombie> zombieQueue = new LinkedList<Zombie>();
 
     JButton startButton;
     JButton helpButton;
@@ -184,6 +185,7 @@ public class MyFrame extends JFrame implements ActionListener {
         readyButton = CreateButton(40, 390, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "READY");
 
         for (int i = 0; i < 6; i++) {
+
             for (int j = 0; j < 11; j++) {
                 if (j == 0) {
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, mapPanel, new ImageIcon("src/assets/bricktile.png")));
@@ -204,12 +206,11 @@ public class MyFrame extends JFrame implements ActionListener {
                             new ImageIcon("src/assets/grasstile2.png")));
                 } 
             }
-            
             mapButtons.add(tempMapRow);
         }
 
     }
-    public void setZombies(){
+    public void setZombies(int i, int j){
         JLabel zombie = new JLabel();
         zombie.setBounds(TILE_WIDTH, TILE_HEIGHT, Image.SCALE_DEFAULT * 25, Image.SCALE_DEFAULT * 60);
         zombie.setHorizontalTextPosition(JLabel.CENTER);
@@ -218,7 +219,7 @@ public class MyFrame extends JFrame implements ActionListener {
         zombie.setOpaque(false);
         zombie.setIcon(new ImageIcon(new ImageIcon("src/assets/normalzombie.png").getImage()
                 .getScaledInstance(zombie.getWidth(), zombie.getHeight(), Image.SCALE_DEFAULT)));
-        tempMapRow.get(10).add(zombie);
+        mapButtons.get(i).get(j).add(zombie);
     }
     public void SetLabels() {
         pvzLogo = new JLabel();
@@ -317,8 +318,13 @@ public class MyFrame extends JFrame implements ActionListener {
 
         }
         if(e.getSource() == startButton) {
+            Lawn mainlawn = new Lawn();
             RemoveButtons();
             SwitchToDeckFrame();
+            System.out.println("TILE ROW: " + mainlawn.getLand().size());
+            System.out.println("TILE COLUMN: " + mainlawn.getLand().get(0).size());
+            System.out.println("MAP ROW: " + mapButtons.size());
+            System.out.println("MAP COLUMN: " + mapButtons.get(0).size());
         }
         else if(e.getSource() == exitButton) {
             dispose();
@@ -328,9 +334,10 @@ public class MyFrame extends JFrame implements ActionListener {
             RemoveButtons();
             SwitchToGameFrame();
             Lawn mainlawn = new Lawn();
+            RunnableZombieSpawn runzombie = new RunnableZombieSpawn(200, mainlawn);
             ThreadManager.addThread(new RunnableGenerateSun(100));
             ThreadManager.addThread(new RunnableGameTimer(200));
-            ThreadManager.addThread(new RunnableZombieSpawn(200, mainlawn));
+            ThreadManager.addThread(runzombie);
             ThreadManager.startAllThreads();
             
             new Sun();
@@ -354,16 +361,13 @@ public class MyFrame extends JFrame implements ActionListener {
                                 }
                                 
                             }
-                                    for (int i = 0; i < mainlawn.getLand().size(); i++) {
-                                        for (int j = 0; j < mainlawn.getLand().size(); j++) {
-                                            if (mainlawn.getLand().get(i).get(j).hasZombie()) {
-                                                setZombies();
-                                            }
-                                        }
-                                    }
+                                 
                        }
-                      
-                       
+                        for (int i = 0; i < mapButtons.size(); i++) {
+                            for (int j = 0; j < tempMapRow.size(); j++) {
+                                    setZombies(i, j); 
+                        }
+                    }
                     });
                 try {
                     Thread.sleep(1000);
