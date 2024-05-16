@@ -39,7 +39,7 @@ public class MyFrame extends JFrame implements ActionListener {
     JPanel deckPanel;
     JPanel inventoryPanel;
 
-    ArrayList<ArrayList<JButton>> mapButtons = new ArrayList<ArrayList<JButton>>(6);
+    ArrayList<ArrayList<JButton>> mapButtons = new ArrayList<ArrayList<JButton>>();
     ArrayList<JButton> deckButtons = new ArrayList<JButton>(7);
     ArrayList<JButton> inventoryButtons = new ArrayList<JButton>(10);
     Queue<Zombie> zombieQueue = new LinkedList<Zombie>();
@@ -71,7 +71,7 @@ public class MyFrame extends JFrame implements ActionListener {
     static final Color WATER_COLOR = new Color(0x59CBE8);
     static final Color BORDER_DECK_COLOR = new Color(0x855200);
 
-    ArrayList<JButton> tempMapRow = new ArrayList<JButton>(11);
+    ArrayList<JButton> tempMapRow ;
 
     public MyFrame() {
 
@@ -185,8 +185,9 @@ public class MyFrame extends JFrame implements ActionListener {
         readyButton = CreateButton(40, 390, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "READY");
 
         for (int i = 0; i < 6; i++) {
-
+            tempMapRow = new ArrayList<JButton>();
             for (int j = 0; j < 11; j++) {
+                
                 if (j == 0) {
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, mapPanel, new ImageIcon("src/assets/bricktile.png")));
                 } else if(j == 10){
@@ -313,9 +314,6 @@ public class MyFrame extends JFrame implements ActionListener {
             }).start();
             RemoveButtons();
             SwitchToMenuFrame();
-            
-            
-
         }
         if(e.getSource() == startButton) {
             Lawn mainlawn = new Lawn();
@@ -365,7 +363,10 @@ public class MyFrame extends JFrame implements ActionListener {
                        }
                         for (int i = 0; i < mapButtons.size(); i++) {
                             for (int j = 0; j < tempMapRow.size(); j++) {
-                                    setZombies(i, j); 
+                                    if(mainlawn.getLand().get(i).get(j).hasZombie()){
+                                        setZombies(i, j);
+                                        //taro code moveZombies disini -Valdi
+                                    }
                         }
                     }
                     });

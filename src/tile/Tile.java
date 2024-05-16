@@ -1,6 +1,9 @@
 package tile;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import organism.plant.*;
 import organism.zombie.*;
 
@@ -51,9 +54,20 @@ public abstract class Tile {
         }
     }
 
-    public void moveZombie(Zombie zombie, Tile tile) {
-        this.removeZombie(zombie);
-        tile.addZombie(zombie);
+    public void moveZombie(Zombie arrayList, Tile tile) {
+        Timer spawn = new Timer();
+        TimerTask spawnTask = new TimerTask(){
+
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                removeZombie(arrayList);
+                tile.addZombie(arrayList);
+            }
+            
+        };
+        spawn.schedule(spawnTask, 0, 5000);
+       
     }
 
     public boolean hasPlant() {
