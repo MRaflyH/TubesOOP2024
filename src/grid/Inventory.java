@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import exception.InvalidInventoryException;
 import organism.plant.*;
 
 public class Inventory {
@@ -23,12 +24,16 @@ public class Inventory {
     }
     
     //harus diurus apakah akan add plant atau swap plant di main
-    public void addPlant(Plant plant, Deck deck, int slot) {
-        if (!deck.getPlayablePlants().contains(plant) && slot < deck.getMaxPlants()) {
-            deck.getPlayablePlants().set(slot, plant);
+    public void addPlant(Plant plant, Deck deck, int slot) throws InvalidInventoryException {
+        if (!deck.getPlayablePlants().contains(plant)) {
+            if(slot < deck.getMaxPlants()){
+                deck.getPlayablePlants().set(slot, plant);
+            } else {
+                throw new InvalidInventoryException("Plants are full!");
+            }
         }
         else {
-            //exception
+            throw new InvalidInventoryException("Plant already in deck!");
         }
     }
 
@@ -61,12 +66,12 @@ public class Inventory {
         
     }
 
-    public void removePlant(Deck deck, int slot) {
+    public void removePlant(Deck deck, int slot) throws InvalidInventoryException {
         if (deck.getPlayablePlants().get(slot) != null) {
             deck.getPlayablePlants().set(slot, null);
         }
         else {
-            //exception
+            throw new InvalidInventoryException("Deck is empty!");
         }
     }
 }

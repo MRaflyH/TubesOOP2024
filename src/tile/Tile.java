@@ -54,7 +54,7 @@ public abstract class Tile {
         }
     }
 
-    public void moveZombie(Zombie arrayList, Tile tile) {
+    public void moveZombie(Zombie arrayList, Tile tilenew) {
         Timer spawn = new Timer();
         TimerTask spawnTask = new TimerTask(){
 
@@ -62,11 +62,11 @@ public abstract class Tile {
             public void run() {
                 // TODO Auto-generated method stub
                 removeZombie(arrayList);
-                tile.addZombie(arrayList);
+                tilenew.addZombie(arrayList);
             }
             
         };
-        spawn.schedule(spawnTask, 0, 5000);
+        spawn.schedule(spawnTask, 1000, 5000);
        
     }
 

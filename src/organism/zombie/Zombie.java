@@ -15,13 +15,13 @@ public abstract class Zombie extends Organism {
         this.isVisible = isVisible;
     }
 
-    public void move(Tile prev, Tile next) {
+    //public void move(Tile prev, Tile next) {
         // ini sementara dibuat gini, asumsinya:
         // Method ini dipanggil dari main dan
         // tile zombie saat ini dan tile zombie selanjutnya disediakan dari main
-        prev.moveZombie(this, next);
-        moveCooldown = 5;
-    }
+   //     prev.moveZombie(this, next);
+   //     moveCooldown = 5;
+   // }
 
     public Integer getMoveCooldown() {
         return moveCooldown;
