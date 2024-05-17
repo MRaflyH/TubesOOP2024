@@ -217,6 +217,7 @@ public class MyFrame extends JFrame implements ActionListener {
             mapButtons.add(tempMapRow);
         }
 
+
     }
     public void setZombies(int i, int j){
         JLabel zombie = new JLabel();
@@ -249,6 +250,20 @@ public class MyFrame extends JFrame implements ActionListener {
     }
 
     
+    // INI GW NYOBA BUAT DEBUGGING ZOMBIE MOVE
+    public void removeZombies(int i, int j) {
+        for (Component component : mapButtons.get(i).get(j).getComponents()) {
+            // Check if component is a JLabel and if it has an icon
+            // System.out.println("Component: " + component);
+            if (component instanceof JLabel) { 
+                JLabel label = (JLabel) component; // Safely cast to JLabel
+                if (label.getIcon() != null) { 
+                    label.setIcon(null);
+                }
+            }
+        }
+    }
+
     public void SetLabels() {
         pvzLogo = new JLabel();
         pvzLogo.setBounds(160, 40, 320, 150);
@@ -444,10 +459,12 @@ public class MyFrame extends JFrame implements ActionListener {
             new Sun();
             GUIThread =
             new Thread(() -> {
-            for(Runnable r : ThreadManager.getList()){
-                            if(r instanceof RunnableGameTimer){
-                                count = ((RunnableGameTimer) r).getCurrentGameTime();}}
-            while (count >= 0) {
+            System.out.println("GUI Thread Started");
+            Boolean rungame = true;
+            count = 200;
+            while (rungame) {
+                System.out.println("while loop entered");
+                System.out.println("---------------");
                 // BERARTI MAIN GAME LOOP DI SINI YA? ~Dama yes ini thread buat swing (GUI thread only)
 
                 // update the every text here
@@ -470,13 +487,27 @@ public class MyFrame extends JFrame implements ActionListener {
                             for (int j = 0; j < tempMapRow.size(); j++) {
                                     if(mainlawn.getLand().get(i).get(j).hasZombie()){
                                         setZombies(i, j);
-                                        //taro code moveZombies disini -Valdi
-                                        for(int k = 0; k <mainlawn.getLand().get(i).get(j).getZombies().size() ; k++){
-                                                mainlawn.getLand().get(i).get(j).moveZombie(
-                                                        mainlawn.getLand().get(i).get(j).getZombies().get(k),
-                                                        mainlawn.getLand().get(i).get(j - 1));
-                                        }
+                                        //taro code moveZombies disini -Vald
                                         
+                                        ArrayList<Zombie> currentZombies = new ArrayList<>(mainlawn.getLand().get(i).get(j).getZombies());
+                                        for (Zombie z : currentZombies){
+                                            // System.out.println("Zombie " + z + " has" + z.getMoveCooldown() + " secs moveCD.");
+                                            z.setMoveCooldown(z.getMoveCooldown() - 1);
+                                            if(z.getMoveCooldown() == 0){
+                                                // System.out.println();
+                                                // System.out.printf("Zombie " + z + " is moving from (" + i + "," + j +"). \n");
+                                                // System.out.printf("Zombie at old tile (%d, %d) exist? %s \n", i, j, mainlawn.getLand().get(i).get(j).getZombies().contains(z));
+                                                // System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
+                                                z.move(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
+                                                // System.out.println("=== After ===");
+                                                removeZombies(i, j);
+                                                setZombies(i, j-1);
+                                                System.out.println("zombie set at: (" + i + "," + (j-1) +")");
+                                                System.out.printf("Zombie at old tile (%d, %d) exist? %s \n", i, j, mainlawn.getLand().get(i).get(j).getZombies().contains(z));
+                                                System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
+                                                System.out.println();
+                                            }
+                                        }
                                     }
                         }
                     }
@@ -488,8 +519,21 @@ public class MyFrame extends JFrame implements ActionListener {
                 }
                 
 
-
+                for (int i = 0; i < 6; i++) {
+                    if (mainlawn.getLand().get(i).get(0).hasZombie()){
+                        rungame = false;
+                    }
+                }
+                System.out.println("Checking endgame");
+                System.out.println("Rungame before and: " + rungame);
+                System.out.println("ZombieCount: " + runzombie.getZombieCount());
+                if (count <= 0) {
+                    rungame = rungame && (count <= 0 && runzombie.getZombieCount() > 0);
+                }
                 count--;
+
+                System.out.println("Rungame after and: " + rungame);
+                System.out.println("=====================");
             }});
             GUIThread.start();
 
