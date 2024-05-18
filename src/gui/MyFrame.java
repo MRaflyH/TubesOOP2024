@@ -298,7 +298,18 @@ public class MyFrame extends JFrame implements ActionListener {
 
     private String getPlantSourceImg(Deck deck){
         String source = "";
-        for(Plant c : deck.getPlayablePlants()){
+        List<Plant> plantsSementara = new ArrayList<Plant>();
+        for(int i=0; i<deck.getMaxPlants(); i++) {
+            Plant plantSementara = null;
+            try {
+                plantSementara = deck.getPlayablePlants().get(i).getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            plantsSementara.add(plantSementara);
+        }
+        for(Plant c : plantsSementara){
             if(c instanceof Sunflower){
                 source ="src/assets/sunflower.png";
             }
