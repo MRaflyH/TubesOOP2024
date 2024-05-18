@@ -2,13 +2,13 @@ package organism;
 
 public abstract class Organism {
     protected String name;
-    protected Integer health;
-    protected Integer attackDamage;
-    protected Integer attackSpeed;
-    protected Integer attackCooldown;
-    protected Boolean isAquatic;
+    protected int health;
+    protected int attackDamage;
+    protected int attackSpeed;
+    protected int attackCooldown;
+    protected static boolean isAquatic;
 
-    public Organism(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic) {
+    public Organism(String name, int health, int attackDamage, int attackSpeed, boolean isAquatic) {
         this.name = name;
         this.health = health;
         this.attackDamage = attackDamage;
@@ -21,32 +21,32 @@ public abstract class Organism {
         return name;
     }
 
-    public Integer getHealth() {
+    public int getHealth() {
         return health;
     }
 
-    public Integer getAttackDamage() {
+    public int getAttackDamage() {
         return attackDamage;
     }
 
-    public Integer getAttackSpeed() {
+    public int getAttackSpeed() {
         return attackSpeed;
     }
 
-    public Integer getAttackCooldown() {
+    public int getAttackCooldown() {
         return attackCooldown;
     }
 
-    public void setAttackCooldown(Integer attackCDValue) {
+    public void setAttackCooldown(int attackCDValue) {
         if (attackCDValue < 0) attackCDValue = 0;
         attackCooldown = attackCDValue;
     }
 
-    public Boolean getIsAquatic() {
+    public static boolean getIsAquatic() {
         return isAquatic;
     }
 
-    public Boolean isDead() {
+    public boolean isDead() {
         return (health == 0);
     }
 
@@ -54,11 +54,11 @@ public abstract class Organism {
         attackCooldown = attackSpeed;
     }
 
-    public void loseHealth(Integer damageTaken) {
+    public void loseHealth(int damageTaken) {
         health -= damageTaken;
     }
 
-    public void addHealth(Integer healthAdded) {
+    public void addHealth(int healthAdded) {
         health += healthAdded;
     }
 

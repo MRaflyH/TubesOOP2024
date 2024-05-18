@@ -500,11 +500,13 @@ public class MyFrame extends JFrame implements ActionListener {
                                                 // System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
                                                 z.move(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
                                                 // System.out.println("=== After ===");
-                                                removeZombies(i, j);
+                                                if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
+                                                    removeZombies(i, j);
+                                                }
                                                 setZombies(i, j-1);
-                                                System.out.println("zombie set at: (" + i + "," + (j-1) +")");
-                                                System.out.printf("Zombie at old tile (%d, %d) exist? %s \n", i, j, mainlawn.getLand().get(i).get(j).getZombies().contains(z));
-                                                System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
+                                                // System.out.println("zombie set at: (" + i + "," + (j-1) +")");
+                                                // System.out.printf("Zombie at old tile (%d, %d) exist? %s \n", i, j, mainlawn.getLand().get(i).get(j).getZombies().contains(z));
+                                                // System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
                                                 System.out.println();
                                             }
                                         }
