@@ -13,6 +13,7 @@ public class DolphinRiderZombie extends Zombie implements VaultingInterface {
         current.moveZombie(this, land);
         vaulted.removePlant();
         hasVaulted = true;
+        moveCooldown = 10;
     }
 
     public boolean getHasVaulted(){
