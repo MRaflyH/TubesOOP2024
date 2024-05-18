@@ -17,7 +17,7 @@ public class Lilypad extends Plant {
         }
     }
 
-    public Integer getHealth() {
+    public int getHealth() {
         if (hasPlant()) {
             return plant.getHealth();
         }
@@ -26,7 +26,7 @@ public class Lilypad extends Plant {
         }
     }
 
-    public Integer getAttackDamage(){
+    public int getAttackDamage(){
         if (hasPlant()) {
             return plant.getAttackDamage();
         }
@@ -35,7 +35,7 @@ public class Lilypad extends Plant {
         }
     }
 
-    public Integer getAttackSpeed(){
+    public int getAttackSpeed(){
         if (hasPlant()) {
             return plant.getAttackSpeed();
         }
@@ -44,7 +44,7 @@ public class Lilypad extends Plant {
         }
     }
 
-    public Integer getAttackCooldown(){
+    public int getAttackCooldown(){
         if (hasPlant()) {
             return plant.getAttackCooldown();
         }
@@ -53,7 +53,7 @@ public class Lilypad extends Plant {
         }
     }
 
-    public void setAttackCooldown(Integer attackCDValue){
+    public void setAttackCooldown(int attackCDValue){
         if (hasPlant()) {
             plant.setAttackCooldown(attackCDValue);
         }
@@ -62,7 +62,7 @@ public class Lilypad extends Plant {
         }
     }
 
-    public Boolean isDead() {
+    public boolean isDead() {
         if (hasPlant()) {
             return plant.isDead();
         }
@@ -80,7 +80,7 @@ public class Lilypad extends Plant {
         }
     }
 
-    public void loseHealth(Integer damageTaken) {
+    public void loseHealth(int damageTaken) {
         if (hasPlant()) {
             plant.loseHealth(damageTaken);
         }
@@ -89,7 +89,7 @@ public class Lilypad extends Plant {
         }
     }
 
-    public void addHealth(Integer healthAdded) {
+    public void addHealth(int healthAdded) {
         if (hasPlant()) {
             plant.addHealth(healthAdded);
         }
@@ -106,7 +106,7 @@ public class Lilypad extends Plant {
         }
     }
 
-    public Integer getRange() {
+    public int getRange() {
         if (hasPlant() == true) {
             return plant.getRange();
         }
@@ -129,7 +129,7 @@ public class Lilypad extends Plant {
         }
     }
 
-    public Boolean hasPlant() {
+    public boolean hasPlant() {
         return plant != null;
     }
 
