@@ -6,7 +6,7 @@ import organism.plant.Plant;
 
 public class Deck {
     private static final int MAX_PLANT = 6;
-    private List<Plant> playablePlants;
+    private List<Class<? extends Plant>> playablePlants;
     
     public Deck() {
         playablePlants = new ArrayList<>();
@@ -15,7 +15,7 @@ public class Deck {
         }
     }
 
-    public List<Plant> getPlayablePlants() {
+    public List<Class<? extends Plant>> getPlayablePlants() {
         return this.playablePlants;
     }
 
@@ -24,12 +24,17 @@ public class Deck {
     }
 
     public void addPlantToMap(int slot, Lawn lawn, int x, int y) {
-        if (slot < MAX_PLANT && playablePlants.get(slot).getPlantingCooldown()==0) {
-            lawn.getLand().get(y).get(x).addPlant(playablePlants.get(slot));
-            playablePlants.get(slot).setPlantingCooldown(playablePlants.get(slot).getPlantingSpeed());
-        }
-        else {
-            // exception
+        try {
+            if (playablePlants.get(slot).getMethod("getPlantingCooldown").invoke(null).equals(0)) {
+                lawn.getLand().get(y).get(x).addPlant(playablePlants.get(slot).getDeclaredConstructor().newInstance());
+                playablePlants.get(slot).getMethod("setPlantingCooldown", int.class).invoke(null,(Integer)playablePlants.get(slot).getMethod("getPlantingSpeed").invoke(null));
+            }
+            else {
+                // exception
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 

@@ -10,7 +10,7 @@ public class PoolTile extends Tile {
 
     public void addPlant(Plant plant) {
         if (!hasPlant()) {
-            if (plant.getIsAquatic()) {
+            if (Plant.getIsAquatic()) {
                 super.addPlant(plant);
             }
             else {
