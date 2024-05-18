@@ -1,9 +1,10 @@
 package gui;
+import javax.imageio.ImageIO;
 import javax.sound.sampled.Line;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-import organism.plant.Sunflower;
+import organism.plant.*;
 import thread.RunnableGameTimer;
 import thread.RunnableGenerateSun;
 import thread.RunnableZombieSpawn;
@@ -17,8 +18,12 @@ import organism.zombie.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.Queue;
 import java.awt.*;
 
 
@@ -46,8 +51,7 @@ public class MyFrame extends JFrame implements ActionListener {
     ArrayList<ArrayList<JButton>> mapButtons = new ArrayList<ArrayList<JButton>>();
     ArrayList<JButton> deckButtons = new ArrayList<JButton>(7);
     ArrayList<JButton> inventoryButtons = new ArrayList<JButton>(10);
-    Queue<Zombie> zombieQueue = new LinkedList<Zombie>();
-
+    ArrayList<JButton> tempMapRow;
     JButton startButton;
     JButton helpButton;
     JButton plantsListButton;
@@ -56,10 +60,9 @@ public class MyFrame extends JFrame implements ActionListener {
     JButton menuButton;
     JButton readyButton;
     JButton deckButton;
-    JLabel pvzLogo;
     JLabel numSun;
 
-    static final int FRAME_WIDTH = 640;
+    static final int FRAME_WIDTH = 638;
     static final int FRAME_HEIGHT = 480;
     static final int TILE_WIDTH = 50;
     static final int TILE_HEIGHT = 60;
@@ -74,11 +77,41 @@ public class MyFrame extends JFrame implements ActionListener {
     static final Color GRASS2_COLOR = new Color(0x6CC24A);
     static final Color WATER_COLOR = new Color(0x59CBE8);
     static final Color BORDER_DECK_COLOR = new Color(0x855200);
+    BufferedImage myImage;
+    
+    class ImagePanel extends JComponent {
+    private Image image;
+    public ImagePanel(Image image) {
+        this.image = image;
+    }
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(image, 0, 0, this);
+    }
 
-    ArrayList<JButton> tempMapRow ;
-
+    public void setImage(Image newimage){
+        image = newimage;
+    }
+}
+    
+    ImagePanel imagepan = new ImagePanel(null);
     public MyFrame() {
 
+       
+        for(int i = 0; i < 6; i++){
+            deckAvailability.add(1);
+        }
+
+        
+        try {
+            myImage = ImageIO.read(new File("src/assets/backgroundmainmenu.png"));
+            imagepan.setImage(myImage);
+            this.setContentPane(imagepan);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -86,12 +119,8 @@ public class MyFrame extends JFrame implements ActionListener {
         getContentPane().setBackground(BACKGROUND_COLOR);
         SetPanels();
         SetButtons();
-        SetLabels();
         SwitchToMenuFrame();
         setVisible(true);
-        for(int i = 0; i < 6; i++){
-            deckAvailability.add(1);
-        }
     }
 
 
@@ -99,13 +128,19 @@ public class MyFrame extends JFrame implements ActionListener {
 
         currentFrame = 0;
         menuPanel.setVisible(true);
-        pvzLogo.setVisible(true);
         exitButton.setVisible(true);
 
     }
 
     public void SwitchToDeckFrame() {
-
+        try{
+            myImage = ImageIO.read(new File("src/assets/deckmenu.png"));
+            imagepan.setImage(myImage);
+            setContentPane(imagepan);
+        } catch (IOException e3) {
+            // TODO Auto-generated catch block
+            e3.printStackTrace();
+        }
         currentFrame = 1;
         menuButton.setVisible(true);
         deckPanel.setVisible(true);
@@ -115,6 +150,14 @@ public class MyFrame extends JFrame implements ActionListener {
     }
 
     public void SwitchToGameFrame() {
+        try {
+            myImage = ImageIO.read(new File("src/assets/gameframe.png"));
+            imagepan.setImage(myImage);
+            setContentPane(imagepan);
+        } catch (IOException e3) {
+            // TODO Auto-generated catch block
+            e3.printStackTrace();
+        }
         currentFrame = 2;
         menuButton.setVisible(true);
         mapPanel.setVisible(true);
@@ -126,7 +169,6 @@ public class MyFrame extends JFrame implements ActionListener {
 
         if (currentFrame == 0) {
             menuPanel.setVisible(false);
-            pvzLogo.setVisible(false);
             exitButton.setVisible(false);
             }
         else if (currentFrame == 1) {
@@ -147,19 +189,24 @@ public class MyFrame extends JFrame implements ActionListener {
         menuPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
         deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8 + 10, TILE_HEIGHT);
         inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 5);
-        mapPanel = CreatePanel(50, 90, TILE_WIDTH * 11, TILE_HEIGHT * 6);
+        mapPanel = CreatePanel(75, 90, TILE_WIDTH * 11, TILE_HEIGHT * 6);
     }
 
     public void SetButtons() {
 
-        startButton = CreateButton(0, 0, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "START", menuPanel);
-        helpButton = CreateButton(0, LARGE_HEIGHT + 10, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "HELP", menuPanel);
-        plantsListButton = CreateButton(0, (LARGE_HEIGHT + 10) * 2, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "PLANTS LIST", menuPanel);
-        zombieListButton = CreateButton(0, (LARGE_HEIGHT + 10) * 3, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "ZOMBIES LIST", menuPanel);
+        startButton = CreateButton(0, 0, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "START", menuPanel, new ImageIcon("src/assets/startbutton.png"));
+        helpButton = CreateButton(0, LARGE_HEIGHT + 10, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "HELP", menuPanel, 
+                new ImageIcon("src/assets/loadbutton.png"));
+        plantsListButton = CreateButton(0, (LARGE_HEIGHT + 10) * 2, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "PLANTS LIST", menuPanel, 
+                new ImageIcon("src/assets/plantlistbutton.png"));
+        zombieListButton = CreateButton(0, (LARGE_HEIGHT + 10) * 3, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "ZOMBIES LIST", menuPanel,
+                new ImageIcon("src/assets/zombielistbutton.png"));
 
-        exitButton = CreateButton(10, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "EXIT");
+        exitButton = CreateButton(10, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "EXIT", menuPanel, 
+                new ImageIcon("src/assets/exitbutton.png"));
        
-        menuButton = CreateButton(530, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "MENU");
+        menuButton = CreateButton(530, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, null, 
+                new ImageIcon("src/assets/exitbutton.png"));
 
         for (int i = 0; i < 7; i++) {
             if (i == 0) {
@@ -189,7 +236,7 @@ public class MyFrame extends JFrame implements ActionListener {
             
         }
 
-        readyButton = CreateButton(40, 390, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "READY");
+        readyButton = CreateButton(60, 390, LARGE_WIDTH + 10, LARGE_HEIGHT, BUTTON_COLOR, null, new ImageIcon("src/assets/readybutton.png"));
 
         for (int i = 0; i < 6; i++) {
             tempMapRow = new ArrayList<JButton>();
@@ -233,13 +280,11 @@ public class MyFrame extends JFrame implements ActionListener {
 
     public void setPlants(boolean onInventory, String srcfile, int i){
         JLabel plant = new JLabel();
-        plant.setBounds(TILE_WIDTH, TILE_HEIGHT, 19, 30);
-        plant.setHorizontalTextPosition(JLabel.CENTER);
-        plant.setVerticalTextPosition(JLabel.CENTER);
+        ImageIcon img = new ImageIcon(srcfile);
+        plant.setBounds(0,0, TILE_WIDTH, TILE_HEIGHT);
         plant.setVisible(true);
-        plant.setOpaque(false);
-        plant.setIcon(new ImageIcon(new ImageIcon(srcfile).getImage()
-                .getScaledInstance(plant.getWidth(), plant.getHeight(), Image.SCALE_SMOOTH)));
+        plant.setIcon(new ImageIcon(img.getImage()
+                .getScaledInstance(19, 30, Image.SCALE_DEFAULT)));
         if(onInventory){
             inventoryButtons.get(i).add(plant);
         } else {
@@ -249,6 +294,39 @@ public class MyFrame extends JFrame implements ActionListener {
         
     }
 
+    private String getPlantSourceImg(Deck deck){
+        String source = "";
+        for(Plant c : deck.getPlayablePlants()){
+            if(c instanceof Sunflower){
+                source ="src/assets/sunflower.png";
+            }
+            if (c instanceof CherryBomb) {
+                source = "src/assets/cherrybomb.png";
+            }
+            if (c instanceof Chomper) {
+                source = "src/assets/chomper.png";
+            }
+            if (c instanceof Lilypad) {
+                source = "src/assets/lilypad.png";
+            }
+            if (c instanceof Peashooter) {
+                source = "src/assets/peashooter.png";
+            }
+            if (c instanceof Repeater) {
+                source = "src/assets/repeater.png";
+            }
+            if (c instanceof SnowPea) {
+                source = "src/assets/snowpea.png";
+            }
+            if (c instanceof TangleKelp) {
+                source = "src/assets/tanglekelp.png";
+            }
+            if (c instanceof Wallnut) {
+                source = "src/assets/wallnut.png";
+            }
+        }
+        return source;
+    }
     
     // INI GW NYOBA BUAT DEBUGGING ZOMBIE MOVE
     public void removeZombies(int i, int j) {
@@ -264,15 +342,7 @@ public class MyFrame extends JFrame implements ActionListener {
         }
     }
 
-    public void SetLabels() {
-        pvzLogo = new JLabel();
-        pvzLogo.setBounds(160, 40, 320, 150);
-        pvzLogo.setIcon(new ImageIcon(new ImageIcon("src/assets/Plants_vs_Zombies_logo.png").getImage().getScaledInstance(pvzLogo.getWidth(), pvzLogo.getHeight(), Image.SCALE_DEFAULT)));
-        pvzLogo.setHorizontalAlignment(JLabel.CENTER);
-        pvzLogo.setVerticalAlignment(JLabel.CENTER);
-        pvzLogo.setVisible(true);
-        add(pvzLogo);
-    }
+   
 
 
     public JPanel CreatePanel(int x, int y, int width, int height) {
@@ -287,9 +357,9 @@ public class MyFrame extends JFrame implements ActionListener {
 
     }
 
-    public JButton CreateButton(int x, int y, int width, int height, Color color, String text) {
+    public JButton CreateButton(int x, int y, int width, int height, Color color, String text, ImageIcon i) {
 
-        JButton newButton = new JButton();
+        JButton newButton = new JButton(i);
         newButton.setBounds(x, y, width, height);
         newButton.addActionListener(this);
         newButton.setBorderPainted(false);
@@ -382,7 +452,7 @@ public class MyFrame extends JFrame implements ActionListener {
     public JLabel CreateLabel() {return new JLabel();}
     @Override
     public void actionPerformed(ActionEvent e) {
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 10; i++){ //buat add plant
             try{
                 if(e.getSource() == inventoryButtons.get(i)){
                 setPlants(false, "src/assets/sunflower.png", getDeckAvalibility() + 1);
@@ -399,7 +469,7 @@ public class MyFrame extends JFrame implements ActionListener {
             }
             
         }
-        if(currentFrame == 1){
+        if(currentFrame == 1){ // buat remove plant
             for(int i = 0; i < 6; i++){
                 if(e.getSource() == deckButtons.get(getDeckAvalibility())){
                     setDeckAvailable();
@@ -420,7 +490,7 @@ public class MyFrame extends JFrame implements ActionListener {
         if(e.getSource() != null) {
             // jika button apapun dipress
         }
-        if (e.getSource() == menuButton) {
+        if (e.getSource() == menuButton && currentFrame == 2) {
         
             new Thread(new Runnable() {
 
@@ -430,15 +500,23 @@ public class MyFrame extends JFrame implements ActionListener {
                     ThreadManager.stopAllThreads();
                     count = -1;
                     System.out.println("Thread Interrupted");
-                    new MenuFrame();
 
                 }
 
             }).start();
             RemoveButtons();
             SwitchToMenuFrame();
+            try {
+                myImage = ImageIO.read(new File("src/assets/backgroundmainmenu.png"));
+                imagepan.setImage(myImage);
+                this.setContentPane(imagepan);
+            } catch (IOException e4) {
+                // TODO Auto-generated catch block
+                e4.printStackTrace();
+            }
         }
         if(e.getSource() == startButton) {
+           
             RemoveButtons();
             SwitchToDeckFrame();
         }
