@@ -3,12 +3,12 @@ package organism.plant;
 import organism.Organism;
 
 public abstract class Plant extends Organism {
-    private Integer cost;
-    private Integer range;
-    private Integer plantingSpeed;
-    private Integer plantingCooldown;
+    private int cost;
+    private int range;
+    private int plantingSpeed;
+    private int plantingCooldown;
 
-    public Plant(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic, Integer cost, Integer range, Integer plantingSpeed) {
+    public Plant(String name, int health, int attackDamage, int attackSpeed, boolean isAquatic, int cost, int range, int plantingSpeed) {
         super(name, health, attackDamage, attackSpeed, isAquatic);
         this.cost = cost;
         this.range = range;
@@ -16,23 +16,23 @@ public abstract class Plant extends Organism {
         plantingCooldown = plantingSpeed;
     }
 
-    public Integer getCost() {
+    public int getCost() {
         return cost;
     }
 
-    public Integer getRange() {
+    public int getRange() {
         return range;
     }
 
-    public Integer getPlantingSpeed() {
+    public int getPlantingSpeed() {
         return plantingSpeed;
     }
 
-    public Integer getPlantingCooldown() {
+    public int getPlantingCooldown() {
         return plantingCooldown;
     }
 
-    public void setPlantingCooldown(Integer plantingCooldown) {
+    public void setPlantingCooldown(int plantingCooldown) {
         this.plantingCooldown = plantingCooldown;
     }
 }

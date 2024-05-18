@@ -4,48 +4,47 @@ import organism.Organism;
 import tile.Tile;
 
 public abstract class Zombie extends Organism {
-    protected Integer moveCooldown;
-    protected Integer currentSlow;
-    protected Boolean isVisible;
+    protected int moveCooldown;
+    protected int currentSlow;
+    protected boolean isVisible;
 
-    public Zombie(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic, Boolean isVisible) {
+    public Zombie(String name, int health, int attackDamage, int attackSpeed, boolean isAquatic, boolean isVisible) {
         super(name, health, attackDamage, attackSpeed, isAquatic);
-        this.moveCooldown = 5;
+        this.moveCooldown = 10;
         this.currentSlow = 0;
         this.isVisible = isVisible;
     }
 
     public void move(Tile prev, Tile next) {
-      
-      prev.moveZombie(this, next);
-       moveCooldown = 5;
+        prev.moveZombie(this, next);
+        moveCooldown = 10;
     }
 
-    public Integer getMoveCooldown() {
+    public int getMoveCooldown() {
         return moveCooldown;
     }
 
-    public void setMoveCooldown(Integer moveCDValue) {
+    public void setMoveCooldown(int moveCDValue) {
         moveCooldown = moveCDValue;
     }
 
-    public Integer getcurrentSlow() {
+    public int getcurrentSlow() {
         return currentSlow;
     }
 
-    public void setCurrentSlow(Integer slowValue) {
+    public void setCurrentSlow(int slowValue) {
         currentSlow = slowValue;
     }
 
-    public void reduceCurrentSlow(Integer reduceValue) {
+    public void reduceCurrentSlow(int reduceValue) {
         currentSlow -= reduceValue;
     }
 
-    public Boolean isSlow() {
+    public boolean isSlow() {
         return (currentSlow > 0);
     }
 
-    public Boolean getIsVisible() {
+    public boolean getIsVisible() {
         return isVisible;
     }
 }

@@ -3,7 +3,7 @@ package organism.zombie;
 import tile.Tile;
 
 public class DolphinRiderZombie extends Zombie implements VaultingInterface {
-    private Boolean hasVaulted = false;
+    private boolean hasVaulted = false;
 
     public DolphinRiderZombie(){
         super("Dolphin Rider Zombie", 175, 100, 1, true, true);
@@ -15,7 +15,7 @@ public class DolphinRiderZombie extends Zombie implements VaultingInterface {
         hasVaulted = true;
     }
 
-    public Boolean getHasVaulted(){
+    public boolean getHasVaulted(){
         return hasVaulted;
     }
 }
