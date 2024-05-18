@@ -7,13 +7,17 @@ import tile.Tile;
 
 public class Deck {
     private static final int MAX_PLANT = 6;
-    private List<Plant> playablePlants;
+    private List<Class<? extends Plant>> playablePlants;
     
     public Deck() {
         playablePlants = new ArrayList<>();
     }
 
+<<<<<<< Updated upstream
     public List<Plant> getPlants() {
+=======
+    public List<Class<? extends Plant>> getPlayablePlants() {
+>>>>>>> Stashed changes
         return this.playablePlants;
     }
 

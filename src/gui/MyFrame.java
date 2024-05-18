@@ -149,8 +149,13 @@ public class MyFrame extends JFrame implements ActionListener {
 
         for (int i = 0; i < 7; i++) {
             if (i == 0) {
+<<<<<<< Updated upstream
                 deckButton = CreateButton(TILE_WIDTH * i, 0, 50, 100, BUTTON_COLOR, null, deckPanel, 
                         new ImageIcon("src/assets/sun.png"));
+=======
+                deckButton = CreateButton(TILE_WIDTH * i -10, 0, 70, 60, BUTTON_COLOR, null, deckPanel, 
+                        new ImageIcon("../src/assets/sun.png"));
+>>>>>>> Stashed changes
                 numSun = new JLabel();
                 numSun.setBounds(200, 250, 300,200);
                 numSun.setText(Integer.toString(Sun.getTotalSun()));
@@ -163,19 +168,29 @@ public class MyFrame extends JFrame implements ActionListener {
                 
             }
             else{
+<<<<<<< Updated upstream
                 deckButton = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH + 10, TILE_HEIGHT, BORDER_DECK_COLOR, null, deckPanel, new ImageIcon("src/assets/deck.png"));
+=======
+                deckButton = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH, TILE_HEIGHT, BORDER_DECK_COLOR, null, deckPanel, new ImageIcon("../src/assets/decktile.png"));
+>>>>>>> Stashed changes
                 deckButtons.add(deckButton);
                 
             }
         }
 
         for (int i = 0; i < 10; i++) {
+<<<<<<< Updated upstream
             if (i % 2 == 0) {
                 inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel));
             }
             else {
                 inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, inventoryPanel));
             }
+=======
+            inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel, new ImageIcon("../src/assets/decktile.png")));
+            setPlants(true, "../src/assets/sunflower.png", i);
+            
+>>>>>>> Stashed changes
         }
 
         readyButton = CreateButton(40, 390, LARLGE_WIDTH, LARLGE_HEIGHT, BUTTON_COLOR, "READY");
@@ -183,6 +198,7 @@ public class MyFrame extends JFrame implements ActionListener {
         for (int i = 0; i < 6; i++) {
             ArrayList<JButton> tempMapRow = new ArrayList<JButton>(11);
             for (int j = 0; j < 11; j++) {
+<<<<<<< Updated upstream
                 if (j == 0 || j == 10) {
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, mapPanel));
                     tempMapRow.get(j).setEnabled(false);
@@ -196,17 +212,86 @@ public class MyFrame extends JFrame implements ActionListener {
                 else {
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, mapPanel));
                 }
+=======
+                
+                if (j == 0) {
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, mapPanel, new ImageIcon("../src/assets/bricktile.png")));
+                } else if(j == 10){
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR,
+                            null, mapPanel, new ImageIcon("../src/assets/gravetile.png")));
+                    
+                }
+                else if (i == 2 || i == 3) {
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, WATER_COLOR, null, mapPanel, 
+                            new ImageIcon("../src/assets/watertile.png")));
+                }
+                else if ((i + j) % 2 == 0) {
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, mapPanel, new ImageIcon("../src/assets/grasstile1.png")));
+                }
+                else {
+                    tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, mapPanel, 
+                            new ImageIcon("../src/assets/grasstile2.png")));
+                } 
+>>>>>>> Stashed changes
             }
             mapButtons.add(tempMapRow);
         }
 
+<<<<<<< Updated upstream
+=======
+
+    }
+    public void setZombies(int i, int j){
+        JLabel zombie = new JLabel();
+        zombie.setBounds(TILE_WIDTH, TILE_HEIGHT, 18, 30);
+        zombie.setHorizontalTextPosition(JLabel.CENTER);
+        zombie.setVerticalTextPosition(JLabel.CENTER);
+        zombie.setVisible(true);
+        zombie.setOpaque(false);
+        zombie.setIcon(new ImageIcon(new ImageIcon("../src/assets/normalzombie.png").getImage()
+                .getScaledInstance(zombie.getWidth(), zombie.getHeight(), Image.SCALE_DEFAULT)));
+        mapButtons.get(i).get(j).add(zombie);
+    }
+
+    public void setPlants(boolean onInventory, String srcfile, int i){
+        JLabel plant = new JLabel();
+        plant.setBounds(TILE_WIDTH, TILE_HEIGHT, 19, 30);
+        plant.setHorizontalTextPosition(JLabel.CENTER);
+        plant.setVerticalTextPosition(JLabel.CENTER);
+        plant.setVisible(true);
+        plant.setOpaque(false);
+        plant.setIcon(new ImageIcon(new ImageIcon(srcfile).getImage()
+                .getScaledInstance(plant.getWidth(), plant.getHeight(), Image.SCALE_SMOOTH)));
+        if(onInventory){
+            inventoryButtons.get(i).add(plant);
+        } else {
+            deckButtons.get(i).add(plant);
+        }
+        
+        
+    }
+
+    
+    // INI GW NYOBA BUAT DEBUGGING ZOMBIE MOVE
+    public void removeZombies(int i, int j) {
+        for (Component component : mapButtons.get(i).get(j).getComponents()) {
+            // Check if component is a JLabel and if it has an icon
+            // System.out.println("Component: " + component);
+            if (component instanceof JLabel) { 
+                JLabel label = (JLabel) component; // Safely cast to JLabel
+                if (label.getIcon() != null) { 
+                    label.setIcon(null);
+                }
+            }
+        }
+>>>>>>> Stashed changes
     }
 
     public void SetLabels() {
 
         pvzLogo = new JLabel();
         pvzLogo.setBounds(160, 40, 320, 150);
-        pvzLogo.setIcon(new ImageIcon(new ImageIcon("src/assets/Plants_vs_Zombies_logo.png").getImage().getScaledInstance(pvzLogo.getWidth(), pvzLogo.getHeight(), Image.SCALE_DEFAULT)));
+        pvzLogo.setIcon(new ImageIcon(new ImageIcon("../src/assets/Plants_vs_Zombies_logo.png").getImage().getScaledInstance(pvzLogo.getWidth(), pvzLogo.getHeight(), Image.SCALE_DEFAULT)));
         pvzLogo.setHorizontalAlignment(JLabel.CENTER);
         pvzLogo.setVerticalAlignment(JLabel.CENTER);
         pvzLogo.setVisible(true);
@@ -276,6 +361,41 @@ public class MyFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+<<<<<<< Updated upstream
+=======
+        for(int i = 0; i < 10; i++){
+            try{
+                if(e.getSource() == inventoryButtons.get(i)){
+                setPlants(false, "../src/assets/sunflower.png", getDeckAvalibility() + 1);
+                plantOnDeck.push(i);
+                deckButtons.get(getDeckAvalibility() + 1).revalidate();
+                SetButtonDisabled(inventoryButtons.get(i), inventoryPanel, new ImageIcon("../src/assets/decktiledisabled.png"));
+                setDeckNotAvailable();
+                inventoryButtons.get(i).revalidate();
+                System.out.println(getDeckAvalibility());
+                System.out.println("Clicked on: " + " " + i);
+            }
+            } catch(Exception e2){
+                System.out.println("SUDAH PENUH BOS");
+            }
+            
+        }
+        if(currentFrame == 1){
+            for(int i = 0; i < 6; i++){
+                if(e.getSource() == deckButtons.get(getDeckAvalibility())){
+                    setDeckAvailable();
+                    SetButtonEnabled(disabledPlant.pop(), plantOnDeck.pop());
+                    System.out.println("SIZE DISABLED PLANT : " + disabledPlant.size());
+                    System.out.println("SIZE PLANT ON DECK : " +  plantOnDeck.size());
+                    deckButtons.get(getDeckAvalibility() + 1).removeAll();
+                    deckButtons.get(getDeckAvalibility()).revalidate();
+                    for(int j = 0; j < 10; j++){
+                        inventoryButtons.get(j).revalidate();
+                    }
+                    System.out.println(getDeckAvalibility());
+                    
+                }
+>>>>>>> Stashed changes
 
         if(e.getSource() != null) {
             // jika button apapun dipress

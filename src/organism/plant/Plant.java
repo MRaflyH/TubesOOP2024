@@ -5,14 +5,14 @@ import organism.Organism;
 public abstract class Plant extends Organism {
     private Integer cost;
     private Integer range;
-    private Integer plantingSpeed;
-    private Integer plantingCooldown;
+    public static Integer plantingSpeed;
+    private static Integer plantingCooldown;
 
-    public Plant(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic, Integer cost, Integer range, Integer plantingSpeed) {
+    public Plant(String name, Integer health, Integer attackDamage, Integer attackSpeed, Boolean isAquatic, Integer cost, Integer range) {
         super(name, health, attackDamage, attackSpeed, isAquatic);
         this.cost = cost;
         this.range = range;
-        this.plantingSpeed = plantingSpeed;
+        plantingSpeed = 0;
         plantingCooldown = plantingSpeed;
     }
 
@@ -22,10 +22,6 @@ public abstract class Plant extends Organism {
 
     public Integer getRange() {
         return range;
-    }
-
-    public Integer getPlantingSpeed() {
-        return plantingSpeed;
     }
 
     public Integer getPlantingCooldown() {
