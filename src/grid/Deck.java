@@ -27,6 +27,7 @@ public class Deck {
         if (slot < MAX_PLANT && playablePlants.get(slot).getPlantingCooldown()==0) {
             lawn.getLand().get(y).get(x).addPlant(playablePlants.get(slot));
             playablePlants.get(slot).setPlantingCooldown(playablePlants.get(slot).getPlantingSpeed());
+            
         }
         else {
             // exception

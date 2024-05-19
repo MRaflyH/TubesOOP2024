@@ -34,7 +34,7 @@ public class RunnableZombieSpawn implements Runnable {
                 int maxSpawn = 10, minSpawn = 1;
                 zombieCount = 0;
                 while(gametimer > 0){
-                    if (ThreadManager.getRunnableGameTimer().getCurrentGameTime() <= 180 && ThreadManager.getRunnableGameTimer().getCurrentGameTime() >= 40) { // for debugging purposes ini diest 199 aja ya -Dama
+                    if (ThreadManager.getRunnableGameTimer().getCurrentGameTime() <= 200 && ThreadManager.getRunnableGameTimer().getCurrentGameTime() >= 40) { // for debugging purposes ini diest 199 aja ya -Dama
                         RunnableZombieSpawn.setFlag((ThreadManager.getRunnableGameTimer().getCurrentGameTime() <= startFlag) && (ThreadManager.getRunnableGameTimer().getCurrentGameTime() >= endFlag));
                         for (int i = 0; i < 6; i++) {
                             //System.out.print("Row" + i + ": ");

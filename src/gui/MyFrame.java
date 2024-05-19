@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.Flow;
 import java.awt.*;
 
 
@@ -60,6 +61,7 @@ public class MyFrame extends JFrame implements ActionListener {
     JButton menuButton;
     JButton readyButton;
     JButton deckButton;
+    JButton shovelButton;
     JLabel numSun;
 
     static final int FRAME_WIDTH = 638;
@@ -162,7 +164,7 @@ public class MyFrame extends JFrame implements ActionListener {
         menuButton.setVisible(true);
         mapPanel.setVisible(true);
         deckPanel.setVisible(true);
-        
+        shovelButton.setVisible(true);
     }
 
     public void RemoveButtons() {
@@ -194,6 +196,7 @@ public class MyFrame extends JFrame implements ActionListener {
 
     public void SetButtons() {
 
+        //Interaction Buttons
         startButton = CreateButton(0, 0, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "START", menuPanel, new ImageIcon("src/assets/startbutton.png"));
         helpButton = CreateButton(0, LARGE_HEIGHT + 10, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "HELP", menuPanel, 
                 new ImageIcon("src/assets/loadbutton.png"));
@@ -207,7 +210,10 @@ public class MyFrame extends JFrame implements ActionListener {
        
         menuButton = CreateButton(530, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, null, 
                 new ImageIcon("src/assets/exitbutton.png"));
+        readyButton = CreateButton(60, 390, LARGE_WIDTH + 10, LARGE_HEIGHT, BUTTON_COLOR, null,
+                new ImageIcon("src/assets/readybutton.png"));
 
+        //deckButtons
         for (int i = 0; i < 7; i++) {
             if (i == 0) {
                 deckButton = CreateButton(TILE_WIDTH * i -10, 0, 70, 60, BUTTON_COLOR, null, deckPanel, 
@@ -226,24 +232,37 @@ public class MyFrame extends JFrame implements ActionListener {
             }
             else{
                 deckButton = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH, TILE_HEIGHT, BORDER_DECK_COLOR, null, deckPanel, new ImageIcon("src/assets/decktile.png"));
+                deckButton.setLayout(new FlowLayout());
                 deckButtons.add(deckButton);
             }
         }
-
+        //shovel button
+        shovelButton = CreateButton(380, 10, TILE_WIDTH, TILE_HEIGHT, BORDER_DECK_COLOR, null, new ImageIcon("src/assets/decktile.png"));
+        shovelButton.setLayout(new FlowLayout());
+        JLabel shovel = new JLabel();
+        ImageIcon img = new ImageIcon("src/assets/shovel.png");
+        shovel.setBounds(0, 0, TILE_WIDTH, TILE_HEIGHT);
+        shovel.setAlignmentX(-0.6f);
+        shovel.setVisible(true);
+        shovel.setIcon(new ImageIcon(img.getImage()
+                .getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
+        shovelButton.add(shovel);
+        //inventory button
         for (int i = 0; i < 10; i++) {
             inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel, new ImageIcon("src/assets/decktile.png")));
-            setPlants(true, "src/assets/sunflower.png", i);
+            inventoryButtons.get(i).setLayout(new FlowLayout());
+            setPlants(true, "src/assets/cherrybomb.png", i);
             
         }
-
-        readyButton = CreateButton(60, 390, LARGE_WIDTH + 10, LARGE_HEIGHT, BUTTON_COLOR, null, new ImageIcon("src/assets/readybutton.png"));
-
+       
+        //map buttons
         for (int i = 0; i < 6; i++) {
             tempMapRow = new ArrayList<JButton>();
             for (int j = 0; j < 11; j++) {
                 
                 if (j == 0) {
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR, null, mapPanel, new ImageIcon("src/assets/bricktile.png")));
+                    
                 } else if(j == 10){
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, BUTTON_COLOR,
                             null, mapPanel, new ImageIcon("src/assets/gravetile.png")));
@@ -260,21 +279,21 @@ public class MyFrame extends JFrame implements ActionListener {
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, mapPanel, 
                             new ImageIcon("src/assets/grasstile2.png")));
                 } 
+                tempMapRow.get(j).setLayout(new FlowLayout());
             }
             mapButtons.add(tempMapRow);
+            
         }
-
-
     }
+
     public void setZombies(int i, int j){
         JLabel zombie = new JLabel();
-        zombie.setBounds(TILE_WIDTH, TILE_HEIGHT, 18, 30);
         zombie.setHorizontalTextPosition(JLabel.CENTER);
         zombie.setVerticalTextPosition(JLabel.CENTER);
         zombie.setVisible(true);
         zombie.setOpaque(false);
         zombie.setIcon(new ImageIcon(new ImageIcon("src/assets/normalzombie.png").getImage()
-                .getScaledInstance(zombie.getWidth(), zombie.getHeight(), Image.SCALE_DEFAULT)));
+                .getScaledInstance(40, 60, Image.SCALE_DEFAULT)));
         mapButtons.get(i).get(j).add(zombie);
     }
 
@@ -284,7 +303,7 @@ public class MyFrame extends JFrame implements ActionListener {
         plant.setBounds(0,0, TILE_WIDTH, TILE_HEIGHT);
         plant.setVisible(true);
         plant.setIcon(new ImageIcon(img.getImage()
-                .getScaledInstance(19, 30, Image.SCALE_DEFAULT)));
+                .getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
         if(onInventory){
             inventoryButtons.get(i).add(plant);
         } else {
