@@ -8,11 +8,11 @@ public class PlantCard {
     }
 
     public void updatePlantingCooldown() {
-        if (plant.getPlantingCooldown() > 0) plant.setPlantingCooldown(plant.getPlantingCooldown() - 1);
+        if (Plant.getPlantingCooldown() > 0) Plant.setPlantingCooldown(Plant.getPlantingCooldown() - 1);
     }
 
     public void plant() {
-        if (plant.getPlantingCooldown() == 0) plant.setPlantingCooldown(plant.getPlantingSpeed());
+        if (Plant.getPlantingCooldown() == 0) Plant.setPlantingCooldown(Plant.getPlantingSpeed());
         else; // exception
     }
 }

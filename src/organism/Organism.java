@@ -14,7 +14,7 @@ public abstract class Organism {
         this.attackDamage = attackDamage;
         this.attackSpeed = attackSpeed;
         this.attackCooldown = 0;
-        this.isAquatic = isAquatic;
+        Organism.isAquatic = isAquatic;
     }
 
     public String getName() {

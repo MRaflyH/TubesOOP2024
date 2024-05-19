@@ -295,6 +295,8 @@ public class MyFrame extends JFrame implements ActionListener {
         zombie.setIcon(new ImageIcon(new ImageIcon("src/assets/normalzombie.png").getImage()
                 .getScaledInstance(40, 60, Image.SCALE_DEFAULT)));
         mapButtons.get(i).get(j).add(zombie);
+        mapButtons.get(i).get(j).revalidate();
+        mapButtons.get(i).get(j).repaint();
     }
 
     public void setPlants(boolean onInventory, String srcfile, int i){
@@ -315,7 +317,18 @@ public class MyFrame extends JFrame implements ActionListener {
 
     private String getPlantSourceImg(Deck deck){
         String source = "";
-        for(Plant c : deck.getPlayablePlants()){
+        List<Plant> plantsSementara = new ArrayList<Plant>();
+        for(int i=0; i<deck.getMaxPlants(); i++) {
+            Plant plantSementara = null;
+            try {
+                plantSementara = deck.getPlayablePlants().get(i).getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            plantsSementara.add(plantSementara);
+        }
+        for(Plant c : plantsSementara){
             if(c instanceof Sunflower){
                 source ="src/assets/sunflower.png";
             }
@@ -556,12 +569,9 @@ public class MyFrame extends JFrame implements ActionListener {
             new Sun();
             GUIThread =
             new Thread(() -> {
-            System.out.println("GUI Thread Started");
             Boolean rungame = true;
             count = 200;
             while (rungame) {
-                System.out.println("while loop entered");
-                System.out.println("---------------");
                 // BERARTI MAIN GAME LOOP DI SINI YA? ~Dama yes ini thread buat swing (GUI thread only)
 
                 // update the every text here
@@ -595,16 +605,31 @@ public class MyFrame extends JFrame implements ActionListener {
                                                 // System.out.printf("Zombie " + z + " is moving from (" + i + "," + j +"). \n");
                                                 // System.out.printf("Zombie at old tile (%d, %d) exist? %s \n", i, j, mainlawn.getLand().get(i).get(j).getZombies().contains(z));
                                                 // System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
-                                                z.move(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
+                                                
+                                                // !! VAULTING LOGIC
+                                                if (z instanceof VaultingInterface){ //&& mainlawn.getLand().get(i).get(j-1).hasPlant()){
+                                                    // System.out.println("");
+                                                    // System.out.println("!!!!!!! VAULTING TYPE !!!!!!!");
+                                                    System.out.println(z.getName() + " is VaultingType");
+                                                    VaultingInterface v = (VaultingInterface) z;
+                                                    // System.out.println(z.getName() + "is Vaulting Over " + mainlawn.getLand().get(i).get(j-1).getPlant().getName());
+                                                    v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1), mainlawn.getLand().get(i).get(j-2));
+                                                    setZombies(i, j-2);
+                                                    // System.out.println("!!! END OF VAULTING TYPE !!!");
+                                                    // System.out.println("");
+                                                } else {
+                                                    z.move(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
+                                                    setZombies(i, j-1);
+                                                }
+
                                                 // System.out.println("=== After ===");
                                                 if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
                                                     removeZombies(i, j);
                                                 }
-                                                setZombies(i, j-1);
                                                 // System.out.println("zombie set at: (" + i + "," + (j-1) +")");
                                                 // System.out.printf("Zombie at old tile (%d, %d) exist? %s \n", i, j, mainlawn.getLand().get(i).get(j).getZombies().contains(z));
                                                 // System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
-                                                System.out.println();
+                                                // System.out.println();
                                             }
                                         }
                                     }
@@ -623,16 +648,16 @@ public class MyFrame extends JFrame implements ActionListener {
                         rungame = false;
                     }
                 }
-                System.out.println("Checking endgame");
-                System.out.println("Rungame before and: " + rungame);
-                System.out.println("ZombieCount: " + runzombie.getZombieCount());
+                // System.out.println("Checking endgame");
+                // System.out.println("Rungame before and: " + rungame);
+                // System.out.println("ZombieCount: " + runzombie.getZombieCount());
                 if (count <= 0) {
                     rungame = rungame && (count <= 0 && runzombie.getZombieCount() > 0);
                 }
                 count--;
 
-                System.out.println("Rungame after and: " + rungame);
-                System.out.println("=====================");
+                // System.out.println("Rungame after and: " + rungame);
+                // System.out.println("=====================");
             }});
             GUIThread.start();
 

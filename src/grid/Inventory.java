@@ -1,33 +1,32 @@
 package grid;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import exception.InvalidInventoryException;
 import organism.plant.*;
 
 public class Inventory {
-    private List<Plant> allPlants;
+    private List<Class<? extends Plant>> allPlants;
     
     public Inventory() {
         allPlants = new ArrayList<>();
-        allPlants.add(new CherryBomb());
-        allPlants.add(new Chomper());
-        allPlants.add(new Lilypad());
-        allPlants.add(new Peashooter());
-        allPlants.add(new Repeater());
-        allPlants.add(new SnowPea());
-        allPlants.add(new Squash());
-        allPlants.add(new Sunflower());
-        allPlants.add(new TangleKelp());
-        allPlants.add(new Wallnut());
+        allPlants.add(CherryBomb.class);
+        allPlants.add(Chomper.class);
+        allPlants.add(Lilypad.class);
+        allPlants.add(Peashooter.class);
+        allPlants.add(Repeater.class);
+        allPlants.add(SnowPea.class);
+        allPlants.add(Squash.class);
+        allPlants.add(Sunflower.class);
+        allPlants.add(TangleKelp.class);
+        allPlants.add(Wallnut.class);
     }
     
     //harus diurus apakah akan add plant atau swap plant di main
-    public void addPlant(Plant plant, Deck deck, int slot) throws InvalidInventoryException {
-        if (!deck.getPlayablePlants().contains(plant)) {
-            if(slot < deck.getMaxPlants()){
-                deck.getPlayablePlants().set(slot, plant);
+    public void addPlant(Class<? extends Plant> cplant, Deck deck) throws InvalidInventoryException {
+        if (!deck.getPlayablePlants().contains(cplant)) {
+            if(deck.getPlayablePlants().size() < deck.getMaxPlants()){
+                deck.getPlayablePlants().set(deck.getPlayablePlants().size(), cplant);
             } else {
                 throw new InvalidInventoryException("Plants are full!");
             }
@@ -37,33 +36,20 @@ public class Inventory {
         }
     }
 
-    public void swapPlant(Plant plant, Deck deck, int slotDeck) {
-        if (!deck.getPlayablePlants().get(slotDeck).equals(plant) && deck.getPlayablePlants().get(slotDeck) != null && slotDeck < deck.getMaxPlants()) {
-            Iterator<Plant> iterInv = allPlants.iterator();
-            int count = 0, idxPlant = 0;
-            while (iterInv.hasNext()) {
-                Plant temp = iterInv.next();
-                count++;
-                if (temp.equals(plant)) {
-                    idxPlant = count-1;
-                }
+    public void swapPlant(List<Class<? extends Plant>> arrayplant, int slot1, int slot2) throws InvalidInventoryException {
+        if (arrayplant.get(slot1) != null && arrayplant.get(slot2) != null && slot1<6 && slot2<6) {
+            if (slot1 != slot2) {
+                Class<? extends Plant> temp = arrayplant.get(slot1);
+                arrayplant.set(slot1, arrayplant.get(slot2));
+                arrayplant.set(slot2, temp);
             }
-            Plant plantSwap = deck.getPlayablePlants().get(slotDeck);
-            iterInv = allPlants.iterator();
-            count = 0;
-            int idxPlantSwap = 0;
-            while (iterInv.hasNext()) {
-                Plant temp = iterInv.next();
-                count++;
-                if (temp.equals(plantSwap)) {
-                    idxPlantSwap = count-1;
-                }
+            else {
+                throw new InvalidInventoryException("Selected plants are same!");
             }
-            deck.getPlayablePlants().set(slotDeck, plant);
-            allPlants.set(idxPlant, plantSwap);
-            allPlants.set(idxPlantSwap, plant);
         }
-        
+        else {
+            throw new InvalidInventoryException("Selected slot is empty!");
+        }
     }
 
     public void removePlant(Deck deck, int slot) throws InvalidInventoryException {
