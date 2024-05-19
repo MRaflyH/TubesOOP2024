@@ -251,7 +251,7 @@ public class MyFrame extends JFrame implements ActionListener {
         for (int i = 0; i < 10; i++) {
             inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel, new ImageIcon("src/assets/decktile.png")));
             inventoryButtons.get(i).setLayout(new FlowLayout());
-            setPlants(true, "src/assets/cherrybomb.png", i);
+            setPlants(true, "src/assets/sunflower.png", i);
             
         }
        
