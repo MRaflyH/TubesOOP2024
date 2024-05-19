@@ -1,11 +1,12 @@
 package grid;
 import java.util.ArrayList;
+import java.io.*;
 
 import organism.plant.Plant;
 import tile.*;
 import organism.zombie.*;
 
-public class Lawn {
+public class Lawn implements Serializable {
     private ArrayList<ArrayList<Tile>> land;
     
     public Lawn() {

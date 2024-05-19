@@ -3,11 +3,12 @@ package tile;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.io.*;
 
 import organism.plant.*;
 import organism.zombie.*;
 
-public abstract class Tile {
+public abstract class Tile implements Serializable {
     private String name;
     private Plant plant;
     private ArrayList<Zombie> zombies;

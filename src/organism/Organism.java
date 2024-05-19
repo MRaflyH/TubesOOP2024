@@ -1,6 +1,8 @@
 package organism;
 
-public abstract class Organism {
+import java.io.*;
+
+public abstract class Organism implements Serializable {
     protected String name;
     protected int health;
     protected int attackDamage;
