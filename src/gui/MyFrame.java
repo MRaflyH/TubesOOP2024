@@ -295,14 +295,54 @@ public class MyFrame extends JFrame implements ActionListener {
             
         }
     }
+    
+    private String getZombieSourceImg(Lawn mainlawn, int i, int j) {
+        String source = "";
+        for(int k = 0; k < mainlawn.getLand().get(i).get(j).getZombies().size(); k++){
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof NormalZombie) {
+                source = "src/assets/normalzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof ConeheadZombie) {
+                source = "src/assets/coneheadzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof BucketheadZombie) {
+                source = "src/assets/bucketheadzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof NewspaperZombie) {
+                source = "src/assets/newspaperzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof PoleVaultingZombie) {
+                source = "src/assets/polevaultingzombie.png";
+            }
 
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof JackInTheBoxZombie) {
+                source = "src/assets/jackintheboxzombie.png";
+            }
+
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof SnorkelZombie) {
+                source = "src/assets/snorkelzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof DolphinRiderZombie) {
+                source = "src/assets/dolphinriderzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof Gargantuar) {
+                source = "src/assets/gargantuar.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof DuckyTubeZombie) {
+                source = "src/assets/duckytubezombie.png";
+            }
+            
+            
+        }
+        return source;
+    }
     public void setZombies(int i, int j){
         JLabel zombie = new JLabel();
         zombie.setHorizontalTextPosition(JLabel.CENTER);
         zombie.setVerticalTextPosition(JLabel.CENTER);
         zombie.setVisible(true);
         zombie.setOpaque(false);
-        zombie.setIcon(new ImageIcon(new ImageIcon("src/assets/normalzombie.png").getImage()
+        zombie.setIcon(new ImageIcon(new ImageIcon(getZombieSourceImg(mainlawn, i, j)).getImage()
                 .getScaledInstance(40, 60, Image.SCALE_DEFAULT)));
         mapButtons.get(i).get(j).add(zombie);
         mapButtons.get(i).get(j).revalidate();
