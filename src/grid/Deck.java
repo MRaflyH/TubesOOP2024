@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
 
-import organism.plant.Plant;
 import organism.plant.PlantCard;
 
 public class Deck implements Serializable {
@@ -24,15 +23,14 @@ public class Deck implements Serializable {
 
     public void addPlantToMap(int slot, Lawn lawn, int x, int y) {
         try {
-            if (playablePlants.get(slot).getMethod("getPlantingCooldown").invoke(null).equals(0)) {
-                lawn.getLand().get(y).get(x).addPlant(playablePlants.get(slot).getDeclaredConstructor().newInstance());
-                playablePlants.get(slot).getMethod("setPlantingCooldown", int.class).invoke(null,(Integer)playablePlants.get(slot).getMethod("getPlantingSpeed").invoke(null));
+            if (playablePlants.get(slot).getPlantingCooldown() == 0) {
+                lawn.getLand().get(y).get(x).addPlant(playablePlants.get(slot).getClassPlant().getDeclaredConstructor().newInstance());
+                playablePlants.get(slot).afterPlant();
             }
             else {
                 // exception
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

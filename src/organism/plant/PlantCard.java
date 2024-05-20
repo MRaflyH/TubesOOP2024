@@ -47,7 +47,10 @@ public class PlantCard {
     }
 
     public void afterPlant() {
-        if (getPlantingCooldown() == 0) setPlantingCooldown(getPlantingSpeed());
-        else; // exception
+        setPlantingCooldown(getPlantingSpeed());
+    }
+
+    public Class<? extends Plant> getClassPlant() {
+        return cplant;
     }
 }

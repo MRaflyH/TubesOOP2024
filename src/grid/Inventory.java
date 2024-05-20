@@ -54,10 +54,14 @@ public class Inventory {
 
     public void removePlant(Deck deck, int slot) throws InvalidInventoryException {
         if (deck.getPlayablePlants().get(slot) != null) {
-            deck.getPlayablePlants().remove(slot);
+            deck.getPlayablePlants().set(slot, null);
         }
         else {
             throw new InvalidInventoryException("Deck is empty!");
         }
+    }
+
+    public List<PlantCard> getAllPlants() {
+        return allPlants;
     }
 }
