@@ -6,28 +6,27 @@ import exception.InvalidInventoryException;
 import organism.plant.*;
 
 public class Inventory {
-    private List<Class<? extends Plant>> allPlants;
+    private List<PlantCard> allPlants;
     
     public Inventory() {
         allPlants = new ArrayList<>();
-        allPlants.add(CherryBomb.class);
-        allPlants.add(Chomper.class);
-        allPlants.add(Lilypad.class);
-        allPlants.add(Peashooter.class);
-        allPlants.add(Repeater.class);
-        allPlants.add(SnowPea.class);
-        allPlants.add(Squash.class);
-        allPlants.add(Sunflower.class);
-        allPlants.add(TangleKelp.class);
-        allPlants.add(Wallnut.class);
+        allPlants.add(new PlantCard(CherryBomb.class));
+        allPlants.add(new PlantCard(Chomper.class));
+        allPlants.add(new PlantCard(Lilypad.class));
+        allPlants.add(new PlantCard(Peashooter.class));
+        allPlants.add(new PlantCard(Repeater.class));
+        allPlants.add(new PlantCard(SnowPea.class));
+        allPlants.add(new PlantCard(Squash.class));
+        allPlants.add(new PlantCard(Sunflower.class));
+        allPlants.add(new PlantCard(TangleKelp.class));
+        allPlants.add(new PlantCard(Wallnut.class));
     }
     
     //harus diurus apakah akan add plant atau swap plant di main
-    public void addPlant(Class<? extends Plant> class1, Deck deck) throws InvalidInventoryException {
-        System.out.println(deck.getPlayablePlants().size());
-        if (!deck.getPlayablePlants().contains(class1)) {
+    public void addPlant(PlantCard plantcard, Deck deck) throws InvalidInventoryException {
+        if (!deck.getPlayablePlants().contains(plantcard)) {
             if(deck.getPlayablePlants().size() < deck.getMaxPlants()){
-                deck.getPlayablePlants().add(deck.getPlayablePlants().size(), class1);
+                deck.getPlayablePlants().set(deck.getPlayablePlants().size(), plantcard);
             } else {
                 throw new InvalidInventoryException("Plants are full!");
             }
@@ -37,10 +36,10 @@ public class Inventory {
         }
     }
 
-    public void swapPlant(List<Class<? extends Plant>> arrayplant, int slot1, int slot2) throws InvalidInventoryException {
+    public void swapPlant(List<PlantCard> arrayplant, int slot1, int slot2) throws InvalidInventoryException {
         if (arrayplant.get(slot1) != null && arrayplant.get(slot2) != null && slot1<6 && slot2<6) {
             if (slot1 != slot2) {
-                Class<? extends Plant> temp = arrayplant.get(slot1);
+                PlantCard temp = arrayplant.get(slot1);
                 arrayplant.set(slot1, arrayplant.get(slot2));
                 arrayplant.set(slot2, temp);
             }
@@ -61,10 +60,4 @@ public class Inventory {
             throw new InvalidInventoryException("Deck is empty!");
         }
     }
-
-    public List<Class<? extends Plant>> getAllPlants(){
-        return allPlants;
-    }
-
-   
 }

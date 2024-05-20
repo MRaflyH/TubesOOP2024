@@ -4,16 +4,17 @@ import java.util.List;
 import java.io.*;
 
 import organism.plant.Plant;
+import organism.plant.PlantCard;
 
 public class Deck implements Serializable {
     private static final int MAX_PLANT = 6;
-    private List<Class<? extends Plant>> playablePlants;
+    private List<PlantCard> playablePlants;
     
     public Deck() {
         playablePlants = new ArrayList<>();
     }
 
-    public List<Class<? extends Plant>> getPlayablePlants() {
+    public List<PlantCard> getPlayablePlants() {
         return this.playablePlants;
     }
 

@@ -377,34 +377,34 @@ public class MyFrame extends JFrame implements ActionListener {
     
     private String getPlantSourceImg(Deck deck, int i){
         String source = "";
-        if (deck.getPlayablePlants().get(i).getSimpleName().equals("Sunflower")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Sunflower")) {
             source = "src/assets/sunflower.png";
         }
-        if (deck.getPlayablePlants().get(i).getSimpleName().equals("CherryBomb")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("CherryBomb")) {
             source = "src/assets/cherrybomb.png";
         }
-        if (deck.getPlayablePlants().get(i).getSimpleName().equals("Chomper")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Chomper")) {
             source = "src/assets/chomper.png";
         }
-        if (deck.getPlayablePlants().get(i).getSimpleName().equals("Lilypad")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Lilypad")) {
             source = "src/assets/lilypad.png";
         }
-        if (deck.getPlayablePlants().get(i).getSimpleName().equals("Squash")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Squash")) {
             source = "src/assets/squash.png";
         }
-        if (deck.getPlayablePlants().get(i).getSimpleName().equals("Peashooter")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Peashooter")) {
             source = "src/assets/peashooter.png";
         }
-        if (deck.getPlayablePlants().get(i).getSimpleName().equals("Repeater")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Repeater")) {
             source = "src/assets/repeater.png";
         }
-        if (deck.getPlayablePlants().get(i).getSimpleName().equals("Snowpea")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Snowpea")) {
             source = "src/assets/snowpea.png";
         }
-        if (deck.getPlayablePlants().get(i).getSimpleName().equals("TangleKelp")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("TangleKelp")) {
             source = "src/assets/tanglekelp.png";
         }
-        if (deck.getPlayablePlants().get(i).getSimpleName().equals("Wallnut")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Wallnut")) {
             source = "src/assets/wallnut.png";
         }
         return source;
@@ -412,34 +412,34 @@ public class MyFrame extends JFrame implements ActionListener {
 
     private String getPlantSourceImg(Inventory deck, int i) {
         String source = "";
-            if (deck.getAllPlants().get(i).getSimpleName().equals("Sunflower")) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Sunflower")) {
                 source = "src/assets/sunflower.png";
             }
-            if (deck.getAllPlants().get(i).getSimpleName().equals("CherryBomb")) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("CherryBomb")) {
                 source = "src/assets/cherrybomb.png";
             }
-            if (deck.getAllPlants().get(i).getSimpleName().equals("Chomper")) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Chomper")) {
                 source = "src/assets/chomper.png";
             }
-            if (deck.getAllPlants().get(i).getSimpleName().equals("Lilypad")) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Lilypad")) {
                 source = "src/assets/lilypad.png";
             }
-            if (deck.getAllPlants().get(i).getSimpleName().equals("Squash")) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Squash")) {
                 source = "src/assets/squash.png";
             }
-            if (deck.getAllPlants().get(i).getSimpleName().equals("Peashooter")) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Peashooter")) {
                 source = "src/assets/peashooter.png";
             }
-            if (deck.getAllPlants().get(i).getSimpleName().equals("Repeater")) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Repeater")) {
                 source = "src/assets/repeater.png";
             }
-            if (deck.getAllPlants().get(i).getSimpleName().equals("SnowPea")) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("SnowPea")) {
                 source = "src/assets/snowpea.png";
             }
-            if (deck.getAllPlants().get(i).getSimpleName().equals("TangleKelp")) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("TangleKelp")) {
                 source = "src/assets/tanglekelp.png";
             }
-            if (deck.getAllPlants().get(i).getSimpleName().equals("Wallnut")) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Wallnut")) {
                 source = "src/assets/wallnut.png";
             }
         return source;
@@ -565,7 +565,7 @@ public class MyFrame extends JFrame implements ActionListener {
         button1.setVisible(false);
         inventoryButtons.get(Jbuttonindex).setVisible(true);
     }
-    private void startPlantCooldown(Deck deck, int i){
+    /*private void startPlantCooldown(Deck deck, int i){
         new Thread(new Runnable(){
             public void run(){
                 int terminator = 0;
@@ -601,7 +601,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 // }
             
         
-    }
+    }*/
     public JLabel CreateLabel() {return new JLabel();}
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -649,7 +649,7 @@ public class MyFrame extends JFrame implements ActionListener {
             boolean plantselected = false;
             for (int i = 1; i < 7; i++) {
                 if (e.getSource() == deckButtons.get(i)) {
-                    System.out.println("plant yang diambil : "+ deck.getPlayablePlants().get(i-1).getSimpleName());
+                    System.out.println("plant yang diambil : "+ deck.getPlayablePlants().get(i-1).getClassPlant().getSimpleName());
                     plantselected = true;
                     idxselectedplant = i;
                     System.out.println(plantselected);
@@ -664,7 +664,7 @@ public class MyFrame extends JFrame implements ActionListener {
                                 setPlants(getPlantSourceImg(deck, idxselectedplant-1), j, k);
                                 mapButtons.get(j).get(k).revalidate();
                                 deckButtons.get(idxselectedplant).setEnabled(false);
-                                startPlantCooldown(deck, idxselectedplant);
+                                //startPlantCooldown(deck, idxselectedplant);
                                 plantselected = false;
 
                             }
@@ -719,9 +719,9 @@ public class MyFrame extends JFrame implements ActionListener {
             ThreadManager.addThread(new RunnableGameTimer(200));
             ThreadManager.addThread(runzombie);
             ThreadManager.startAllThreads();
-            for (int i = 1; i < 7; i++) {
+            /*for (int i = 1; i < 7; i++) {
                 deckButtons.get(i).setEnabled(true);
-            }
+            }*/
             new Sun();
             GUIThread =
             new Thread(() -> {
@@ -732,7 +732,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 
                 // update the every text here
                 SwingUtilities.invokeLater(() -> {
-                       for(int i = 1; i < deckButtons.size();i++){
+                        /*for(int i = 1; i < deckButtons.size();i++){
                             if(!deckButtons.get(i).isEnabled()){
                                 
                             }
@@ -749,68 +749,78 @@ public class MyFrame extends JFrame implements ActionListener {
                             }
                            
                            
-                       }
-                       numSun.setText(Integer.toString(Sun.getTotalSun()));
-                       for(Runnable r : ThreadManager.getList()){
-                            if(r instanceof RunnableGameTimer){
-                                if(((RunnableGameTimer) r).getCurrentGameTime() != 0){
-                                            this.setTitle("Game "
-                                                    + String.valueOf(((RunnableGameTimer) r).getCurrentGameTime())
-                                                    + " seconds remaining");
-                                } else {
-                                        this.setTitle("Game paused");
-                                }
-                                
+                       }*/
+                    numSun.setText(Integer.toString(Sun.getTotalSun()));
+                    for(Runnable r : ThreadManager.getList()){
+                        if(r instanceof RunnableGameTimer){
+                            if(((RunnableGameTimer) r).getCurrentGameTime() != 0){
+                                        this.setTitle("Game "
+                                                + String.valueOf(((RunnableGameTimer) r).getCurrentGameTime())
+                                                + " seconds remaining");
+                            } else {
+                                    this.setTitle("Game paused");
                             }
-                                 
-                       }
-                        for (int i = 0; i < mapButtons.size(); i++) {
-                            for (int j = 0; j < tempMapRow.size(); j++) {
-                                    if(mainlawn.getLand().get(i).get(j).hasZombie()){
-                                        setZombies(i, j);
-                                        //taro code moveZombies disini -Vald
-                                        mapButtons.get(i).get(j).revalidate();
-                                        ArrayList<Zombie> currentZombies = new ArrayList<>(mainlawn.getLand().get(i).get(j).getZombies());
-                                        for (Zombie z : currentZombies){
-                                            // System.out.println("Zombie " + z + " has" + z.getMoveCooldown() + " secs moveCD.");
-                                            z.setMoveCooldown(z.getMoveCooldown() - 1);
-                                            if(z.getMoveCooldown() == 0){
-                                                // System.out.println();
-                                                // System.out.printf("Zombie " + z + " is moving from (" + i + "," + j +"). \n");
-                                                // System.out.printf("Zombie at old tile (%d, %d) exist? %s \n", i, j, mainlawn.getLand().get(i).get(j).getZombies().contains(z));
-                                                // System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
-                                                
-                                                // !! VAULTING LOGIC
-                                                if (z instanceof VaultingInterface){ //&& mainlawn.getLand().get(i).get(j-1).hasPlant()){
-                                                    // System.out.println("");
-                                                    // System.out.println("!!!!!!! VAULTING TYPE !!!!!!!");
-                                                    System.out.println(z.getName() + " is VaultingType");
-                                                    VaultingInterface v = (VaultingInterface) z;
-                                                    // System.out.println(z.getName() + "is Vaulting Over " + mainlawn.getLand().get(i).get(j-1).getPlant().getName());
-                                                    v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1), mainlawn.getLand().get(i).get(j-2));
-                                                    setZombies(i, j-2);
-                                                    // System.out.println("!!! END OF VAULTING TYPE !!!");
-                                                    // System.out.println("");
-                                                } else {
-                                                    z.move(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
-                                                    setZombies(i, j-1);
-                                                }
-
-                                                // System.out.println("=== After ===");
-                                                if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
-                                                    removeZombies(i, j);
-                                                }
-                                                // System.out.println("zombie set at: (" + i + "," + (j-1) +")");
-                                                // System.out.printf("Zombie at old tile (%d, %d) exist? %s \n", i, j, mainlawn.getLand().get(i).get(j).getZombies().contains(z));
-                                                // System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
-                                                // System.out.println();
-                                            }
-                                        }
-                                    }
+                            
                         }
                     }
-                               
-                    });
+                    for (int i = 0; i < mapButtons.size(); i++) {
+                        for (int j = 0; j < tempMapRow.size(); j++) {
+                                if(mainlawn.getLand().get(i).get(j).hasZombie()){
+                                    setZombies(i, j);
+                                    //taro code moveZombies disini -Vald
+                                    mapButtons.get(i).get(j).revalidate();
+                                    ArrayList<Zombie> currentZombies = new ArrayList<>(mainlawn.getLand().get(i).get(j).getZombies());
+                                    for (Zombie z : currentZombies){
+                                        z.setMoveCooldown(z.getMoveCooldown() - 1);
+                                        if (mainlawn.getLand().get(i).get(j).hasPlant()) {
+                                            if (z instanceof VaultingInterface) {
+                                                System.out.println(z.getName() + " is VaultingType");
+                                                VaultingInterface v = (VaultingInterface) z;
+                                                // System.out.println(z.getName() + "is Vaulting Over " + mainlawn.getLand().get(i).get(j-1).getPlant().getName());
+                                                if (mainlawn.getLand().get(i).get(j-1).hasPlant() && !v.getHasVaulted()) {
+                                                    v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-2));
+                                                    setZombies(i, j-2);
+                                                    System.out.println(z.getName() + " loncat keulang");
+                                                }
+                                                // System.out.println("!!! END OF VAULTING TYPE !!!");
+                                            }
+                                            else {
+                                                if (z.getAttackCooldown() == 0) {
+                                                    mainlawn.getLand().get(i).get(j).getPlant().loseHealth(z.getAttackDamage());
+                                                    z.attack();
+                                                }
+                                            }
+                                        }
+                                        if(z.getMoveCooldown() == 0){
+                                            // !! VAULTING LOGIC
+                                            
+                                        }
+                                        if(z.getMoveCooldown() == 0) {
+                                            if (mainlawn.getLand().get(i).get(j).hasPlant()) {
+                                                
+                                            }
+                                            else if (mainlawn.getLand().get(i).get(j-1).hasPlant()) {
+                                                if (z.getAttackCooldown() == 0) {
+                                                    mainlawn.getLand().get(i).get(j-1).getPlant().loseHealth(z.getAttackDamage());
+                                                    z.attack();
+                                                }
+                                            }
+                                            else {
+                                                z.move(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
+                                                setZombies(i, j-1);
+                                            }
+                                        }
+
+                                            // System.out.println("=== After ===");
+                                        if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
+                                            removeZombies(i, j);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                }
+                    );
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
