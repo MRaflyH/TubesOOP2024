@@ -565,31 +565,14 @@ public class MyFrame extends JFrame implements ActionListener {
         button1.setVisible(false);
         inventoryButtons.get(Jbuttonindex).setVisible(true);
     }
-    /*private void startPlantCooldown(Deck deck, int i){
+    private void startPlantCooldown(Deck deck, int i){
         new Thread(new Runnable(){
             public void run(){
                 int terminator = 0;
-                Class<? extends Plant> c = null;
-                c = deck.getPlayablePlants().get(i - 1);
-                try {
-                    terminator = (int) c.getMethod("getPlantingCooldown").invoke(null);
-                } catch (IllegalAccessException | InvocationTargetException
-                        | NoSuchMethodException
-                        | SecurityException ee) {
-                    // TODO Auto-generated catch block
-                    ee.printStackTrace();
-                }
+                PlantCard c = deck.getPlayablePlants().get(i - 1);
+                terminator = c.getPlantingCooldown();
                 while (terminator > 0) {
-                    try {
-                        c.getMethod("setPlantingCooldown", int.class).invoke(null,
-                                (int) c.getMethod("getPlantingCooldown").invoke(null) - 1);
-                    } catch (IllegalAccessException | InvocationTargetException
-                            | NoSuchMethodException
-                            | SecurityException ee) {
-                        // TODO Auto-generated catch block
-                        ee.printStackTrace();
-                    }
-
+                    c.updatePlantingCooldown();
                     terminator--;
                 }
             }
@@ -601,7 +584,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 // }
             
         
-    }*/
+    }
     public JLabel CreateLabel() {return new JLabel();}
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -664,7 +647,7 @@ public class MyFrame extends JFrame implements ActionListener {
                                 setPlants(getPlantSourceImg(deck, idxselectedplant-1), j, k);
                                 mapButtons.get(j).get(k).revalidate();
                                 deckButtons.get(idxselectedplant).setEnabled(false);
-                                //startPlantCooldown(deck, idxselectedplant);
+                                startPlantCooldown(deck, idxselectedplant);
                                 plantselected = false;
 
                             }
@@ -732,24 +715,18 @@ public class MyFrame extends JFrame implements ActionListener {
                 
                 // update the every text here
                 SwingUtilities.invokeLater(() -> {
-                        /*for(int i = 1; i < deckButtons.size();i++){
+                        for(int i = 1; i < deckButtons.size();i++){
                             if(!deckButtons.get(i).isEnabled()){
                                 
                             }
-                            for(Class<? extends Plant> c : deck.getPlayablePlants()){
-                                try {
-                                    if(c.getMethod("getPlantingCooldown").invoke(null).equals(0)){
-                                        deckButtons.get(i).setEnabled(true);
-                                    }
-                                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException
-                                        | SecurityException e1) {
-                                    // TODO Auto-generated catch block
-                                    e1.printStackTrace();
+                            for(PlantCard c : deck.getPlayablePlants()){
+                                if(c.getPlantingCooldown() == 0){
+                                    deckButtons.get(i).setEnabled(true);
                                 }
                             }
                            
                            
-                       }*/
+                       }
                     numSun.setText(Integer.toString(Sun.getTotalSun()));
                     for(Runnable r : ThreadManager.getList()){
                         if(r instanceof RunnableGameTimer){

@@ -26,7 +26,7 @@ public class Inventory {
     public void addPlant(PlantCard plantcard, Deck deck) throws InvalidInventoryException {
         if (!deck.getPlayablePlants().contains(plantcard)) {
             if(deck.getPlayablePlants().size() < deck.getMaxPlants()){
-                deck.getPlayablePlants().set(deck.getPlayablePlants().size(), plantcard);
+                deck.getPlayablePlants().add(plantcard);
             } else {
                 throw new InvalidInventoryException("Plants are full!");
             }
