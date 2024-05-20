@@ -594,66 +594,77 @@ public class MyFrame extends JFrame implements ActionListener {
 
                 // update the every text here
                 SwingUtilities.invokeLater(() -> {
-                       numSun.setText(Integer.toString(Sun.getTotalSun()));
-                       for(Runnable r : ThreadManager.getList()){
-                            if(r instanceof RunnableGameTimer){
-                                if(((RunnableGameTimer) r).getCurrentGameTime() != 0){
-                                            this.setTitle("Game "
-                                                    + String.valueOf(((RunnableGameTimer) r).getCurrentGameTime())
-                                                    + " seconds remaining");
-                                } else {
-                                        this.setTitle("Game paused");
-                                }
-                                
+                    numSun.setText(Integer.toString(Sun.getTotalSun()));
+                    for(Runnable r : ThreadManager.getList()){
+                        if(r instanceof RunnableGameTimer){
+                            if(((RunnableGameTimer) r).getCurrentGameTime() != 0){
+                                        this.setTitle("Game "
+                                                + String.valueOf(((RunnableGameTimer) r).getCurrentGameTime())
+                                                + " seconds remaining");
+                            } else {
+                                    this.setTitle("Game paused");
                             }
-                                 
-                       }
-                        for (int i = 0; i < mapButtons.size(); i++) {
-                            for (int j = 0; j < tempMapRow.size(); j++) {
-                                    if(mainlawn.getLand().get(i).get(j).hasZombie()){
-                                        setZombies(i, j);
-                                        //taro code moveZombies disini -Vald
-                                        
-                                        ArrayList<Zombie> currentZombies = new ArrayList<>(mainlawn.getLand().get(i).get(j).getZombies());
-                                        for (Zombie z : currentZombies){
-                                            // System.out.println("Zombie " + z + " has" + z.getMoveCooldown() + " secs moveCD.");
-                                            z.setMoveCooldown(z.getMoveCooldown() - 1);
-                                            if(z.getMoveCooldown() == 0){
-                                                // System.out.println();
-                                                // System.out.printf("Zombie " + z + " is moving from (" + i + "," + j +"). \n");
-                                                // System.out.printf("Zombie at old tile (%d, %d) exist? %s \n", i, j, mainlawn.getLand().get(i).get(j).getZombies().contains(z));
-                                                // System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
-                                                
-                                                // !! VAULTING LOGIC
-                                                if (z instanceof VaultingInterface){ //&& mainlawn.getLand().get(i).get(j-1).hasPlant()){
-                                                    // System.out.println("");
-                                                    // System.out.println("!!!!!!! VAULTING TYPE !!!!!!!");
-                                                    System.out.println(z.getName() + " is VaultingType");
-                                                    VaultingInterface v = (VaultingInterface) z;
-                                                    // System.out.println(z.getName() + "is Vaulting Over " + mainlawn.getLand().get(i).get(j-1).getPlant().getName());
-                                                    v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1), mainlawn.getLand().get(i).get(j-2));
-                                                    setZombies(i, j-2);
-                                                    // System.out.println("!!! END OF VAULTING TYPE !!!");
-                                                    // System.out.println("");
-                                                } else {
-                                                    z.move(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
-                                                    setZombies(i, j-1);
-                                                }
-
-                                                // System.out.println("=== After ===");
-                                                if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
-                                                    removeZombies(i, j);
-                                                }
-                                                // System.out.println("zombie set at: (" + i + "," + (j-1) +")");
-                                                // System.out.printf("Zombie at old tile (%d, %d) exist? %s \n", i, j, mainlawn.getLand().get(i).get(j).getZombies().contains(z));
-                                                // System.out.printf("Zombie at new tile (%d, %d) exist? %s \n", i, j-1, mainlawn.getLand().get(i).get(j-1).getZombies().contains(z));
-                                                // System.out.println();
-                                            }
-                                        }
-                                    }
+                            
                         }
                     }
-                    });
+                    for (int i = 0; i < mapButtons.size(); i++) {
+                        for (int j = 0; j < tempMapRow.size(); j++) {
+                                if(mainlawn.getLand().get(i).get(j).hasZombie()){
+                                    setZombies(i, j);
+                                    //taro code moveZombies disini -Vald
+                                    
+                                    ArrayList<Zombie> currentZombies = new ArrayList<>(mainlawn.getLand().get(i).get(j).getZombies());
+                                    for (Zombie z : currentZombies){
+                                        z.setMoveCooldown(z.getMoveCooldown() - 1);
+                                        if (mainlawn.getLand().get(i).get(j).hasPlant()) {
+                                            if (z instanceof VaultingInterface) {
+                                                System.out.println(z.getName() + " is VaultingType");
+                                                VaultingInterface v = (VaultingInterface) z;
+                                                // System.out.println(z.getName() + "is Vaulting Over " + mainlawn.getLand().get(i).get(j-1).getPlant().getName());
+                                                if (mainlawn.getLand().get(i).get(j-1).hasPlant() && !v.getHasVaulted()) {
+                                                    v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-2));
+                                                    setZombies(i, j-2);
+                                                    System.out.println(z.getName() + " loncat keulang");
+                                                }
+                                                // System.out.println("!!! END OF VAULTING TYPE !!!");
+                                            }
+                                            else {
+                                                if (z.getAttackCooldown() == 0) {
+                                                    mainlawn.getLand().get(i).get(j).getPlant().loseHealth(z.getAttackDamage());
+                                                    z.attack();
+                                                }
+                                            }
+                                        }
+                                        if(z.getMoveCooldown() == 0){
+                                            // !! VAULTING LOGIC
+                                            
+                                        }
+                                        if(z.getMoveCooldown() == 0) {
+                                            if (mainlawn.getLand().get(i).get(j).hasPlant()) {
+                                                
+                                            }
+                                            else if (mainlawn.getLand().get(i).get(j-1).hasPlant()) {
+                                                if (z.getAttackCooldown() == 0) {
+                                                    mainlawn.getLand().get(i).get(j-1).getPlant().loseHealth(z.getAttackDamage());
+                                                    z.attack();
+                                                }
+                                            }
+                                            else {
+                                                z.move(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
+                                                setZombies(i, j-1);
+                                            }
+                                        }
+
+                                            // System.out.println("=== After ===");
+                                        if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
+                                            removeZombies(i, j);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    );
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
