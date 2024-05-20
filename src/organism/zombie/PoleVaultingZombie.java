@@ -8,7 +8,7 @@ public class PoleVaultingZombie extends Zombie implements VaultingInterface {
     private boolean hasVaulted = false;
 
     public PoleVaultingZombie(){
-        super("Pole Vaulting Zombie", 175, 100, 2, true, true);
+        super("Pole Vaulting Zombie", 175, 100, 2, false, true);
     }
 
     public void vault(Tile current, Tile land){
