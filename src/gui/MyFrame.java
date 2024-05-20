@@ -749,17 +749,21 @@ public class MyFrame extends JFrame implements ActionListener {
                                     ArrayList<Zombie> currentZombies = new ArrayList<>(mainlawn.getLand().get(i).get(j).getZombies());
                                     for (Zombie z : currentZombies){
                                         z.setMoveCooldown(z.getMoveCooldown() - 1);
+                                        z.setAttackCooldown(z.getAttackCooldown() - 1);
                                         if (mainlawn.getLand().get(i).get(j).hasPlant()) {
                                             if (z instanceof VaultingInterface) {
-                                                System.out.println(z.getName() + " is VaultingType");
                                                 VaultingInterface v = (VaultingInterface) z;
                                                 // System.out.println(z.getName() + "is Vaulting Over " + mainlawn.getLand().get(i).get(j-1).getPlant().getName());
-                                                if (mainlawn.getLand().get(i).get(j-1).hasPlant() && !v.getHasVaulted()) {
-                                                    v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-2));
-                                                    setZombies(i, j-2);
-                                                    System.out.println(z.getName() + " loncat keulang");
+                                                if (!v.getHasVaulted()) {
+                                                    System.out.println(z.getName() + " vaulting 2 tile");
+                                                    v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
+                                                    setZombies(i, j-1);
                                                 }
                                                 // System.out.println("!!! END OF VAULTING TYPE !!!");
+                                                else if (z.getAttackCooldown() == 0) {
+                                                    mainlawn.getLand().get(i).get(j).getPlant().loseHealth(z.getAttackDamage());
+                                                    z.attack();
+                                                }
                                             }
                                             else {
                                                 if (z.getAttackCooldown() == 0) {
@@ -768,36 +772,43 @@ public class MyFrame extends JFrame implements ActionListener {
                                                 }
                                             }
                                         }
-                                        if(z.getMoveCooldown() == 0){
-                                            // !! VAULTING LOGIC
-                                            
-                                        }
-                                        if(z.getMoveCooldown() == 0) {
-                                            if (mainlawn.getLand().get(i).get(j).hasPlant()) {
-                                                
-                                            }
-                                            else if (mainlawn.getLand().get(i).get(j-1).hasPlant()) {
-                                                if (z.getAttackCooldown() == 0) {
+                                        else if (mainlawn.getLand().get(i).get(j-1).hasPlant()) {
+                                            if (z instanceof VaultingInterface) {
+                                                VaultingInterface v = (VaultingInterface) z;
+                                                // System.out.println(z.getName() + "is Vaulting Over " + mainlawn.getLand().get(i).get(j-1).getPlant().getName());
+                                                if (!v.getHasVaulted()) {
+                                                    System.out.println(z.getName() + " vaulting 3 tile");
+                                                    v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-2));
+                                                    setZombies(i, j-2);
+                                                }
+                                                // System.out.println("!!! END OF VAULTING TYPE !!!");
+                                                else if (z.getAttackCooldown() == 0) {
                                                     mainlawn.getLand().get(i).get(j-1).getPlant().loseHealth(z.getAttackDamage());
                                                     z.attack();
                                                 }
                                             }
                                             else {
+                                                if (z.getAttackCooldown() == 0) {
+                                                    mainlawn.getLand().get(i).get(j-1).getPlant().loseHealth(z.getAttackDamage());
+                                                    z.attack();
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            if(z.getMoveCooldown() == 0) {
                                                 z.move(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
                                                 setZombies(i, j-1);
                                             }
-                                        }
-
-                                            // System.out.println("=== After ===");
-                                        if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
-                                            removeZombies(i, j);
+                                                // System.out.println("=== After ===");
+                                            if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
+                                                removeZombies(i, j);
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                }
-                    );
+                    });
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {

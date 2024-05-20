@@ -25,6 +25,7 @@ public abstract class Zombie extends Organism {
     }
 
     public void setMoveCooldown(int moveCDValue) {
+        if (moveCDValue < 0) moveCDValue = 0;
         moveCooldown = moveCDValue;
     }
 

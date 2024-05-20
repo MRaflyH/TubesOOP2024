@@ -19,7 +19,7 @@ public class PoleVaultingZombie extends Zombie implements VaultingInterface {
         }
         else if (!(land.getPlant() instanceof Squash)) land.removePlant();
         hasVaulted = true;
-        
+        attack();
     }
 
     public boolean getHasVaulted(){
