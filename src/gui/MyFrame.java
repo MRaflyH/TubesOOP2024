@@ -650,8 +650,8 @@ public class MyFrame extends JFrame implements ActionListener {
                     for (int j = 0; j < 6; j++) {
                         for (int k = 0; k < 11; k++) {
                             if (e.getSource() == mapButtons.get(j).get(k) && deckButtons.get(idxselectedplant).isEnabled()) {
-                                System.out.println("dipencet map : pada x : " + j + " y : " + k);
-                                deck.addPlantToMap(idxselectedplant-1, mainlawn, j, k);
+                                System.out.println("dipencet map : pada y : " + j + " x : " + k);
+                                deck.addPlantToMap(idxselectedplant-1, mainlawn, k, j);
                                 setPlants(getPlantSourceImg(deck, idxselectedplant-1), j, k);
                                 mapButtons.get(j).get(k).revalidate();
                                 deckButtons.get(idxselectedplant).setEnabled(false);
