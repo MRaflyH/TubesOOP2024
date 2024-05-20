@@ -14,6 +14,8 @@ import sun.Sun;
 import exception.*;
 import grid.*;
 
+import loadsave.*;
+
 import organism.zombie.*;
 
 import java.awt.event.ActionEvent;
@@ -80,6 +82,9 @@ public class MyFrame extends JFrame implements ActionListener {
     static final Color WATER_COLOR = new Color(0x59CBE8);
     static final Color BORDER_DECK_COLOR = new Color(0x855200);
     BufferedImage myImage;
+
+    // variabel untuk save
+    private Lawn mainlawn = null;
     
     class ImagePanel extends JComponent {
     private Image image;
@@ -172,6 +177,7 @@ public class MyFrame extends JFrame implements ActionListener {
         if (currentFrame == 0) {
             menuPanel.setVisible(false);
             exitButton.setVisible(false);
+            shovelButton.setVisible(false);
             }
         else if (currentFrame == 1) {
             menuButton.setVisible(false);
@@ -484,6 +490,7 @@ public class MyFrame extends JFrame implements ActionListener {
     public JLabel CreateLabel() {return new JLabel();}
     @Override
     public void actionPerformed(ActionEvent e) {
+
         for(int i = 0; i < 10; i++){ //buat add plant
             try{
                 if(e.getSource() == inventoryButtons.get(i)){
@@ -523,6 +530,7 @@ public class MyFrame extends JFrame implements ActionListener {
             // jika button apapun dipress
         }
         if (e.getSource() == menuButton && currentFrame == 2) {
+            System.out.println("This is save?"); // ya jadi save di sini ya? -dama
         
             new Thread(new Runnable() {
 
@@ -532,6 +540,8 @@ public class MyFrame extends JFrame implements ActionListener {
                     ThreadManager.stopAllThreads();
                     count = -1;
                     System.out.println("Thread Interrupted");
+
+                    Save.save("testSave.ser", mainlawn);
 
                 }
 
@@ -553,13 +563,21 @@ public class MyFrame extends JFrame implements ActionListener {
             SwitchToDeckFrame();
         }
         else if(e.getSource() == exitButton) {
+            System.out.println("This is Exit");
             dispose();
         }
         else if (e.getSource() == readyButton) {
             
             RemoveButtons();
             SwitchToGameFrame();
-            Lawn mainlawn = new Lawn();
+
+            Load.LawnHolder holder = new Load.LawnHolder();
+            if (!Load.load("testSave.ser", holder)){
+                mainlawn = new Lawn();
+            } else {
+                mainlawn = holder.lawn;
+            }
+            // mainlawn = new Lawn();
             RunnableZombieSpawn runzombie = new RunnableZombieSpawn(200, mainlawn);
             ThreadManager.addThread(new RunnableGenerateSun(100));
             ThreadManager.addThread(new RunnableGameTimer(200));

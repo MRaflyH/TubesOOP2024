@@ -98,11 +98,12 @@ public class Lilypad extends Plant {
         }
     }
 
-    public void updateState() {
+    public boolean updateState() {
         if (hasPlant()) {
-            plant.updateState();
+            return plant.updateState();
         }
         else {
+            return false;
         }
     }
 

@@ -1,10 +1,11 @@
 package grid;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.*;
 
 import organism.plant.Plant;
 
-public class Deck {
+public class Deck implements Serializable {
     private static final int MAX_PLANT = 6;
     private List<Class<? extends Plant>> playablePlants;
     

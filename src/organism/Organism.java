@@ -1,6 +1,8 @@
 package organism;
 
-public abstract class Organism {
+import java.io.*;
+
+public abstract class Organism implements Serializable {
     protected String name;
     protected int health;
     protected int attackDamage;
@@ -47,7 +49,7 @@ public abstract class Organism {
     }
 
     public boolean isDead() {
-        return (health == 0);
+        return (health <= 0);
     }
 
     public void attack() {
@@ -62,11 +64,14 @@ public abstract class Organism {
         health += healthAdded;
     }
 
-    public void updateState() {
+    public boolean updateState() {
         setAttackCooldown(attackCooldown - 1);
 
         if (attackCooldown == 0) {
             attack();
+            return true;
         }
+
+        return false;
     }
 }
