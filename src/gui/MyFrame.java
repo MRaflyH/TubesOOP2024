@@ -665,7 +665,6 @@ public class MyFrame extends JFrame implements ActionListener {
 
                 @Override
                 public void run() {
-                    // TODO Auto-generated method stub
                     ThreadManager.stopAllThreads();
                     count = -1;
                     System.out.println("Thread Interrupted");
