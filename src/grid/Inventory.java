@@ -26,7 +26,7 @@ public class Inventory {
     public void addPlant(PlantCard plantcard, Deck deck) throws InvalidInventoryException {
         if (!deck.getPlayablePlants().contains(plantcard)) {
             if(deck.getPlayablePlants().size() < deck.getMaxPlants()){
-                deck.getPlayablePlants().add(plantcard);
+                deck.getPlayablePlants().set(deck.getPlayablePlants().size(), plantcard);
             } else {
                 throw new InvalidInventoryException("Plants are full!");
             }
@@ -54,14 +54,10 @@ public class Inventory {
 
     public void removePlant(Deck deck, int slot) throws InvalidInventoryException {
         if (deck.getPlayablePlants().get(slot) != null) {
-            deck.getPlayablePlants().set(slot, null);
+            deck.getPlayablePlants().remove(slot);
         }
         else {
             throw new InvalidInventoryException("Deck is empty!");
         }
-    }
-
-    public List<PlantCard> getAllPlants() {
-        return allPlants;
     }
 }
