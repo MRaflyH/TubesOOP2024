@@ -1,9 +1,10 @@
 package gui;
 import javax.imageio.ImageIO;
+import javax.management.timer.Timer;
 import javax.sound.sampled.Line;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-
+import java.lang.reflect.*;
 import organism.plant.*;
 import thread.RunnableGameTimer;
 import thread.RunnableGenerateSun;
@@ -13,8 +14,6 @@ import thread.ThreadManager;
 import sun.Sun;
 import exception.*;
 import grid.*;
-
-import loadsave.*;
 
 import organism.zombie.*;
 
@@ -37,6 +36,10 @@ public class MyFrame extends JFrame implements ActionListener {
     private Stack<JButton> disabledPlant = new Stack<JButton>();
     private Stack<Integer> plantOnDeck = new Stack<Integer>();
     Thread GUIThread;
+    Deck deck;
+    Inventory inventory; 
+    Lawn mainlawn;
+    public int idxselectedplant = -1;
     /*
      * 0: menu
      * 1: deck
@@ -82,9 +85,6 @@ public class MyFrame extends JFrame implements ActionListener {
     static final Color WATER_COLOR = new Color(0x59CBE8);
     static final Color BORDER_DECK_COLOR = new Color(0x855200);
     BufferedImage myImage;
-
-    // variabel untuk save
-    private Lawn mainlawn = null;
     
     class ImagePanel extends JComponent {
     private Image image;
@@ -177,7 +177,6 @@ public class MyFrame extends JFrame implements ActionListener {
         if (currentFrame == 0) {
             menuPanel.setVisible(false);
             exitButton.setVisible(false);
-            shovelButton.setVisible(false);
             }
         else if (currentFrame == 1) {
             menuButton.setVisible(false);
@@ -220,6 +219,8 @@ public class MyFrame extends JFrame implements ActionListener {
                 new ImageIcon("src/assets/readybutton.png"));
 
         //deckButtons
+        deck = new Deck();
+       
         for (int i = 0; i < 7; i++) {
             if (i == 0) {
                 deckButton = CreateButton(TILE_WIDTH * i -10, 0, 70, 60, BUTTON_COLOR, null, deckPanel, 
@@ -254,10 +255,13 @@ public class MyFrame extends JFrame implements ActionListener {
                 .getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
         shovelButton.add(shovel);
         //inventory button
+        inventory = new Inventory();
+        
         for (int i = 0; i < 10; i++) {
+
             inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel, new ImageIcon("src/assets/decktile.png")));
             inventoryButtons.get(i).setLayout(new FlowLayout());
-            setPlants(true, "src/assets/sunflower.png", i);
+            setPlants(true, getPlantSourceImg(inventory, i), i);
             
         }
        
@@ -321,48 +325,83 @@ public class MyFrame extends JFrame implements ActionListener {
         
     }
 
-    private String getPlantSourceImg(Deck deck){
+    public void setPlants(String srcfile, int i, int j) {
+        JLabel plant = new JLabel();
+        ImageIcon img = new ImageIcon(srcfile);
+        plant.setBounds(0, 0, TILE_WIDTH, TILE_HEIGHT);
+        plant.setVisible(true);
+        plant.setIcon(new ImageIcon(img.getImage()
+                .getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
+        mapButtons.get(i).get(j).add(plant);
+    }
+    
+    private String getPlantSourceImg(Deck deck, int i){
         String source = "";
-        List<Plant> plantsSementara = new ArrayList<Plant>();
-        for(int i=0; i<deck.getMaxPlants(); i++) {
-            Plant plantSementara = null;
-            try {
-                plantSementara = deck.getPlayablePlants().get(i).getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            plantsSementara.add(plantSementara);
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Sunflower")) {
+            source = "src/assets/sunflower.png";
         }
-        for(Plant c : plantsSementara){
-            if(c instanceof Sunflower){
-                source ="src/assets/sunflower.png";
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("CherryBomb")) {
+            source = "src/assets/cherrybomb.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Chomper")) {
+            source = "src/assets/chomper.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Lilypad")) {
+            source = "src/assets/lilypad.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Squash")) {
+            source = "src/assets/squash.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Peashooter")) {
+            source = "src/assets/peashooter.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Repeater")) {
+            source = "src/assets/repeater.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Snowpea")) {
+            source = "src/assets/snowpea.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("TangleKelp")) {
+            source = "src/assets/tanglekelp.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Wallnut")) {
+            source = "src/assets/wallnut.png";
+        }
+        return source;
+    }
+
+    private String getPlantSourceImg(Inventory deck, int i) {
+        String source = "";
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Sunflower")) {
+                source = "src/assets/sunflower.png";
             }
-            if (c instanceof CherryBomb) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("CherryBomb")) {
                 source = "src/assets/cherrybomb.png";
             }
-            if (c instanceof Chomper) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Chomper")) {
                 source = "src/assets/chomper.png";
             }
-            if (c instanceof Lilypad) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Lilypad")) {
                 source = "src/assets/lilypad.png";
             }
-            if (c instanceof Peashooter) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Squash")) {
+                source = "src/assets/squash.png";
+            }
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Peashooter")) {
                 source = "src/assets/peashooter.png";
             }
-            if (c instanceof Repeater) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Repeater")) {
                 source = "src/assets/repeater.png";
             }
-            if (c instanceof SnowPea) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("SnowPea")) {
                 source = "src/assets/snowpea.png";
             }
-            if (c instanceof TangleKelp) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("TangleKelp")) {
                 source = "src/assets/tanglekelp.png";
             }
-            if (c instanceof Wallnut) {
+            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Wallnut")) {
                 source = "src/assets/wallnut.png";
             }
-        }
         return source;
     }
     
@@ -486,52 +525,119 @@ public class MyFrame extends JFrame implements ActionListener {
         button1.setVisible(false);
         inventoryButtons.get(Jbuttonindex).setVisible(true);
     }
+    /*private void startPlantCooldown(Deck deck, int i){
+        new Thread(new Runnable(){
+            public void run(){
+                int terminator = 0;
+                Class<? extends Plant> c = null;
+                c = deck.getPlayablePlants().get(i - 1);
+                try {
+                    terminator = (int) c.getMethod("getPlantingCooldown").invoke(null);
+                } catch (IllegalAccessException | InvocationTargetException
+                        | NoSuchMethodException
+                        | SecurityException ee) {
+                    // TODO Auto-generated catch block
+                    ee.printStackTrace();
+                }
+                while (terminator > 0) {
+                    try {
+                        c.getMethod("setPlantingCooldown", int.class).invoke(null,
+                                (int) c.getMethod("getPlantingCooldown").invoke(null) - 1);
+                    } catch (IllegalAccessException | InvocationTargetException
+                            | NoSuchMethodException
+                            | SecurityException ee) {
+                        // TODO Auto-generated catch block
+                        ee.printStackTrace();
+                    }
 
+                    terminator--;
+                }
+            }
+        }).start();
+      
+                // if(c.getSuperclass().getMethod("getPlantingCooldown").invoke(null).toString()){
+                // deckButtons.get(0).setEnabled(true);
+                // deckButtons.get(0).revalidate();
+                // }
+            
+        
+    }*/
     public JLabel CreateLabel() {return new JLabel();}
     @Override
     public void actionPerformed(ActionEvent e) {
-
         for(int i = 0; i < 10; i++){ //buat add plant
             try{
                 if(e.getSource() == inventoryButtons.get(i)){
-                setPlants(false, "src/assets/sunflower.png", getDeckAvalibility() + 1);
+                setPlants(false, getPlantSourceImg(inventory, i), getDeckAvalibility() + 1);
+                inventory.addPlant(inventory.getAllPlants().get(i), deck);
                 plantOnDeck.push(i);
                 deckButtons.get(getDeckAvalibility() + 1).revalidate();
                 SetButtonDisabled(inventoryButtons.get(i), inventoryPanel, new ImageIcon("src/assets/decktiledisabled.png"));
                 setDeckNotAvailable();
                 inventoryButtons.get(i).revalidate();
-                System.out.println(getDeckAvalibility());
-                System.out.println("Clicked on: " + " " + i);
+                System.out.println(deck.getPlayablePlants());
             }
             } catch(Exception e2){
-                System.out.println("SUDAH PENUH BOS");
+                e2.printStackTrace();
             }
             
         }
         if(currentFrame == 1){ // buat remove plant
+            
             for(int i = 0; i < 6; i++){
                 if(e.getSource() == deckButtons.get(getDeckAvalibility())){
                     setDeckAvailable();
+                    try {
+                        inventory.removePlant(deck, getDeckAvalibility());
+                    } catch (InvalidInventoryException e1) {
+                        // TODO Auto-generated catch block
+                        e1.getMessage();
+                    }
+                    System.out.println(deck.getPlayablePlants());
                     SetButtonEnabled(disabledPlant.pop(), plantOnDeck.pop());
-                    System.out.println("SIZE DISABLED PLANT : " + disabledPlant.size());
-                    System.out.println("SIZE PLANT ON DECK : " +  plantOnDeck.size());
                     deckButtons.get(getDeckAvalibility() + 1).removeAll();
                     deckButtons.get(getDeckAvalibility()).revalidate();
                     for(int j = 0; j < 10; j++){
                         inventoryButtons.get(j).revalidate();
                     }
-                    System.out.println(getDeckAvalibility());
                     
                 }
 
             }
         }
+        if(currentFrame == 2){
+            boolean plantselected = false;
+            for (int i = 1; i < 7; i++) {
+                if (e.getSource() == deckButtons.get(i)) {
+                    System.out.println("plant yang diambil : "+ deck.getPlayablePlants().get(i-1).getClassPlant().getSimpleName());
+                    plantselected = true;
+                    idxselectedplant = i;
+                    System.out.println(plantselected);
+                }
+            }
+               
+                    for (int j = 0; j < 6; j++) {
+                        for (int k = 0; k < 11; k++) {
+                            if (e.getSource() == mapButtons.get(j).get(k) && deckButtons.get(idxselectedplant).isEnabled()) {
+                                System.out.println("dipencet map : pada x : " + j + " y : " + k);
+                                deck.addPlantToMap(idxselectedplant-1, mainlawn, j, k);
+                                setPlants(getPlantSourceImg(deck, idxselectedplant-1), j, k);
+                                mapButtons.get(j).get(k).revalidate();
+                                deckButtons.get(idxselectedplant).setEnabled(false);
+                                //startPlantCooldown(deck, idxselectedplant);
+                                plantselected = false;
+
+                            }
+                        }
+                    }
+                  
+        }
+        
         if(e.getSource() != null) {
             // jika button apapun dipress
         }
         if (e.getSource() == menuButton && currentFrame == 2) {
-            System.out.println("This is save?"); // ya jadi save di sini ya? -dama
-        
+            
             new Thread(new Runnable() {
 
                 @Override
@@ -540,8 +646,6 @@ public class MyFrame extends JFrame implements ActionListener {
                     ThreadManager.stopAllThreads();
                     count = -1;
                     System.out.println("Thread Interrupted");
-
-                    Save.save("testSave.ser", mainlawn);
 
                 }
 
@@ -563,27 +667,21 @@ public class MyFrame extends JFrame implements ActionListener {
             SwitchToDeckFrame();
         }
         else if(e.getSource() == exitButton) {
-            System.out.println("This is Exit");
             dispose();
         }
         else if (e.getSource() == readyButton) {
             
             RemoveButtons();
             SwitchToGameFrame();
-
-            Load.LawnHolder holder = new Load.LawnHolder();
-            if (!Load.load("testSave.ser", holder)){
-                mainlawn = new Lawn();
-            } else {
-                mainlawn = holder.lawn;
-            }
-            // mainlawn = new Lawn();
+            mainlawn = new Lawn();
             RunnableZombieSpawn runzombie = new RunnableZombieSpawn(200, mainlawn);
             ThreadManager.addThread(new RunnableGenerateSun(100));
             ThreadManager.addThread(new RunnableGameTimer(200));
             ThreadManager.addThread(runzombie);
             ThreadManager.startAllThreads();
-            
+            /*for (int i = 1; i < 7; i++) {
+                deckButtons.get(i).setEnabled(true);
+            }*/
             new Sun();
             GUIThread =
             new Thread(() -> {
@@ -591,9 +689,27 @@ public class MyFrame extends JFrame implements ActionListener {
             count = 200;
             while (rungame) {
                 // BERARTI MAIN GAME LOOP DI SINI YA? ~Dama yes ini thread buat swing (GUI thread only)
-
+                
                 // update the every text here
                 SwingUtilities.invokeLater(() -> {
+                        /*for(int i = 1; i < deckButtons.size();i++){
+                            if(!deckButtons.get(i).isEnabled()){
+                                
+                            }
+                            for(Class<? extends Plant> c : deck.getPlayablePlants()){
+                                try {
+                                    if(c.getMethod("getPlantingCooldown").invoke(null).equals(0)){
+                                        deckButtons.get(i).setEnabled(true);
+                                    }
+                                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException
+                                        | SecurityException e1) {
+                                    // TODO Auto-generated catch block
+                                    e1.printStackTrace();
+                                }
+                            }
+                           
+                           
+                       }*/
                     numSun.setText(Integer.toString(Sun.getTotalSun()));
                     for(Runnable r : ThreadManager.getList()){
                         if(r instanceof RunnableGameTimer){
@@ -612,7 +728,7 @@ public class MyFrame extends JFrame implements ActionListener {
                                 if(mainlawn.getLand().get(i).get(j).hasZombie()){
                                     setZombies(i, j);
                                     //taro code moveZombies disini -Vald
-                                    
+                                    mapButtons.get(i).get(j).revalidate();
                                     ArrayList<Zombie> currentZombies = new ArrayList<>(mainlawn.getLand().get(i).get(j).getZombies());
                                     for (Zombie z : currentZombies){
                                         z.setMoveCooldown(z.getMoveCooldown() - 1);
@@ -663,7 +779,7 @@ public class MyFrame extends JFrame implements ActionListener {
                                 }
                             }
                         }
-                    }
+                }
                     );
                 try {
                     Thread.sleep(1000);

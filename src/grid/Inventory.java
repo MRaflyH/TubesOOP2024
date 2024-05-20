@@ -54,7 +54,7 @@ public class Inventory {
 
     public void removePlant(Deck deck, int slot) throws InvalidInventoryException {
         if (deck.getPlayablePlants().get(slot) != null) {
-            deck.getPlayablePlants().set(slot, null);
+            deck.getPlayablePlants().remove(slot);
         }
         else {
             throw new InvalidInventoryException("Deck is empty!");

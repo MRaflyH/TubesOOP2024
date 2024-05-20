@@ -12,9 +12,6 @@ public class Deck implements Serializable {
     
     public Deck() {
         playablePlants = new ArrayList<>();
-        for (int i = 0; i < MAX_PLANT; i++) {
-            playablePlants.add(null);
-        }
     }
 
     public List<PlantCard> getPlayablePlants() {

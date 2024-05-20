@@ -49,7 +49,7 @@ public abstract class Organism implements Serializable {
     }
 
     public boolean isDead() {
-        return (health == 0);
+        return (health <= 0);
     }
 
     public void attack() {
@@ -64,11 +64,14 @@ public abstract class Organism implements Serializable {
         health += healthAdded;
     }
 
-    public void updateState() {
+    public boolean updateState() {
         setAttackCooldown(attackCooldown - 1);
 
         if (attackCooldown == 0) {
             attack();
+            return true;
         }
+
+        return false;
     }
 }
