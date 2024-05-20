@@ -779,6 +779,9 @@ public class MyFrame extends JFrame implements ActionListener {
                                                     System.out.println(z.getName() + " vaulting 2 tile");
                                                     v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
                                                     setZombies(i, j-1);
+                                                    if (mainlawn.getLand().get(i).get(j).getPlant() instanceof Squash) {
+                                                        mainlawn.getLand().get(i).get(j-1).removeZombie(z);
+                                                    }
                                                 }
                                                 // System.out.println("!!! END OF VAULTING TYPE !!!");
                                                 else if (z.getAttackCooldown() == 0) {
@@ -801,6 +804,9 @@ public class MyFrame extends JFrame implements ActionListener {
                                                     System.out.println(z.getName() + " vaulting 3 tile");
                                                     v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-2));
                                                     setZombies(i, j-2);
+                                                    if (mainlawn.getLand().get(i).get(j-1).getPlant() instanceof Squash) {
+                                                        mainlawn.getLand().get(i).get(j-2).removeZombie(z);
+                                                    }
                                                 }
                                                 // System.out.println("!!! END OF VAULTING TYPE !!!");
                                                 else if (z.getAttackCooldown() == 0) {
