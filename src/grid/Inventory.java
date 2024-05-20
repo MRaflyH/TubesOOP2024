@@ -23,10 +23,11 @@ public class Inventory {
     }
     
     //harus diurus apakah akan add plant atau swap plant di main
-    public void addPlant(Class<? extends Plant> cplant, Deck deck) throws InvalidInventoryException {
-        if (!deck.getPlayablePlants().contains(cplant)) {
+    public void addPlant(Class<? extends Plant> class1, Deck deck) throws InvalidInventoryException {
+        System.out.println(deck.getPlayablePlants().size());
+        if (!deck.getPlayablePlants().contains(class1)) {
             if(deck.getPlayablePlants().size() < deck.getMaxPlants()){
-                deck.getPlayablePlants().set(deck.getPlayablePlants().size(), cplant);
+                deck.getPlayablePlants().add(deck.getPlayablePlants().size(), class1);
             } else {
                 throw new InvalidInventoryException("Plants are full!");
             }
@@ -54,10 +55,16 @@ public class Inventory {
 
     public void removePlant(Deck deck, int slot) throws InvalidInventoryException {
         if (deck.getPlayablePlants().get(slot) != null) {
-            deck.getPlayablePlants().set(slot, null);
+            deck.getPlayablePlants().remove(slot);
         }
         else {
             throw new InvalidInventoryException("Deck is empty!");
         }
     }
+
+    public List<Class<? extends Plant>> getAllPlants(){
+        return allPlants;
+    }
+
+   
 }
