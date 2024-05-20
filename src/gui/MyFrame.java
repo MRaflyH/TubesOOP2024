@@ -17,6 +17,8 @@ import grid.*;
 
 import organism.zombie.*;
 
+import loadsave.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -39,6 +41,7 @@ public class MyFrame extends JFrame implements ActionListener {
     Deck deck;
     Inventory inventory; 
     Lawn mainlawn;
+    RunnableZombieSpawn runzombie;
     public int idxselectedplant = -1;
     /*
      * 0: menu
@@ -59,7 +62,7 @@ public class MyFrame extends JFrame implements ActionListener {
     ArrayList<JButton> inventoryButtons = new ArrayList<JButton>(10);
     ArrayList<JButton> tempMapRow;
     JButton startButton;
-    JButton helpButton;
+    JButton loadButton;
     JButton plantsListButton;
     JButton zombieListButton;
     JButton exitButton;
@@ -85,6 +88,9 @@ public class MyFrame extends JFrame implements ActionListener {
     static final Color WATER_COLOR = new Color(0x59CBE8);
     static final Color BORDER_DECK_COLOR = new Color(0x855200);
     BufferedImage myImage;
+
+    // for saving purposes
+    Load.LoadHolder mainholder = new Load.LoadHolder();
     
     class ImagePanel extends JComponent {
     private Image image;
@@ -182,12 +188,14 @@ public class MyFrame extends JFrame implements ActionListener {
             menuButton.setVisible(false);
             deckPanel.setVisible(false);
             inventoryPanel.setVisible(false);
-            readyButton.setVisible(false);    
+            readyButton.setVisible(false); 
+            shovelButton.setVisible(false);  
         }
         else if (currentFrame == 2) {
             menuButton.setVisible(false);
             mapPanel.setVisible(false);
             deckPanel.setVisible(false);
+            shovelButton.setVisible(false);  
         }
 
     }
@@ -203,7 +211,7 @@ public class MyFrame extends JFrame implements ActionListener {
 
         //Interaction Buttons
         startButton = CreateButton(0, 0, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "START", menuPanel, new ImageIcon("src/assets/startbutton.png"));
-        helpButton = CreateButton(0, LARGE_HEIGHT + 10, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "HELP", menuPanel, 
+        loadButton = CreateButton(0, LARGE_HEIGHT + 10, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "HELP", menuPanel, 
                 new ImageIcon("src/assets/loadbutton.png"));
         plantsListButton = CreateButton(0, (LARGE_HEIGHT + 10) * 2, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, "PLANTS LIST", menuPanel, 
                 new ImageIcon("src/assets/plantlistbutton.png"));
@@ -665,10 +673,12 @@ public class MyFrame extends JFrame implements ActionListener {
 
                 @Override
                 public void run() {
+                    System.out.println("Threads in manager (save): " + ThreadManager.getList().size());
+                    Save.save("testSave.ser", mainlawn, ThreadManager.getList());                    
+                    System.out.println("Save executed");
                     ThreadManager.stopAllThreads();
                     count = -1;
                     System.out.println("Thread Interrupted");
-
                 }
 
             }).start();
@@ -695,11 +705,22 @@ public class MyFrame extends JFrame implements ActionListener {
             
             RemoveButtons();
             SwitchToGameFrame();
-            mainlawn = new Lawn();
-            RunnableZombieSpawn runzombie = new RunnableZombieSpawn(200, mainlawn);
-            ThreadManager.addThread(new RunnableGenerateSun(100));
-            ThreadManager.addThread(new RunnableGameTimer(200));
-            ThreadManager.addThread(runzombie);
+
+            if (Load.load("testSave.ser", mainholder)) {
+                mainlawn = mainholder.lawn;
+                runzombie = mainholder.zomSpawn;
+                ThreadManager.addThread(runzombie);
+                ThreadManager.addThread(mainholder.genSun);
+                ThreadManager.addThread(mainholder.gameTimer);
+            } else {
+                mainlawn = new Lawn();
+                runzombie = new RunnableZombieSpawn(200, mainlawn);
+                ThreadManager.addThread(new RunnableGenerateSun(100));
+                ThreadManager.addThread(new RunnableGameTimer(200));
+                ThreadManager.addThread(runzombie);
+            }
+            System.out.println("Threads in manager (load): " + ThreadManager.getList().size());
+            System.out.println("Game timer in manager (load): " + ThreadManager.getRunnableGameTimer().getCurrentGameTime());
             ThreadManager.startAllThreads();
             /*for (int i = 1; i < 7; i++) {
                 deckButtons.get(i).setEnabled(true);
@@ -733,6 +754,7 @@ public class MyFrame extends JFrame implements ActionListener {
                                         this.setTitle("Game "
                                                 + String.valueOf(((RunnableGameTimer) r).getCurrentGameTime())
                                                 + " seconds remaining");
+                                        count = ((RunnableGameTimer) r).getCurrentGameTime();
                             } else {
                                     this.setTitle("Game paused");
                             }
@@ -830,7 +852,9 @@ public class MyFrame extends JFrame implements ActionListener {
 
                 // System.out.println("Rungame after and: " + rungame);
                 // System.out.println("=====================");
-            }});
+            }
+            ThreadManager.stopAllThreads();
+            });
             GUIThread.start();
 
             

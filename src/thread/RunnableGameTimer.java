@@ -2,8 +2,9 @@ package thread;
 
 import java.util.Random;
 import java.util.Timer;
+import java.io.*;
 
-public class RunnableGameTimer implements Runnable{
+public class RunnableGameTimer implements Runnable, Serializable{
     public int gametimer;
    
 

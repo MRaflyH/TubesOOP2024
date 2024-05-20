@@ -32,7 +32,8 @@ public class ThreadManager {
                 ((RunnableGameTimer)run).endCurrentGameTime();
             } else if(run instanceof RunnableGenerateSun){
                 ((RunnableGenerateSun)run).endCurrentSundrop();
-            }
+            } else if(run instanceof RunnableGenerateSun){
+                ((RunnableGenerateSun)run).endCurrentZombieSpawn();
         }
         for(int i = 0; i < ThreadList.size(); i++){
             ThreadManager.removeThread(i);

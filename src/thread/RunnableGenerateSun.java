@@ -3,8 +3,9 @@ package thread;
 import java.util.Random;
 import gui.*;
 import sun.*;
+import java.io.*;
 
-public class RunnableGenerateSun implements Runnable {
+public class RunnableGenerateSun implements Runnable, Serializable {
     private int sundrop;
     
     public RunnableGenerateSun(int sundrop){
