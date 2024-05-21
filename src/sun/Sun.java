@@ -13,4 +13,9 @@ public class Sun {
     public static int getTotalSun(){
         return totalsun;
     }
+
+    public static void reduceSun(int plantcost){
+        System.out.println("berkurang sebanyak : " + plantcost);
+        totalsun -= plantcost;
+    }
 }

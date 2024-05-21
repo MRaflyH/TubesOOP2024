@@ -26,6 +26,10 @@ import java.util.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Flow;
+
+import static organism.plant.Plant.getPlantingCooldown;
+import static organism.plant.Plant.getPlantingSpeed;
+
 import java.awt.*;
 
 
@@ -571,20 +575,31 @@ public class MyFrame extends JFrame implements ActionListener {
                 int terminator = 0;
                 PlantCard c = deck.getPlayablePlants().get(i - 1);
                 terminator = c.getPlantingCooldown();
+               
                 while (terminator > 0) {
                     c.updatePlantingCooldown();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                     terminator--;
                 }
+                deck.getPlayablePlants().get(i - 1).afterPlant();
+                
             }
         }).start();
-      
-                // if(c.getSuperclass().getMethod("getPlantingCooldown").invoke(null).toString()){
-                // deckButtons.get(0).setEnabled(true);
-                // deckButtons.get(0).revalidate();
-                // }
-            
         
     }
+    public boolean isPlantEnoughSun(Deck deck, int i){
+        if(deck.getPlayablePlants().get(i-1).getCost() <= Sun.getTotalSun()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public JLabel CreateLabel() {return new JLabel();}
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -598,7 +613,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 SetButtonDisabled(inventoryButtons.get(i), inventoryPanel, new ImageIcon("src/assets/decktiledisabled.png"));
                 setDeckNotAvailable();
                 inventoryButtons.get(i).revalidate();
-                System.out.println(deck.getPlayablePlants());
+                System.out.println(deck.getPlayablePlants().size());
             }
             } catch(Exception e2){
                 e2.printStackTrace();
@@ -635,20 +650,19 @@ public class MyFrame extends JFrame implements ActionListener {
                     System.out.println("plant yang diambil : "+ deck.getPlayablePlants().get(i-1).getClassPlant().getSimpleName());
                     plantselected = true;
                     idxselectedplant = i;
-                    System.out.println(plantselected);
                 }
             }
                
                     for (int j = 0; j < 6; j++) {
                         for (int k = 0; k < 11; k++) {
-                            if (e.getSource() == mapButtons.get(j).get(k) && deckButtons.get(idxselectedplant).isEnabled()) {
+                            if (e.getSource() == mapButtons.get(j).get(k) && deckButtons.get(idxselectedplant).isEnabled() && isPlantEnoughSun(deck, idxselectedplant)) {
                                 System.out.println("dipencet map : pada x : " + j + " y : " + k);
                                 deck.addPlantToMap(idxselectedplant-1, mainlawn, j, k);
                                 setPlants(getPlantSourceImg(deck, idxselectedplant-1), j, k);
                                 mapButtons.get(j).get(k).revalidate();
-                                deckButtons.get(idxselectedplant).setEnabled(false);
                                 startPlantCooldown(deck, idxselectedplant);
-                                plantselected = false;
+                                deckButtons.get(idxselectedplant).setEnabled(false);
+                                Sun.reduceSun(deck.getPlayablePlants().get(idxselectedplant-1).getCost());
 
                             }
                         }
@@ -692,146 +706,175 @@ public class MyFrame extends JFrame implements ActionListener {
             dispose();
         }
         else if (e.getSource() == readyButton) {
-            
-            RemoveButtons();
-            SwitchToGameFrame();
-            mainlawn = new Lawn();
-            RunnableZombieSpawn runzombie = new RunnableZombieSpawn(200, mainlawn);
-            ThreadManager.addThread(new RunnableGenerateSun(100));
-            ThreadManager.addThread(new RunnableGameTimer(200));
-            ThreadManager.addThread(runzombie);
-            ThreadManager.startAllThreads();
-            /*for (int i = 1; i < 7; i++) {
-                deckButtons.get(i).setEnabled(true);
-            }*/
-            new Sun();
-            GUIThread =
-            new Thread(() -> {
-            Boolean rungame = true;
-            count = 200;
-            while (rungame) {
-                // BERARTI MAIN GAME LOOP DI SINI YA? ~Dama yes ini thread buat swing (GUI thread only)
-                
-                // update the every text here
-                SwingUtilities.invokeLater(() -> {
-                        for(int i = 1; i < deckButtons.size();i++){
-                            if(!deckButtons.get(i).isEnabled()){
-                                
-                            }
-                            for(PlantCard c : deck.getPlayablePlants()){
-                                if(c.getPlantingCooldown() == 0){
-                                    deckButtons.get(i).setEnabled(true);
+            try{
+            if(deck.getPlayablePlants().size() == deck.getMaxPlants()){
+                RemoveButtons();
+                SwitchToGameFrame();
+                mainlawn = new Lawn();
+                RunnableZombieSpawn runzombie = new RunnableZombieSpawn(200, mainlawn);
+                ThreadManager.addThread(new RunnableGenerateSun(100));
+                ThreadManager.addThread(new RunnableGameTimer(200));
+                ThreadManager.addThread(runzombie);
+                ThreadManager.startAllThreads();
+
+                new Sun();
+                for (int i = 1; i < 7; i++) {
+                    deckButtons.get(i).setEnabled(false);
+                    startPlantCooldown(deck, i);
+                }
+
+                GUIThread = new Thread(() -> {
+                    Boolean rungame = true;
+                    count = 200;
+                    while (rungame) {
+                        // BERARTI MAIN GAME LOOP DI SINI YA? ~Dama yes ini thread buat swing (GUI
+                        // thread only)
+
+                        // update the every text here
+                        SwingUtilities.invokeLater(() -> {
+                            for (int i = 1; i < deckButtons.size(); i++) {
+                                for (PlantCard c : deck.getPlayablePlants()) {
+                                    System.out.println(c.getClassPlant() + " " + c.getPlantingCooldown());
+                                    /*
+                                     * if (!deckButtons.get(i).isEnabled() && c.getPlantingCooldown() != 0
+                                     * && isPlantEnoughSun(deck, i)) {
+                                     * deckButtons.get(i).setEnabled(false);
+                                     * }
+                                     * else if(!deckButtons.get(i).isEnabled() && c.getPlantingCooldown() == 0 &&
+                                     * isPlantEnoughSun(deck, i)){
+                                     * deckButtons.get(i).setEnabled(true);
+                                     * c.afterPlant();
+                                     * }
+                                     */
+                                    if (!deckButtons.get(i).isEnabled()) {
+                                        if(c.getPlantingCooldown() == getPlantingSpeed() && isPlantEnoughSun(deck, i)){
+                                            deckButtons.get(i).setEnabled(true);
+                                        } else if(c.getPlantingCooldown() != getPlantingSpeed() && isPlantEnoughSun(deck, i)){
+                                            deckButtons.get(i).setEnabled(false);
+                                        } 
+                                              
+                                    } 
                                 }
+
                             }
-                           
-                           
-                       }
-                    numSun.setText(Integer.toString(Sun.getTotalSun()));
-                    for(Runnable r : ThreadManager.getList()){
-                        if(r instanceof RunnableGameTimer){
-                            if(((RunnableGameTimer) r).getCurrentGameTime() != 0){
+                            numSun.setText(Integer.toString(Sun.getTotalSun()));
+                            for (Runnable r : ThreadManager.getList()) {
+                                if (r instanceof RunnableGameTimer) {
+                                    if (((RunnableGameTimer) r).getCurrentGameTime() != 0) {
                                         this.setTitle("Game "
                                                 + String.valueOf(((RunnableGameTimer) r).getCurrentGameTime())
                                                 + " seconds remaining");
-                            } else {
-                                    this.setTitle("Game paused");
+                                    } else {
+                                        this.setTitle("Game paused");
+                                    }
+
+                                }
                             }
-                            
-                        }
-                    }
-                    for (int i = 0; i < mapButtons.size(); i++) {
-                        for (int j = 0; j < tempMapRow.size(); j++) {
-                                if(mainlawn.getLand().get(i).get(j).hasZombie()){
-                                    setZombies(i, j);
-                                    //taro code moveZombies disini -Vald
-                                    mapButtons.get(i).get(j).revalidate();
-                                    ArrayList<Zombie> currentZombies = new ArrayList<>(mainlawn.getLand().get(i).get(j).getZombies());
-                                    for (Zombie z : currentZombies){
-                                        z.setMoveCooldown(z.getMoveCooldown() - 1);
-                                        z.setAttackCooldown(z.getAttackCooldown() - 1);
-                                        if (mainlawn.getLand().get(i).get(j).hasPlant()) {
-                                            if (z instanceof VaultingInterface) {
-                                                VaultingInterface v = (VaultingInterface) z;
-                                                // System.out.println(z.getName() + "is Vaulting Over " + mainlawn.getLand().get(i).get(j-1).getPlant().getName());
-                                                if (!v.getHasVaulted()) {
-                                                    System.out.println(z.getName() + " vaulting 2 tile");
-                                                    v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
-                                                    setZombies(i, j-1);
+                            for (int i = 0; i < mapButtons.size(); i++) {
+                                for (int j = 0; j < tempMapRow.size(); j++) {
+                                    if (mainlawn.getLand().get(i).get(j).hasZombie()) {
+                                        setZombies(i, j);
+                                        // taro code moveZombies disini -Vald
+                                        mapButtons.get(i).get(j).revalidate();
+                                        ArrayList<Zombie> currentZombies = new ArrayList<>(
+                                                mainlawn.getLand().get(i).get(j).getZombies());
+                                        for (Zombie z : currentZombies) {
+                                            z.setMoveCooldown(z.getMoveCooldown() - 1);
+                                            z.setAttackCooldown(z.getAttackCooldown() - 1);
+                                            if (mainlawn.getLand().get(i).get(j).hasPlant()) {
+                                                if (z instanceof VaultingInterface) {
+                                                    VaultingInterface v = (VaultingInterface) z;
+                                                    // System.out.println(z.getName() + "is Vaulting Over " +
+                                                    // mainlawn.getLand().get(i).get(j-1).getPlant().getName());
+                                                    if (!v.getHasVaulted()) {
+                                                        System.out.println(z.getName() + " vaulting 2 tile");
+                                                        v.vault(mainlawn.getLand().get(i).get(j),
+                                                                mainlawn.getLand().get(i).get(j - 1));
+                                                        setZombies(i, j - 1);
+                                                    }
+                                                    // System.out.println("!!! END OF VAULTING TYPE !!!");
+                                                    else if (z.getAttackCooldown() == 0) {
+                                                        mainlawn.getLand().get(i).get(j).getPlant()
+                                                                .loseHealth(z.getAttackDamage());
+                                                        z.attack();
+                                                    }
+                                                } else {
+                                                    if (z.getAttackCooldown() == 0) {
+                                                        mainlawn.getLand().get(i).get(j).getPlant()
+                                                                .loseHealth(z.getAttackDamage());
+                                                        z.attack();
+                                                    }
                                                 }
-                                                // System.out.println("!!! END OF VAULTING TYPE !!!");
-                                                else if (z.getAttackCooldown() == 0) {
-                                                    mainlawn.getLand().get(i).get(j).getPlant().loseHealth(z.getAttackDamage());
-                                                    z.attack();
+                                            } else if (mainlawn.getLand().get(i).get(j - 1).hasPlant()) {
+                                                if (z instanceof VaultingInterface) {
+                                                    VaultingInterface v = (VaultingInterface) z;
+                                                    // System.out.println(z.getName() + "is Vaulting Over " +
+                                                    // mainlawn.getLand().get(i).get(j-1).getPlant().getName());
+                                                    if (!v.getHasVaulted()) {
+                                                        System.out.println(z.getName() + " vaulting 3 tile");
+                                                        v.vault(mainlawn.getLand().get(i).get(j),
+                                                                mainlawn.getLand().get(i).get(j - 2));
+                                                        setZombies(i, j - 2);
+                                                    }
+                                                    // System.out.println("!!! END OF VAULTING TYPE !!!");
+                                                    else if (z.getAttackCooldown() == 0) {
+                                                        mainlawn.getLand().get(i).get(j - 1).getPlant()
+                                                                .loseHealth(z.getAttackDamage());
+                                                        z.attack();
+                                                    }
+                                                } else {
+                                                    if (z.getAttackCooldown() == 0) {
+                                                        mainlawn.getLand().get(i).get(j - 1).getPlant()
+                                                                .loseHealth(z.getAttackDamage());
+                                                        z.attack();
+                                                    }
                                                 }
-                                            }
-                                            else {
-                                                if (z.getAttackCooldown() == 0) {
-                                                    mainlawn.getLand().get(i).get(j).getPlant().loseHealth(z.getAttackDamage());
-                                                    z.attack();
+                                            } else {
+                                                if (z.getMoveCooldown() == 0) {
+                                                    z.move(mainlawn.getLand().get(i).get(j),
+                                                            mainlawn.getLand().get(i).get(j - 1));
+                                                    setZombies(i, j - 1);
                                                 }
-                                            }
-                                        }
-                                        else if (mainlawn.getLand().get(i).get(j-1).hasPlant()) {
-                                            if (z instanceof VaultingInterface) {
-                                                VaultingInterface v = (VaultingInterface) z;
-                                                // System.out.println(z.getName() + "is Vaulting Over " + mainlawn.getLand().get(i).get(j-1).getPlant().getName());
-                                                if (!v.getHasVaulted()) {
-                                                    System.out.println(z.getName() + " vaulting 3 tile");
-                                                    v.vault(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-2));
-                                                    setZombies(i, j-2);
-                                                }
-                                                // System.out.println("!!! END OF VAULTING TYPE !!!");
-                                                else if (z.getAttackCooldown() == 0) {
-                                                    mainlawn.getLand().get(i).get(j-1).getPlant().loseHealth(z.getAttackDamage());
-                                                    z.attack();
-                                                }
-                                            }
-                                            else {
-                                                if (z.getAttackCooldown() == 0) {
-                                                    mainlawn.getLand().get(i).get(j-1).getPlant().loseHealth(z.getAttackDamage());
-                                                    z.attack();
-                                                }
-                                            }
-                                        }
-                                        else {
-                                            if(z.getMoveCooldown() == 0) {
-                                                z.move(mainlawn.getLand().get(i).get(j), mainlawn.getLand().get(i).get(j-1));
-                                                setZombies(i, j-1);
-                                            }
                                                 // System.out.println("=== After ===");
-                                            if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
-                                                removeZombies(i, j);
+                                                if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
+                                                    removeZombies(i, j);
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
+                        });
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
                         }
-                    });
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-                
 
-                for (int i = 0; i < 6; i++) {
-                    if (mainlawn.getLand().get(i).get(0).hasZombie()){
-                        rungame = false;
+                        for (int i = 0; i < 6; i++) {
+                            if (mainlawn.getLand().get(i).get(0).hasZombie()) {
+                                rungame = false;
+                            }
+                        }
+                        // System.out.println("Checking endgame");
+                        // System.out.println("Rungame before and: " + rungame);
+                        // System.out.println("ZombieCount: " + runzombie.getZombieCount());
+                        if (count <= 0) {
+                            rungame = rungame && (count <= 0 && runzombie.getZombieCount() > 0);
+                        }
+                        count--;
+
+                        // System.out.println("Rungame after and: " + rungame);
+                        // System.out.println("=====================");
                     }
-                }
-                // System.out.println("Checking endgame");
-                // System.out.println("Rungame before and: " + rungame);
-                // System.out.println("ZombieCount: " + runzombie.getZombieCount());
-                if (count <= 0) {
-                    rungame = rungame && (count <= 0 && runzombie.getZombieCount() > 0);
-                }
-                count--;
-
-                // System.out.println("Rungame after and: " + rungame);
-                // System.out.println("=====================");
-            }});
-            GUIThread.start();
+                });
+                GUIThread.start();
+            } else{
+                throw new InvalidInventoryException("Deck belum penuh");
+            }
+        } catch(InvalidInventoryException eee){
+            System.out.println(eee.getMessage());
+        }
 
             
         }

@@ -24,8 +24,8 @@ public class Deck implements Serializable {
     public void addPlantToMap(int slot, Lawn lawn, int x, int y) {
         try {
             if (playablePlants.get(slot).getPlantingCooldown() == 0) {
-                lawn.getLand().get(y).get(x).addPlant(playablePlants.get(slot).getClassPlant().getDeclaredConstructor().newInstance());
-                playablePlants.get(slot).afterPlant();
+                lawn.getLand().get(x).get(y).addPlant(playablePlants.get(slot).getClassPlant().getDeclaredConstructor().newInstance());
+                //playablePlants.get(slot).afterPlant();
             }
             else {
                 // exception

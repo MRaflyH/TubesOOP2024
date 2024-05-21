@@ -9,6 +9,5 @@ public class InvalidInventoryException extends Exception {
 
     public String getMessage() {
         return message;
-
     }
 }
