@@ -1,6 +1,8 @@
 package organism.plant;
 
-public class PlantCard {
+import java.io.*;
+
+public class PlantCard implements Serializable {
     private Class<? extends Plant> cplant;
     private int plantingCooldown = 0;
     private int plantingSpeed;

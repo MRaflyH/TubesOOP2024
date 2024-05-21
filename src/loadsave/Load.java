@@ -5,28 +5,13 @@ import organism.*;
 import sun.*;
 import thread.*;
 import tile.*;
+import gui.*;
 
 import java.io.*;
 
 public class Load {
-    public static boolean load(String fileName, LoadHolder holder) {
-        try (FileInputStream fileIn = new FileInputStream(fileName);
-             ObjectInputStream in = new ObjectInputStream(fileIn)) {
-            holder.lawn = (Lawn) in.readObject();
-            // holder.threadManager = (ThreadManager) in.readObject();
-            holder.zomSpawn = (RunnableZombieSpawn) in.readObject();
-            holder.genSun = (RunnableGenerateSun) in.readObject();
-            holder.gameTimer = (RunnableGameTimer) in.readObject();
-            System.out.println("Lawn object deserialized: " + holder.lawn);
-            System.out.println("RunnableZombieSpawn object deserialized: " + holder.zomSpawn);
-            System.out.println("RunnableGenerateSun object deserialized: " + holder.genSun);
-            System.out.println("RunnableGameTimer object deserialized: " + holder.gameTimer);
-            return true;
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+
+    private static boolean hasLoaded = false;
 
     public static class LoadHolder {
         public static Lawn lawn = null;
@@ -34,5 +19,45 @@ public class Load {
         public static RunnableZombieSpawn zomSpawn = null;
         public static RunnableGenerateSun genSun = null;
         public static RunnableGameTimer gameTimer = null;
+        public static Deck gameDeck = null;
+
+        public static MyFrame myFrame = null;
     }
+
+    public static boolean load(String fileName) {
+        try (FileInputStream fileIn = new FileInputStream(fileName);
+             ObjectInputStream in = new ObjectInputStream(fileIn)) {
+            Load.LoadHolder.lawn = (Lawn) in.readObject();
+            // Load.LoadHolder.threadManager = (ThreadManager) in.readObject();
+            Load.LoadHolder.zomSpawn = (RunnableZombieSpawn) in.readObject();
+            Load.LoadHolder.genSun = (RunnableGenerateSun) in.readObject();
+            Load.LoadHolder.gameTimer = (RunnableGameTimer) in.readObject();
+            Load.LoadHolder.gameDeck = (Deck) in.readObject();
+            System.out.println("Lawn object deserialized: " + Load.LoadHolder.lawn);
+            System.out.println("RunnableZombieSpawn object deserialized: " + Load.LoadHolder.zomSpawn);
+            System.out.println("RunnableGenerateSun object deserialized: " + Load.LoadHolder.genSun);
+            System.out.println("RunnableGameTimer object deserialized: " + Load.LoadHolder.gameTimer);
+            return true;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean loadFrame(String fileName) {
+        try (FileInputStream fileIn = new FileInputStream(fileName);
+             ObjectInputStream in = new ObjectInputStream(fileIn)) {
+            Load.LoadHolder.myFrame = (MyFrame) in.readObject();
+            hasLoaded = true;
+            return true;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean getHasLoaded(){
+        return hasLoaded;
+    }
+
 }

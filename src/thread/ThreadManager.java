@@ -1,54 +1,63 @@
 package thread;
 
-import java.awt.EventQueue;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
 
 public class ThreadManager {
-    private static ArrayList<Runnable> ThreadList = new  ArrayList<Runnable>();
+    private static ThreadManager instance;
+    private ArrayList<Runnable> threadList;
 
-    public synchronized static ArrayList<Runnable> getList(){
-        return ThreadList;
+    // Private constructor to prevent instantiation
+    private ThreadManager() {
+        threadList = new ArrayList<>();
     }
 
-    public static void addThread(Runnable thread) {
-        ThreadList.add(thread);
+    // Public method to provide access to the singleton instance
+    public static synchronized ThreadManager getInstance() {
+        if (instance == null) {
+            instance = new ThreadManager();
+        }
+        return instance;
     }
 
-    public static void removeThread(int i) {
-        ThreadList.remove(i);
+    public synchronized ArrayList<Runnable> getList() {
+        return threadList;
     }
 
-    public synchronized static void startAllThreads() {
-        for (Runnable run : ThreadList) {
+    public void addThread(Runnable thread) {
+        System.out.println("addThread called with thread " + thread.getClass().getName());
+        threadList.add(thread);
+    }
+
+    public void removeThread(int i) {
+        threadList.remove(i);
+    }
+
+    public synchronized void startAllThreads() {
+        for (Runnable run : threadList) {
             Thread t = new Thread(run);
             t.start();
         }
     }
 
-    public synchronized static void stopAllThreads(){
-        for(Runnable run : ThreadList){
-            if(run instanceof RunnableGameTimer){
-                ((RunnableGameTimer)run).endCurrentGameTime();
-            } else if(run instanceof RunnableGenerateSun){
-                ((RunnableGenerateSun)run).endCurrentSundrop();
-            } else if(run instanceof RunnableGenerateSun){
-                ((RunnableGenerateSun)run).endCurrentZombieSpawn();
-        }
-        for(int i = 0; i < ThreadList.size(); i++){
-            ThreadManager.removeThread(i);
-        }
-    }
-
-    public static RunnableGameTimer getRunnableGameTimer() {
-        RunnableGameTimer r = null;
-        for (Runnable run : ThreadManager.getList()) {
-            {
-                if(run instanceof RunnableGameTimer){
-                    r = (RunnableGameTimer) run;
-                }
+    public synchronized void stopAllThreads() {
+        for (Runnable run : threadList) {
+            if (run instanceof RunnableGameTimer) {
+                ((RunnableGameTimer) run).endCurrentGameTime();
+            } else if (run instanceof RunnableGenerateSun) {
+                ((RunnableGenerateSun) run).endCurrentSundrop();
+            } else if (run instanceof RunnableZombieSpawn) {
+                ((RunnableZombieSpawn) run).endCurrentZombieSpawn();
             }
         }
-        return r;
+        threadList.clear();
+    }
+
+    public RunnableGameTimer getRunnableGameTimer() {
+        for (Runnable run : threadList) {
+            if (run instanceof RunnableGameTimer) {
+                return (RunnableGameTimer) run;
+            }
+        }
+        return null;
     }
 }

@@ -2,7 +2,8 @@ package thread;
 
 import java.util.*;
 import gui.*;
-import grid.Lawn;
+import grid.*;
+import tile.*;
 import organism.zombie.*;
 import java.io.*;
 
@@ -38,16 +39,37 @@ public class RunnableZombieSpawn implements Runnable, Serializable {
                 // Random spawn zombie
                 Random spawnRand = new Random();
                 int maxSpawn = 10, minSpawn = 1;
-                zombieCount = 0;
+                // zombieCount = 0;
+
                 gargantuarCount = 0;
                 
                 while(gametimer > 0){
-                    if (ThreadManager.getRunnableGameTimer().getCurrentGameTime() <= 200 && ThreadManager.getRunnableGameTimer().getCurrentGameTime() >= 40) { // for debugging purposes ini diest 199 aja ya -Dama
-                        setFlag((ThreadManager.getRunnableGameTimer().getCurrentGameTime() <= startFlag) && (ThreadManager.getRunnableGameTimer().getCurrentGameTime() >= endFlag));
+                    int currentZombies = 0;
+                    int currentGargantuar = 0;
+                    for (ArrayList<Tile> alt : mainlawn.getLand()){
+                        for (Tile t : alt){
+                            if (t.hasZombie()) {
+                                // Zombie z = t.getZombie();
+                                ArrayList<Zombie> alz = t.getZombies();
+                                for (Zombie z : alz){
+                                    if (z instanceof Gargantuar) {
+                                        currentGargantuar++;
+                                    }
+                                }
+                                currentZombies += alz.size();
+                            }
+                        }
+                    }
+                    zombieCount = currentZombies;
+                    gargantuarCount = currentGargantuar;
+                    
+                    if (ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() <= 200 && ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() >= 40) { // for debugging purposes ini diest 199 aja ya -Dama
+                        setFlag((ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() <= startFlag) && (ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() >= endFlag));
+                        int spawned = 0;
                         for (int i = 0; i < 6; i++) {
-                            if (((spawnRand.nextInt(maxSpawn - minSpawn + 1) + minSpawn) <= probability) && (zombieCount < max_zombies)) {
+                            if (((spawnRand.nextInt(maxSpawn - minSpawn + 1) + minSpawn) <= probability) && (zombieCount+spawned < max_zombies)) {
                                 // int num = spawnRand.nextInt(0,5);
-                                if (ThreadManager.getRunnableGameTimer().getCurrentGameTime() < 100) {
+                                if (ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() < 100) {
                                     minSelection = 7;
                                     maxSelection = 10;
                                 }
@@ -62,16 +84,15 @@ public class RunnableZombieSpawn implements Runnable, Serializable {
                                     }
                                 }
                                 if (spawn instanceof Gargantuar) {
-                                    if (gargantuarCount < (max_zombies / 2)){
-                                        gargantuarCount++;
-                                    } else {
+                                    if (!(gargantuarCount < (max_zombies / 2))){
                                         while (spawn instanceof Gargantuar) {
                                             spawn = selectZombie((randSelector.nextInt(maxSelection - minSelection + 1) + minSelection));
                                         }
                                     }
                                 }
                                 mainlawn.getLand().get(i).get(10).addZombie(spawn);
-                                zombieCount++;
+                                spawned += 1;
+                                // zombieCount++;
                                 System.out.println("New " + spawn.getName() + " spawned at: (" + i + ", 10)");
                             } else {
                                 // System.out.println("Zombie not spawned");

@@ -18,6 +18,7 @@ import grid.*;
 import organism.zombie.*;
 
 import loadsave.*;
+import java.io.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +32,7 @@ import java.util.concurrent.Flow;
 import java.awt.*;
 
 
-public class MyFrame extends JFrame implements ActionListener {
+public class MyFrame extends JFrame implements ActionListener, Serializable {
     private int currentFrame;
     private int count;
     private List<Integer> deckAvailability = new ArrayList<Integer>();
@@ -90,9 +91,10 @@ public class MyFrame extends JFrame implements ActionListener {
     BufferedImage myImage;
 
     // for saving purposes
-    Load.LoadHolder mainholder = new Load.LoadHolder();
+    // Load.LoadHolder Load.LoadHolder = new Load.LoadHolder();
+    ThreadManager threadManager = ThreadManager.getInstance();
     
-    class ImagePanel extends JComponent {
+    class ImagePanel extends JComponent implements Serializable {
     private Image image;
     public ImagePanel(Image image) {
         this.image = image;
@@ -673,10 +675,10 @@ public class MyFrame extends JFrame implements ActionListener {
 
                 @Override
                 public void run() {
-                    System.out.println("Threads in manager (save): " + ThreadManager.getList().size());
-                    Save.save("testSave.ser", mainlawn, ThreadManager.getList());                    
+                    System.out.println("Threads in manager (save): " + ThreadManager.getInstance().getList().size());
+                    Save.save("testSave.ser", mainlawn, ThreadManager.getInstance().getList(), deck);                    
                     System.out.println("Save executed");
-                    ThreadManager.stopAllThreads();
+                    ThreadManager.getInstance().stopAllThreads();
                     count = -1;
                     System.out.println("Thread Interrupted");
                 }
@@ -697,6 +699,9 @@ public class MyFrame extends JFrame implements ActionListener {
            
             RemoveButtons();
             SwitchToDeckFrame();
+        } else if(e.getSource() == loadButton) {
+            RemoveButtons();
+            SwitchToGameFrame();
         }
         else if(e.getSource() == exitButton) {
             dispose();
@@ -706,22 +711,27 @@ public class MyFrame extends JFrame implements ActionListener {
             RemoveButtons();
             SwitchToGameFrame();
 
-            if (Load.load("testSave.ser", mainholder)) {
-                mainlawn = mainholder.lawn;
-                runzombie = mainholder.zomSpawn;
-                ThreadManager.addThread(runzombie);
-                ThreadManager.addThread(mainholder.genSun);
-                ThreadManager.addThread(mainholder.gameTimer);
+            if (!Load.getHasLoaded()){
+                System.out.println("Frame not loaded, loading other components...");
+                if (Load.load("testSave.ser")) {
+                    mainlawn = Load.LoadHolder.lawn;
+                    runzombie = Load.LoadHolder.zomSpawn;
+                    ThreadManager.getInstance().addThread(runzombie);
+                    ThreadManager.getInstance().addThread(Load.LoadHolder.genSun);
+                    ThreadManager.getInstance().addThread(Load.LoadHolder.gameTimer);
+                } else {
+                    mainlawn = new Lawn();
+                    runzombie = new RunnableZombieSpawn(200, mainlawn);
+                    ThreadManager.getInstance().addThread(new RunnableGenerateSun(100));
+                    ThreadManager.getInstance().addThread(new RunnableGameTimer(200));
+                    ThreadManager.getInstance().addThread(runzombie);
+                }
             } else {
-                mainlawn = new Lawn();
-                runzombie = new RunnableZombieSpawn(200, mainlawn);
-                ThreadManager.addThread(new RunnableGenerateSun(100));
-                ThreadManager.addThread(new RunnableGameTimer(200));
-                ThreadManager.addThread(runzombie);
+                System.out.println("already loaded frame");
             }
-            System.out.println("Threads in manager (load): " + ThreadManager.getList().size());
-            System.out.println("Game timer in manager (load): " + ThreadManager.getRunnableGameTimer().getCurrentGameTime());
-            ThreadManager.startAllThreads();
+            System.out.println("Threads in manager (load): " + ThreadManager.getInstance().getList().size());
+            System.out.println("Game timer in manager (load): " + ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime());
+            ThreadManager.getInstance().startAllThreads();
             /*for (int i = 1; i < 7; i++) {
                 deckButtons.get(i).setEnabled(true);
             }*/
@@ -748,7 +758,7 @@ public class MyFrame extends JFrame implements ActionListener {
                            
                        }
                     numSun.setText(Integer.toString(Sun.getTotalSun()));
-                    for(Runnable r : ThreadManager.getList()){
+                    for(Runnable r : ThreadManager.getInstance().getList()){
                         if(r instanceof RunnableGameTimer){
                             if(((RunnableGameTimer) r).getCurrentGameTime() != 0){
                                         this.setTitle("Game "
@@ -859,7 +869,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 // System.out.println("Rungame after and: " + rungame);
                 // System.out.println("=====================");
             }
-            ThreadManager.stopAllThreads();
+            ThreadManager.getInstance().stopAllThreads();
             });
             GUIThread.start();
 

@@ -5,13 +5,16 @@ import organism.*;
 import sun.*;
 import thread.*;
 import tile.*;
+import gui.*;
 
 import java.io.*;
 import java.util.*;
 
 public class Save {
+    private static boolean hasSaved = false;
+
     public static void save(String fileName, Lawn mainlawn,
-    ArrayList<Runnable> threads) {
+    ArrayList<Runnable> threads, Deck deck) {
         try (FileOutputStream fileOut = new FileOutputStream(fileName);
              ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             System.out.println("Threads in manager (save): " + threads.size());
@@ -31,10 +34,25 @@ public class Save {
                     out.writeObject(r);
                 }
             }
-            // out.writeObject(zSpawn);
+            out.writeObject(deck);
             System.out.println("Game saved to " + fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        hasSaved = true;
+    }
+
+    public static void saveFrame(String fileName, MyFrame frame){
+        try (FileOutputStream fileOut = new FileOutputStream(fileName);
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+            out.writeObject(frame);
+            System.out.println("Game saved to " + fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean getHasSaved() {
+        return hasSaved;
     }
 }
