@@ -3,7 +3,7 @@ package sun;
 public class Sun {
     private static int totalsun;
     public Sun(){
-        totalsun = 25;
+        totalsun = 50;
     }
 
     public static void generateSun(){
