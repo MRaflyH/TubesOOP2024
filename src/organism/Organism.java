@@ -64,14 +64,7 @@ public abstract class Organism implements Serializable {
         health += healthAdded;
     }
 
-    public boolean updateState() {
-        setAttackCooldown(attackCooldown - 1);
-
-        if (attackCooldown == 0) {
-            attack();
-            return true;
-        }
-
-        return false;
+    public void updateState() {
+        if (attackCooldown > 0) setAttackCooldown(attackCooldown - 1);
     }
 }

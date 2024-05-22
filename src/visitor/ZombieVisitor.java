@@ -22,7 +22,7 @@ public class ZombieVisitor extends Visitor{
 
                 if (row.get(i).hasPlant()) {
                     for (Zombie z : row.get(i).getZombies()) {
-                        if(z.updateState()) totalDamage += z.getAttackDamage();
+                        // if(z.updateState()) totalDamage += z.getAttackDamage();
                     }
                     
                     row.get(i).getPlant().loseHealth(totalDamage);
