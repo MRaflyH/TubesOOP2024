@@ -1,9 +1,8 @@
 package grid;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.*;
+import java.io.Serializable;
 
-import organism.plant.Plant;
 import organism.plant.PlantCard;
 
 public class Deck implements Serializable {
@@ -34,7 +33,7 @@ public class Deck implements Serializable {
         }
     }
 
-    public void removePlantFromMap(Lawn lawn, int x, int y) {
-        lawn.getLand().get(y).get(x).removePlant();
+    public void removePlantFromMap(Lawn lawn, int row, int column) {
+        lawn.getLand().get(row).get(column).removePlant();
     }
 }
