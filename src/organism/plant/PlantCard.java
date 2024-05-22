@@ -12,43 +12,33 @@ public class PlantCard implements Serializable {
         this.cplant = cplant;
         if (cplant == CherryBomb.class) {
             plantingSpeed = 20;
-            plantingCooldown = plantingSpeed;
             cost = 150;    
         } else if (cplant == Chomper.class) {
-            plantingSpeed = 15;   
-            plantingCooldown = plantingSpeed; 
+            plantingSpeed = 15;    
             cost = 150;  
         } else if (cplant == Lilypad.class) {
             plantingSpeed = 10;      
-            plantingCooldown = plantingSpeed;
             cost = 25;
         } else if (cplant == Peashooter.class) {
-            plantingSpeed = 10;    
-            plantingCooldown = plantingSpeed;
+            plantingSpeed = 1;    
             cost = 100;
         } else if (cplant == Repeater.class) {
             plantingSpeed = 10;
-            plantingCooldown = plantingSpeed;
             cost = 200;
         } else if (cplant == SnowPea.class) {
-            plantingSpeed = 10; 
-            plantingCooldown = plantingSpeed; 
+            plantingSpeed = 10;  
             cost = 175; 
         } else if (cplant == Squash.class) {
-            plantingSpeed = 20;  
-            plantingCooldown = plantingSpeed; 
+            plantingSpeed = 20;   
             cost = 50;   
         } else if (cplant == Sunflower.class) {
-            plantingSpeed = 10;  
-            plantingCooldown = plantingSpeed;   
+            plantingSpeed = 5;     
             cost = 50;
         } else if (cplant == TangleKelp.class) {
             plantingSpeed = 15;
-            plantingCooldown = plantingSpeed;
             cost = 25;
         } else if (cplant == Wallnut.class) {
             plantingSpeed = 20; 
-            plantingCooldown = plantingSpeed;
             cost = 50;
         }
     }

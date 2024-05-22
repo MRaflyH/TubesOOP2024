@@ -9,7 +9,7 @@ import organism.plant.*;
 import thread.RunnableGameTimer;
 import thread.RunnableGenerateSun;
 import thread.RunnableZombieSpawn;
-import thread.RunnableGenerateSun.*;
+import visitor.PlantVisitor;
 import thread.ThreadManager;
 import sun.Sun;
 import exception.*;
@@ -23,8 +23,6 @@ import java.io.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.Queue;
@@ -597,8 +595,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     }
                     terminator--;
                 }
-                deck.getPlayablePlants().get(i - 1).afterPlant();
-                
             }
         }).start();
         
@@ -667,18 +663,17 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     for (int j = 0; j < 6; j++) {
                         for (int k = 0; k < 11; k++) {
                             if (e.getSource() == mapButtons.get(j).get(k) && deckButtons.get(idxselectedplant).isEnabled()) {
-                                System.out.println("dipencet map : pada x : " + j + " y : " + k);
+                                System.out.println("dipencet map : pada row : " + j + " column : " + k);
                                 deck.addPlantToMap(idxselectedplant-1, mainlawn, j, k);
                                 setPlants(getPlantSourceImg(deck, idxselectedplant-1), j, k);
                                 mapButtons.get(j).get(k).revalidate();
                                 startPlantCooldown(deck, idxselectedplant);
+                                deck.getPlayablePlants().get(idxselectedplant - 1).afterPlant();
                                 deckButtons.get(idxselectedplant).setEnabled(false);
                                 Sun.getInstance().reduceSun(deck.getPlayablePlants().get(idxselectedplant-1).getCost());
-
                             }
                         }
                     }
-                  
         }
         
         if(e.getSource() != null) {
@@ -771,7 +766,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                     for (int i = 1; i < deckButtons.size(); i++) {
                                             System.out.println(isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost()));
                                             if (!deckButtons.get(i).isEnabled()) {
-                                                if (deck.getPlayablePlants().get(i-1).getPlantingCooldown() == deck.getPlayablePlants().get(i-1).getPlantingSpeed()
+                                                if (deck.getPlayablePlants().get(i-1).getPlantingCooldown() == 0
                                                         && isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost())) {
                                                     deckButtons.get(i).setEnabled(true);
                                                 } else if (deck.getPlayablePlants().get(i - 1)
@@ -798,6 +793,11 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                             }
 
                                         }
+                                    }
+                                    for (int i = 0; i < 6; i++) {
+                                        PlantVisitor visitor = new PlantVisitor(mainlawn, i);
+                                        Thread visitorThread = new Thread(visitor);
+                                        visitorThread.start();
                                     }
                                     for (int i = 0; i < mapButtons.size(); i++) {
                                         for (int j = 0; j < tempMapRow.size(); j++) {
