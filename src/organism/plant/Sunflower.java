@@ -7,7 +7,8 @@ public class Sunflower extends Plant {
     private int remainingTime;
     public Sunflower() {
         super("Sunflower", 100, 0, 0, false, 50, 0, 10);
-        for(Runnable run : ThreadManager.getList()){
+        System.out.println("Sunflower Planted!");
+        for(Runnable run : ThreadManager.getInstance().getList()){
             if(run instanceof RunnableGenerateSun){
                 remainingTime = ((RunnableGenerateSun)run).getCurrentSundrop();
             }

@@ -2,25 +2,27 @@ package thread;
 
 import java.util.*;
 import gui.*;
-import grid.Lawn;
+import grid.*;
+import tile.*;
 import organism.zombie.*;
+import java.io.*;
 
-public class RunnableZombieSpawn implements Runnable {
+public class RunnableZombieSpawn implements Runnable, Serializable {
     private int gametimer;
     private Lawn mainlawn;
-    private static int zombieCount;
-    private static int gargantuarCount;
-    private static int max_zombies = 10;
-    private static int probability = 3;
-    private static boolean flag = false;
+    private int zombieCount;
+    private int gargantuarCount;
+    private int max_zombies = 10;
+    private int probability = 3;
+    private boolean flag = false;
 
-    private static Random flagRand = new Random();
-    private static int maxStartFlag = 50, minStartFlag = 40;
-    private static int startFlag = (flagRand.nextInt(maxStartFlag - minStartFlag + 1) + minStartFlag);
-    private static int maxFlagDuration = 20, minFlagDuration = 10;
-    private static int endFlag = startFlag - (flagRand.nextInt(maxFlagDuration - minFlagDuration + 1) + minFlagDuration);
+    private Random flagRand = new Random();
+    private int maxStartFlag = 50, minStartFlag = 40;
+    private int startFlag = (flagRand.nextInt(maxStartFlag - minStartFlag + 1) + minStartFlag);
+    private int maxFlagDuration = 20, minFlagDuration = 10;
+    private int endFlag = startFlag - (flagRand.nextInt(maxFlagDuration - minFlagDuration + 1) + minFlagDuration);
 
-    private static Random randSelector = new Random();
+    private Random randSelector = new Random();
     int minSelection = 1, maxSelection = 6;
 
     public RunnableZombieSpawn(int gametimer, Lawn mainlawn){
@@ -37,15 +39,37 @@ public class RunnableZombieSpawn implements Runnable {
                 // Random spawn zombie
                 Random spawnRand = new Random();
                 int maxSpawn = 10, minSpawn = 1;
-                zombieCount = 0;
+                // zombieCount = 0;
+
                 gargantuarCount = 0;
+                
                 while(gametimer > 0){
-                    if (ThreadManager.getRunnableGameTimer().getCurrentGameTime() <= 200 && ThreadManager.getRunnableGameTimer().getCurrentGameTime() >= 40) { // for debugging purposes ini diest 199 aja ya -Dama
-                        RunnableZombieSpawn.setFlag((ThreadManager.getRunnableGameTimer().getCurrentGameTime() <= startFlag) && (ThreadManager.getRunnableGameTimer().getCurrentGameTime() >= endFlag));
+                    int currentZombies = 0;
+                    int currentGargantuar = 0;
+                    for (ArrayList<Tile> alt : mainlawn.getLand()){
+                        for (Tile t : alt){
+                            if (t.hasZombie()) {
+                                // Zombie z = t.getZombie();
+                                ArrayList<Zombie> alz = t.getZombies();
+                                for (Zombie z : alz){
+                                    if (z instanceof Gargantuar) {
+                                        currentGargantuar++;
+                                    }
+                                }
+                                currentZombies += alz.size();
+                            }
+                        }
+                    }
+                    zombieCount = currentZombies;
+                    gargantuarCount = currentGargantuar;
+                    
+                    if (ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() <= 200 && ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() >= 40) { // for debugging purposes ini diest 199 aja ya -Dama
+                        setFlag((ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() <= startFlag) && (ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() >= endFlag));
+                        int spawned = 0;
                         for (int i = 0; i < 6; i++) {
-                            if (((spawnRand.nextInt(maxSpawn - minSpawn + 1) + minSpawn) <= probability) && (zombieCount < max_zombies)) {
+                            if (((spawnRand.nextInt(maxSpawn - minSpawn + 1) + minSpawn) <= probability) && (zombieCount+spawned < max_zombies)) {
                                 // int num = spawnRand.nextInt(0,5);
-                                if (ThreadManager.getRunnableGameTimer().getCurrentGameTime() < 100) {
+                                if (ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() < 100) {
                                     minSelection = 7;
                                     maxSelection = 10;
                                 }
@@ -60,23 +84,22 @@ public class RunnableZombieSpawn implements Runnable {
                                     }
                                 }
                                 if (spawn instanceof Gargantuar) {
-                                    if (gargantuarCount < (max_zombies / 2)){
-                                        gargantuarCount++;
-                                    } else {
+                                    if (!(gargantuarCount < (max_zombies / 2))){
                                         while (spawn instanceof Gargantuar) {
                                             spawn = selectZombie((randSelector.nextInt(maxSelection - minSelection + 1) + minSelection));
                                         }
                                     }
                                 }
                                 mainlawn.getLand().get(i).get(10).addZombie(spawn);
-                                zombieCount++;
+                                spawned += 1;
+                                // zombieCount++;
                                 System.out.println("New " + spawn.getName() + " spawned at: (" + i + ", 10)");
                             } else {
                                 // System.out.println("Zombie not spawned");
                             }
                         }
                         // System.out.println();
-                        //System.out.println("Zombie Count: " + zombieCount);
+                        System.out.println("Zombie Count: " + zombieCount);
                         // System.out.println("max_zombies: " + max_zombies);
                         // System.out.println("probability: " + probability);
                         // System.out.println("start flag at: " + startFlag);
@@ -106,15 +129,15 @@ public class RunnableZombieSpawn implements Runnable {
         return zombieCount;
     }
 
-    public static void setFlag(boolean setFlag){
+    public void setFlag(boolean setFlag){
         if (setFlag == true){
-            RunnableZombieSpawn.max_zombies = 25;
-            RunnableZombieSpawn.probability = 5;
-            RunnableZombieSpawn.flag = setFlag;
+            max_zombies = 25;
+            probability = 5;
+            flag = setFlag;
         } else {
-            RunnableZombieSpawn.max_zombies = 10;
-            RunnableZombieSpawn.probability = 3;
-            RunnableZombieSpawn.flag = setFlag;
+            max_zombies = 10;
+            probability = 3;
+            flag = setFlag;
         }
         
     }
@@ -144,5 +167,10 @@ public class RunnableZombieSpawn implements Runnable {
             default:
                 return new NormalZombie();
         }
+    }
+
+    public void endCurrentZombieSpawn() {
+        gametimer = 0;
+        mainlawn = null;
     }
 } 
