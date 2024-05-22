@@ -1,21 +1,37 @@
 package sun;
+import java.io.*;
 
-public class Sun {
-    private static int totalsun;
-    public Sun(){
-        totalsun = 50;
+public class Sun implements Serializable {
+    private static Sun instance;
+    private int totalsun;
+
+    // Private constructor to prevent instantiation
+    private Sun() {
+        totalsun = 0;
     }
 
-    public static void generateSun(){
+    // Public method to provide access to the singleton instance
+    public static Sun getInstance() {
+        if (instance == null) {
+            instance = new Sun();
+        }
+        return instance;
+    }
+
+    public void generateSun() {
         totalsun += 25;
     }
 
-    public static int getTotalSun(){
+    public int getTotalSun() {
         return totalsun;
     }
 
-    public static void reduceSun(int plantcost){
+    public void reduceSun(int plantcost) {
         System.out.println("berkurang sebanyak : " + plantcost);
         totalsun -= plantcost;
+    }
+
+    public void initializeSun(){
+        totalsun = 50;
     }
 }

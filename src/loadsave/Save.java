@@ -11,10 +11,14 @@ import java.io.*;
 import java.util.*;
 
 public class Save {
-    private static boolean hasSaved = false;
+    // private static boolean hasSaved = false;
+
+    // public static class SaveHolder {
+    //     public static MyFrame myFrame = null;
+    // }
 
     public static void save(String fileName, Lawn mainlawn,
-    ArrayList<Runnable> threads, Deck deck) {
+    ArrayList<Runnable> threads, Deck deck, Sun sun) {
         try (FileOutputStream fileOut = new FileOutputStream(fileName);
              ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             System.out.println("Threads in manager (save): " + threads.size());
@@ -35,24 +39,25 @@ public class Save {
                 }
             }
             out.writeObject(deck);
+            out.writeObject(sun);
             System.out.println("Game saved to " + fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        hasSaved = true;
+        // hasSaved = true;
     }
 
-    public static void saveFrame(String fileName, MyFrame frame){
-        try (FileOutputStream fileOut = new FileOutputStream(fileName);
-             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
-            out.writeObject(frame);
-            System.out.println("Game saved to " + fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    // public static void saveFrame(String fileName, MyFrame frame){
+    //     try (FileOutputStream fileOut = new FileOutputStream(fileName);
+    //          ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+    //         out.writeObject(frame);
+    //         System.out.println("Game saved to " + fileName);
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
-    public static boolean getHasSaved() {
-        return hasSaved;
-    }
+    // public static boolean getHasSaved() {
+    //     return hasSaved;
+    // }
 }

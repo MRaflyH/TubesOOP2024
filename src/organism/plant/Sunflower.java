@@ -23,7 +23,7 @@ public class Sunflower extends Plant {
             public void run() {
                 try {
                     while(remainingTime > 0){
-                        Sun.generateSun();
+                        Sun.getInstance().generateSun();
                         Thread.sleep(3000);
                         System.out.println("Sun produced");
                         remainingTime -= 3;
