@@ -143,7 +143,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
 
         currentFrame = 0;
         menuPanel.setVisible(true);
-        exitButton.setVisible(true);
+        menuButton.setVisible(true);
 
     }
 
@@ -796,47 +796,51 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         if(e.getSource() != null) {
             // jika button apapun dipress
         }
-        if (e.getSource() == menuButton && currentFrame == 2) {
+        // if (e.getSource() == menuButton && currentFrame == 2) {
             
-            new Thread(new Runnable() {
+        //     new Thread(new Runnable() {
 
-                @Override
-                public void run() {
-                    rungame = false;
-                    System.out.println("Threads in manager (save): " + ThreadManager.getInstance().getList().size());
-                    Save.save("testSave.ser", mainlawn, ThreadManager.getInstance().getList(), deck, Sun.getInstance());                    
-                    System.out.println("Save executed");
-                    // Save.saveFrame("testSaveFrame.ser", Save.SaveHolder.myFrame);                    
-                    // System.out.println("SaveFrame executed");
-                    ThreadManager.getInstance().stopAllThreads();
-                    count = -1;
-                    System.out.println("Thread Interrupted");
-                }
+        //         @Override
+        //         public void run() {
+        //             rungame = false;
+        //             System.out.println("Threads in manager (save): " + ThreadManager.getInstance().getList().size());
+        //             Save.save("testSave.ser", mainlawn, ThreadManager.getInstance().getList(), deck, Sun.getInstance());                    
+        //             System.out.println("Save executed");
+        //             // Save.saveFrame("testSaveFrame.ser", Save.SaveHolder.myFrame);                    
+        //             // System.out.println("SaveFrame executed");
+        //             ThreadManager.getInstance().stopAllThreads();
+        //             count = -1;
+        //             System.out.println("Thread Interrupted");
+        //         }
 
-            }).start();
-            RemoveButtons();
-            SwitchToMenuFrame();
-            try {
-                myImage = ImageIO.read(new File("src/assets/backgroundmainmenu.png"));
-                imagepan.setImage(myImage);
-                this.setContentPane(imagepan);
-            } catch (IOException e4) {
+        //     }).start();
+        //     RemoveButtons();
+        //     SwitchToMenuFrame();
+        //     try {
+        //         myImage = ImageIO.read(new File("src/assets/backgroundmainmenu.png"));
+        //         imagepan.setImage(myImage);
+        //         this.setContentPane(imagepan);
+        //     } catch (IOException e4) {
                 
-                e4.printStackTrace();
-            }
-        }
+        //         e4.printStackTrace();
+        //     }
+        // }
+        
         if(e.getSource() == startButton) {
             RemoveButtons();
             SwitchToDeckFrame();
             readyButton.setEnabled(false);
-        } else if(e.getSource() == loadButton) {
+        } if(e.getSource() == loadButton) {
             RemoveButtons();
             SwitchToGameFrame();
         }
-        else if(e.getSource() == exitButton) {
+        if(e.getSource() == menuButton && currentFrame == 2) {
+            new ExitFrame();
+            dispose();
+        } else if(e.getSource() == menuButton){
             dispose();
         }
-        else if (e.getSource() == readyButton) {
+        if (e.getSource() == readyButton) {
             if(deck.getPlayablePlants().size() == deck.getMaxPlants()){
                 RemoveButtons();
                 SwitchToGameFrame();
