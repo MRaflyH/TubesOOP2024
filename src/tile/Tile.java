@@ -28,12 +28,11 @@ public abstract class Tile implements Serializable {
         }
     }
 
-    public void  removePlant() {
+    public void removePlant() {
         if (hasPlant()) {
             plant = null;
         }
         else {
-            // exception
         }
     }
 

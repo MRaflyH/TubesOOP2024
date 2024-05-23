@@ -100,7 +100,7 @@ public class RunnableZombieSpawn implements Runnable, Serializable {
                             }
                         }
                         // System.out.println();
-                        System.out.println("Zombie Count: " + zombieCount);
+                        //System.out.println("Zombie Count: " + zombieCount);
                         // System.out.println("max_zombies: " + max_zombies);
                         // System.out.println("probability: " + probability);
                         // System.out.println("start flag at: " + startFlag);

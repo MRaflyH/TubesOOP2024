@@ -349,7 +349,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         }
         return source;
     }
-    public void setZombies(int i, int j){
+    private void setZombies(int i, int j){
         JLabel zombie = new JLabel();
         zombie.setHorizontalTextPosition(JLabel.CENTER);
         zombie.setVerticalTextPosition(JLabel.CENTER);
@@ -366,7 +366,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         mapButtons.get(i).get(j).repaint();
     }
 
-    public void setPlants(boolean onInventory, String srcfile, int i){
+    private void setPlants(boolean onInventory, String srcfile, int i){
        
         if(onInventory){
             JButton inventorybuttonnew = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR,
@@ -384,7 +384,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         } 
     }
 
-    public void removePlant(String srcfile, int i){
+    private void removePlant(String srcfile, int i){
         JButton deckButtonnew = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH, TILE_HEIGHT, BORDER_DECK_COLOR, null,
                 deckPanel, new ImageIcon(srcfile));
         deckButtonnew.setVisible(true);
@@ -393,7 +393,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         deckButtons.get(i).revalidate();
     }
 
-    public void setPlants(String srcfile, int i, int j, int idplant) throws InvalidDeployException{
+    private void setPlants(String srcfile, int i, int j, int idplant) throws InvalidDeployException{
         JLabel plant = new JLabel();
         ImageIcon img = new ImageIcon(srcfile);
         plant.setBounds(0, 0, TILE_WIDTH, TILE_HEIGHT);
@@ -404,14 +404,40 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         gbc.gridx = 0;
         gbc.gridy = 0; 
         gbc.anchor = GridBagConstraints.CENTER;
-        mapButtons.get(i).get(j).add(plant, gbc);
-
-        if(deck.getPlayablePlants().get(idplant).getClassPlant() == Lilypad.class){
-            mapButtons.get(i).get(j).setComponentZOrder(plant, 1);
+        if (j != 0 && j != 10) {
+                if (deck.getPlayablePlants().get(idplant).getClassPlant() == Lilypad.class || deck.getPlayablePlants()
+                        .get(idplant).getClassPlant() == TangleKelp.class) {
+                    if (i == 2 || i == 3) {
+                        mapButtons.get(i).get(j).add(plant, gbc);
+                        mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+                    } else {
+                        throw new InvalidDeployException("Plant aquatic tidak dapat ditanam pada tile yang dipilih!");
+                    }
+                } else if ((deck.getPlayablePlants().get(idplant).getClassPlant() != Lilypad.class
+                        || deck.getPlayablePlants().get(idplant).getClassPlant() != TangleKelp.class) && i != 2 && i != 3) {
+                        mapButtons.get(i).get(j).add(plant, gbc);
+                        mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+                } else {
+                    if ((i == 2 || i == 3) && mapButtons.get(i).get(j).getComponents().length > 0) {
+                        mapButtons.get(i).get(j).add(plant, gbc);
+                        mapButtons.get(i).get(j).setComponentZOrder(mapButtons.get(i).get(j).getComponent(0), 1);
+                        mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+                    } else {
+                        throw new InvalidDeployException("Plant tidak dapat ditanam! Belum ada lilypad!");
+                    }
+                }
+            
         } else {
-            mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+            throw new InvalidDeployException("Plant tidak dapat ditanam di tile yang dipilih!");
+        }  
+    }
+
+    private void removePlantsOnMap(int i, int j) throws InvalidDeployException{
+        if(mapButtons.get(i).get(j).getComponents().length <= 0){
+            throw new InvalidDeployException("Tidak ada tanaman! Tidak dapat menggali!");
+        } else{
+            mapButtons.get(i).get(j).removeAll();
         }
-       
     }
     
     private String getPlantSourceImg(Deck deck, int i){
@@ -658,7 +684,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             return false;
         }
     }
-
+    
+    private boolean selectedshovel = false;
     public JLabel CreateLabel() {return new JLabel();}
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -688,17 +715,11 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 if(e.getSource() == deckButtons.get(i+1)){
                     setDeckAvailable(i);
                     try {
-                       
-                        System.out.println(deck.getPlayablePlants());
                         SetButtonEnabled(plantStorage.get(i),
                                 getPlantButtonSourceImg(inventory, plantStorage.get(i)));
                         plantStorage.put(i, -1);
-                        System.out.println(plantStorage);
-                        // deckButtons.get(getDeckAvalibility() + 1).removeAll();
-                        // deckButtons.get(getDeckAvalibility()).revalidate();
                         removePlant("src/assets/decktile.png", i + 1);
                         inventory.removePlant(deck, getDeckAvalibility());
-                        System.out.println(deck.getPlayablePlants());
                         
                     } catch (InvalidInventoryException e1) {
                         
@@ -710,31 +731,52 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
 
             }
         }
-        if(currentFrame == 2){
-            for (int i = 1; i < 7; i++) {
-                if (e.getSource() == deckButtons.get(i)) {
-                    idxselectedplant = i;
+        if(currentFrame == 2){ //listner untuk ingame
+       
+            if (e.getSource() == shovelButton) {
+                selectedshovel = true;
+                
+            } else {
+                for (int i = 1; i < 7; i++) {
+                    if (e.getSource() == deckButtons.get(i)) {
+                        idxselectedplant = i;
+                    }
+            }
+                   
+            }
+            for (int j = 0; j < 6; j++) {
+                for (int k = 0; k < 11; k++) {
+                    try {
+                        if (selectedshovel) {
+                            if(e.getSource() == mapButtons.get(j).get(k)){
+                                try {
+                                    removePlantsOnMap(j, k);
+                                    deck.removePlantFromMap(mainlawn, j, k);
+                                } catch (InvalidDeployException e1) {
+                                    System.out.println(e1.getMessage());
+                                }
+                                selectedshovel = false;
+                            }
+                        } else if (idxselectedplant != -1 && e.getSource() == mapButtons.get(j).get(k)
+                                && deckButtons.get(idxselectedplant).isEnabled()) {
+                            // System.out.println("map clicked : pada x : " + j + " y : " + k);
+                            setPlants(getPlantSourceImg(deck, idxselectedplant - 1), j, k,
+                                    idxselectedplant - 1);
+                            deck.addPlantToMap(idxselectedplant - 1, mainlawn, j, k);
+                            mapButtons.get(j).get(k).revalidate();
+                            startPlantCooldown(deck, idxselectedplant);
+                            deck.getPlayablePlants().get(idxselectedplant - 1).afterPlant();
+                            deckButtons.get(idxselectedplant).setEnabled(false);
+                            Sun.getInstance()
+                                    .reduceSun(
+                                            deck.getPlayablePlants().get(idxselectedplant - 1).getCost());
+                        }
+                    } catch (InvalidDeployException e1) {
+                        System.out.println(e1.getMessage());
+                    }
+
                 }
             }
-               
-                    for (int j = 0; j < 6; j++) {
-                        for (int k = 0; k < 11; k++) {
-                            if (e.getSource() == mapButtons.get(j).get(k) && deckButtons.get(idxselectedplant).isEnabled()) {
-                                System.out.println("dipencet map : pada x : " + j + " y : " + k);
-                                try {
-                                    setPlants(getPlantSourceImg(deck, idxselectedplant-1), j, k, idxselectedplant-1);
-                                    deck.addPlantToMap(idxselectedplant - 1, mainlawn, j, k);
-                                } catch (InvalidDeployException e1) {
-                                    e1.getMessage();
-                                }
-                                mapButtons.get(j).get(k).revalidate();
-                                startPlantCooldown(deck, idxselectedplant);
-                                deck.getPlayablePlants().get(idxselectedplant - 1).afterPlant();
-                                deckButtons.get(idxselectedplant).setEnabled(false);
-                                Sun.getInstance().reduceSun(deck.getPlayablePlants().get(idxselectedplant-1).getCost());
-                            }
-                        }
-                    }
         }
         
         if(e.getSource() != null) {
@@ -782,7 +824,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         else if (e.getSource() == readyButton) {
             try{
                 if(deck.getPlayablePlants().size() == deck.getMaxPlants()){
-
                 } else {
                     throw new InvalidInventoryException("Deck Belum Penuh");
                 }
@@ -831,7 +872,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     count = 200;
                     rungame = true;
                     while(rungame){
-                        System.out.println(Sun.getInstance().getTotalSun());
                                 SwingUtilities.invokeLater(() -> {
                                     for (int i = 1; i < deckButtons.size(); i++) {
                                         if (isPlantEnoughSun(deck.getPlayablePlants().get(i - 1).getCost())) {
@@ -1006,16 +1046,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 }
             }
           
-        } 
-            
-            
-                // System.out.println("Checking endgame");
-                // System.out.println("Rungame before and: " + rungame);
-                // System.out.println("ZombieCount: " + runzombie.getZombieCount());
-               
-            
-
-            
+        }    
     }
         
 

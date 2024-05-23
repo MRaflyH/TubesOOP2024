@@ -5,16 +5,16 @@ import sun.Sun;
 import thread.*;
 public class Sunflower extends Plant {
     private int remainingTime;
+    private volatile boolean isSunflowerExist = true;
     public Sunflower() {
         super("Sunflower", 100, 0, 0, false, 50, 0, 10);
-        System.out.println("Sunflower Planted!");
         for(Runnable run : ThreadManager.getInstance().getList()){
             if(run instanceof RunnableGenerateSun){
                 remainingTime = ((RunnableGenerateSun)run).getCurrentSundrop();
             }
-        }
-        produceSun();
-    }
+        }  
+        produceSun();     
+}
 
     public void produceSun(){
         Thread t = new Thread(new Runnable(){
@@ -22,7 +22,7 @@ public class Sunflower extends Plant {
             @Override
             public void run() {
                 try {
-                    while(remainingTime > 0){
+                    while(remainingTime > 0 && isSunflowerExist){
                         Sun.getInstance().generateSun();
                         Thread.sleep(3000);
                         System.out.println("Sun produced");
@@ -35,6 +35,10 @@ public class Sunflower extends Plant {
             
         });
         t.start();
+    }
+
+    public void stopProduce(){
+        isSunflowerExist = false;
     }
 
 }

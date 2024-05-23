@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.io.*;
 
 import organism.plant.PlantCard;
+import organism.plant.Sunflower;
 
 public class Deck implements Serializable {
     private static final int MAX_PLANT = 6;
@@ -29,7 +30,7 @@ public class Deck implements Serializable {
 
     public void addPlantToMap(int slot, Lawn lawn, int x, int y) throws InvalidDeployException {
         try {
-            if(y != 0 || y != 10){
+            if(y != 0 && y != 10){
                 if (playablePlants.get(slot).getPlantingCooldown() == playablePlants.get(slot).getPlantingSpeed()) {
                     if(playablePlants.get(slot).getIsAquatic()){
                         if(x == 2 || x == 3){
@@ -58,14 +59,17 @@ public class Deck implements Serializable {
             } else {
                 throw new InvalidDeployException("Plant tidak dapat ditanam di tile yang dipilih!");
             }
-               
-           
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void removePlantFromMap(Lawn lawn, int row, int column) {
+        if (lawn.getLand().get(row).get(column).getPlant() instanceof Sunflower) {
+            Sunflower sunflower = (Sunflower) lawn.getLand().get(row).get(column).getPlant();
+            sunflower.stopProduce();
+        }
         lawn.getLand().get(row).get(column).removePlant();
+        
     }
 }

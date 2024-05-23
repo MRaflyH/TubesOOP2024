@@ -8,12 +8,4 @@ public class HomeTile extends Tile{
         super("Home Tile");
     }
 
-    public void addPlant(Plant plant) {
-        // exception
-    }
-
-    public void removePlant() {
-        // exception
-    }
-
 }
