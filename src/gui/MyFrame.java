@@ -437,7 +437,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Repeater")) {
             source = "src/assets/repeater.png";
         }
-        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Snowpea")) {
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("SnowPea")) {
             source = "src/assets/snowpea.png";
         }
         if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("TangleKelp")) {
@@ -711,11 +711,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             }
         }
         if(currentFrame == 2){
-            boolean plantselected = false;
             for (int i = 1; i < 7; i++) {
                 if (e.getSource() == deckButtons.get(i)) {
-                    System.out.println("plant yang diambil : "+ deck.getPlayablePlants().get(i-1).getClassPlant().getSimpleName());
-                    plantselected = true;
                     idxselectedplant = i;
                 }
             }
@@ -834,25 +831,20 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     count = 200;
                     rungame = true;
                     while(rungame){
-                        for(PlantCard p : deck.getPlayablePlants()){
-                            System.out.println(p.getPlantingCooldown());
-                        }
+                        System.out.println(Sun.getInstance().getTotalSun());
                                 SwingUtilities.invokeLater(() -> {
                                     for (int i = 1; i < deckButtons.size(); i++) {
-                                           // System.out.println(isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost()));
-                                            if (!deckButtons.get(i).isEnabled()) {
-                                                if (deck.getPlayablePlants().get(i-1).getPlantingCooldown() == deck.getPlayablePlants().get(i-1).getPlantingSpeed()
-                                                        && isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost())) {
-                                                    deckButtons.get(i).setEnabled(true);
-                                                } else if (deck.getPlayablePlants().get(i - 1)
-                                                        .getPlantingCooldown() != deck.getPlayablePlants().get(i - 1)
-                                                            .getPlantingSpeed()
-                                                        && isPlantEnoughSun(
-                                                                deck.getPlayablePlants().get(i-1).getCost())) {
-                                                    deckButtons.get(i).setEnabled(false);
-                                                }
-
-                                            
+                                        if (isPlantEnoughSun(deck.getPlayablePlants().get(i - 1).getCost())) {
+                                            if (deck.getPlayablePlants().get(i - 1).getPlantingCooldown() == deck
+                                                    .getPlayablePlants().get(i - 1).getPlantingSpeed()) {
+                                                deckButtons.get(i).setEnabled(true);
+                                            } else if (deck.getPlayablePlants().get(i - 1)
+                                                    .getPlantingCooldown() != deck.getPlayablePlants().get(i - 1)
+                                                            .getPlantingSpeed()) {
+                                                deckButtons.get(i).setEnabled(false);
+                                            } 
+                                        } else {
+                                            deckButtons.get(i).setEnabled(false);
                                         }
                                     }
                                     numSun.setText(Integer.toString(Sun.getInstance().getTotalSun()));
