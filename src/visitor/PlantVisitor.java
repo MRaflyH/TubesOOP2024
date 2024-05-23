@@ -1,6 +1,8 @@
 package visitor;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+
 import grid.Lawn;
 import tile.*;
 import organism.plant.*;
@@ -14,7 +16,12 @@ public class PlantVisitor extends Visitor implements Runnable{
         this.row = lawn.getLand().get(idxrow);
     }
     public void run() {
-        visit();
+        try {
+            visit();
+        }
+        catch (ConcurrentModificationException e) {
+            e.getMessage();
+        }
     }
     public void visit() {
         int distance = 0;

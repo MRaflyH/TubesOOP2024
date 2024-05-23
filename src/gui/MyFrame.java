@@ -26,9 +26,6 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.concurrent.Flow;
 
-import static organism.plant.Plant.getPlantingCooldown;
-import static organism.plant.Plant.getPlantingSpeed;
-
 import java.awt.*;
 
 

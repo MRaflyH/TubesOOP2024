@@ -1,9 +1,9 @@
 package tile;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.io.*;
+import java.util.Iterator;
+
+import java.io.Serializable;
 
 import organism.plant.*;
 import organism.zombie.*;
@@ -47,12 +47,19 @@ public abstract class Tile implements Serializable {
     }
 
     public void removeZombie(Zombie zombie) {
-        if (zombies.contains(zombie)) {
+        Iterator<Zombie> iterzombie = zombies.iterator();
+        while (iterzombie.hasNext()) {
+            Zombie z = iterzombie.next();
+            if (z.equals(zombie)) {
+                iterzombie.remove();
+            }
+        }
+        /*if (zombies.contains(zombie)) {
             zombies.remove(zombie);
         }
         else {
             // exception
-        }
+        }*/
     }
 
     public void moveZombie(Zombie zombie, Tile tile) {
