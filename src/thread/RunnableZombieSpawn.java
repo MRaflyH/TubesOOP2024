@@ -64,7 +64,7 @@ public class RunnableZombieSpawn implements Runnable, Serializable {
                     zombieCount = currentZombies;
                     gargantuarCount = currentGargantuar;
                     
-                    if (ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() <= 200 && ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() >= 40) { // for debugging purposes ini diest 199 aja ya -Dama
+                    if (ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() <= 180 && ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() >= 40) { // for debugging purposes ini diest 199 aja ya -Dama
                         setFlag((ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() <= startFlag) && (ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime() >= endFlag));
                         int spawned = 0;
                         for (int i = 0; i < 6; i++) {

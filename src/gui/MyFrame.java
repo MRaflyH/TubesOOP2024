@@ -4,6 +4,9 @@ import javax.management.timer.Timer;
 import javax.sound.sampled.Line;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
+import org.w3c.dom.events.MouseEvent;
+
 import java.lang.reflect.*;
 import organism.plant.*;
 import thread.RunnableGameTimer;
@@ -22,6 +25,7 @@ import java.io.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.concurrent.Flow;
@@ -224,7 +228,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
        
         menuButton = CreateButton(530, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, null, 
                 new ImageIcon("src/assets/exitbutton.png"));
-        readyButton = CreateButton(60, 390, LARGE_WIDTH + 10, LARGE_HEIGHT, BUTTON_COLOR, null,
+        readyButton = CreateButton(60, 390, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, null,
                 new ImageIcon("src/assets/readybutton.png"));
 
         //deckButtons
@@ -641,7 +645,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 null, inventoryPanel, new ImageIcon(srcfile));
         inventorybuttonnew.setVisible(true);
         inventoryButtons.set(i, inventorybuttonnew);
-        
     }
 
     public void SetButtonEnabled(int i, String srcfile) {
@@ -681,15 +684,28 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             return false;
         }
     }
-    
+    private void updateReadyButton(){
+        boolean fullcheck = true;
+        int i  = 0;
+        while(i < deck.getPlayablePlants().size()){
+            if(deck.getPlayablePlants().get(i) == null){
+                fullcheck = false;
+                break;
+            }
+            i++;
+        }
+        if (fullcheck) {
+            readyButton.setEnabled(true);
+        }
+    }
     private boolean selectedshovel = false;
     public JLabel CreateLabel() {return new JLabel();}
     @Override
     public void actionPerformed(ActionEvent e) {
         for(int i = 0; i < 10; i++){ //buat add plant
             try{
-                if(e.getSource() == inventoryButtons.get(i)){
-                System.out.println(deck.getPlayablePlants());
+                
+                if(e.getSource() == inventoryButtons.get(i) && !plantStorage.containsValue(i)){
                 inventory.addPlant(inventory.getAllPlants().get(i), deck, getDeckAvalibility());
                 setPlants(false, getPlantButtonSourceImg(inventory, i), getDeckAvalibility() + 1);
                 
@@ -697,9 +713,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 setDeckNotAvailable(getDeckAvalibility());
                 deckButtons.get(getDeckAvalibility()).revalidate();
                 SetButtonDisabled(i, "src/assets/decktiledisabled.png");
-                
-                
                 inventoryButtons.get(i).revalidate();
+                updateReadyButton();
             }
             } catch(InvalidInventoryException e2){
                 e2.getMessage();
@@ -707,27 +722,29 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             
         }
         if(currentFrame == 1){ // buat remove plant
-            
             for(int i = 0; i < 6; i++){
-                if(e.getSource() == deckButtons.get(i+1)){
-                    setDeckAvailable(i);
+                  
                     try {
-                        SetButtonEnabled(plantStorage.get(i),
-                                getPlantButtonSourceImg(inventory, plantStorage.get(i)));
-                        plantStorage.put(i, -1);
-                        removePlant("src/assets/decktile.png", i + 1);
-                        inventory.removePlant(deck, getDeckAvalibility());
-                        
+                        if(e.getSource() == deckButtons.get(i+1) && plantStorage.get(i) != -1){
+                                setDeckAvailable(i);
+                                SetButtonEnabled(plantStorage.get(i),
+                            getPlantButtonSourceImg(inventory, plantStorage.get(i)));
+                            plantStorage.put(i, -1);
+                            removePlant("src/assets/decktile.png", i + 1);
+                            inventory.removePlant(deck, getDeckAvalibility());
+                            readyButton.setEnabled(false);
+                        } 
+
                     } catch (InvalidInventoryException e1) {
                         
-                        e1.getMessage();
+                        System.out.println(e1.getMessage());
                     }
                     
                     
                 }
-
+                
             }
-        }
+        
         if(currentFrame == 2){ //listner untuk ingame
        
             if (e.getSource() == shovelButton) {
@@ -811,6 +828,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         if(e.getSource() == startButton) {
             RemoveButtons();
             SwitchToDeckFrame();
+            readyButton.setEnabled(false);
         } else if(e.getSource() == loadButton) {
             RemoveButtons();
             SwitchToGameFrame();
@@ -819,14 +837,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             dispose();
         }
         else if (e.getSource() == readyButton) {
-            try{
-                if(deck.getPlayablePlants().size() == deck.getMaxPlants()){
-                } else {
-                    throw new InvalidInventoryException("Deck Belum Penuh");
-                }
-            } catch(InvalidInventoryException eee){
-                System.out.println(eee);
-            }
             if(deck.getPlayablePlants().size() == deck.getMaxPlants()){
                 RemoveButtons();
                 SwitchToGameFrame();
