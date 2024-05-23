@@ -19,38 +19,47 @@ public class PlantCard implements Serializable {
             
         } else if (cplant == Chomper.class) {
             plantingSpeed = 15;    
+            plantingCooldown = plantingSpeed;
             cost = 150;  
             is_aquatic = false;
         } else if (cplant == Lilypad.class) {
             plantingSpeed = 10;      
+            plantingCooldown = plantingSpeed;
             cost = 25;
             is_aquatic = true;
         } else if (cplant == Peashooter.class) {
-            plantingSpeed = 1;    
+            plantingSpeed = 10;    
+            plantingCooldown = plantingSpeed;
             cost = 100;
             is_aquatic = false;
         } else if (cplant == Repeater.class) {
             plantingSpeed = 10;
+            plantingCooldown = plantingSpeed;
             cost = 200;
             is_aquatic = false;
         } else if (cplant == SnowPea.class) {
             plantingSpeed = 10;  
+            plantingCooldown = plantingSpeed;
             cost = 175; 
             is_aquatic = false;
         } else if (cplant == Squash.class) {
             plantingSpeed = 20;   
+            plantingCooldown = plantingSpeed;
             cost = 50;   
             is_aquatic = false;
         } else if (cplant == Sunflower.class) {
-            plantingSpeed = 5;     
+            plantingSpeed = 10;  
+            plantingCooldown = plantingSpeed;   
             cost = 50;
             is_aquatic = false;
         } else if (cplant == TangleKelp.class) {
             plantingSpeed = 15;
+            plantingCooldown = plantingSpeed;
             cost = 25;
             is_aquatic = true;
         } else if (cplant == Wallnut.class) {
             plantingSpeed = 20; 
+            plantingCooldown = plantingSpeed;
             cost = 50;
             is_aquatic = false;
         }

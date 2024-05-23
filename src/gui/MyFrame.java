@@ -646,6 +646,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     }
                     terminator--;
                 }
+                c.afterPlant();
             }
         }).start();
         
@@ -823,7 +824,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 Sun.getInstance().initializeSun();
                 for (int i = 1; i < 7; i++) {
                     deckButtons.get(i).setEnabled(false);
-                    startPlantCooldown(deck, i);
+                    //startPlantCooldown(deck, i);
                 }
 
                         // update the every text here
@@ -833,11 +834,14 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     count = 200;
                     rungame = true;
                     while(rungame){
+                        for(PlantCard p : deck.getPlayablePlants()){
+                            System.out.println(p.getPlantingCooldown());
+                        }
                                 SwingUtilities.invokeLater(() -> {
                                     for (int i = 1; i < deckButtons.size(); i++) {
                                            // System.out.println(isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost()));
                                             if (!deckButtons.get(i).isEnabled()) {
-                                                if (deck.getPlayablePlants().get(i-1).getPlantingCooldown() == 0
+                                                if (deck.getPlayablePlants().get(i-1).getPlantingCooldown() == deck.getPlayablePlants().get(i-1).getPlantingSpeed()
                                                         && isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost())) {
                                                     deckButtons.get(i).setEnabled(true);
                                                 } else if (deck.getPlayablePlants().get(i - 1)
