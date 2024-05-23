@@ -17,7 +17,7 @@ public class RunnableGenerateSun implements Runnable, Serializable {
                 Random rand = new Random();
                 int berkurang = rand.nextInt(5000, 10000);
                 Thread.sleep(berkurang);
-                Sun.generateSun();
+                Sun.getInstance().generateSun();
                 sundrop -= (berkurang/1000);
                 
             }

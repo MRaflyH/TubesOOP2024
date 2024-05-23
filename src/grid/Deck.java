@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exception.InvalidDeployException;
-
+import java.io.Serializable;
 import java.io.*;
 
 import organism.plant.PlantCard;
@@ -65,7 +65,7 @@ public class Deck implements Serializable {
         }
     }
 
-    public void removePlantFromMap(Lawn lawn, int x, int y) {
-        lawn.getLand().get(y).get(x).removePlant();
+    public void removePlantFromMap(Lawn lawn, int row, int column) {
+        lawn.getLand().get(row).get(column).removePlant();
     }
 }

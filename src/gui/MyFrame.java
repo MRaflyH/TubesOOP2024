@@ -9,7 +9,7 @@ import organism.plant.*;
 import thread.RunnableGameTimer;
 import thread.RunnableGenerateSun;
 import thread.RunnableZombieSpawn;
-import thread.RunnableGenerateSun.*;
+import visitor.PlantVisitor;
 import thread.ThreadManager;
 import sun.Sun;
 import exception.*;
@@ -238,7 +238,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 deckButton = CreateButton(TILE_WIDTH * i -10, 0, 70, 60, BUTTON_COLOR, null, deckPanel, 
                         new ImageIcon("src/assets/sun.png"));
                 numSun = new JLabel();
-                numSun.setText(Integer.toString(Sun.getTotalSun()));
+                numSun.setText(Integer.toString(Sun.getInstance().getTotalSun()));
                 numSun.setAlignmentX(0.6f);
                 numSun.setHorizontalTextPosition(JLabel.CENTER);
                 numSun.setVerticalTextPosition(JLabel.CENTER);
@@ -646,14 +646,12 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     }
                     terminator--;
                 }
-                deck.getPlayablePlants().get(i - 1).afterPlant();
-                
             }
         }).start();
         
     }
     public boolean isPlantEnoughSun(int cost){
-        if(cost <= Sun.getTotalSun()){
+        if(cost <= Sun.getInstance().getTotalSun()){
             return true;
         } else {
             return false;
@@ -733,13 +731,12 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                 }
                                 mapButtons.get(j).get(k).revalidate();
                                 startPlantCooldown(deck, idxselectedplant);
+                                deck.getPlayablePlants().get(idxselectedplant - 1).afterPlant();
                                 deckButtons.get(idxselectedplant).setEnabled(false);
-                                Sun.reduceSun(deck.getPlayablePlants().get(idxselectedplant-1).getCost());
-
+                                Sun.getInstance().reduceSun(deck.getPlayablePlants().get(idxselectedplant-1).getCost());
                             }
                         }
                     }
-                  
         }
         
         if(e.getSource() != null) {
@@ -751,9 +748,12 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
 
                 @Override
                 public void run() {
+                    rungame = false;
                     System.out.println("Threads in manager (save): " + ThreadManager.getInstance().getList().size());
-                    Save.save("testSave.ser", mainlawn, ThreadManager.getInstance().getList(), deck);                    
+                    Save.save("testSave.ser", mainlawn, ThreadManager.getInstance().getList(), deck, Sun.getInstance());                    
                     System.out.println("Save executed");
+                    // Save.saveFrame("testSaveFrame.ser", Save.SaveHolder.myFrame);                    
+                    // System.out.println("SaveFrame executed");
                     ThreadManager.getInstance().stopAllThreads();
                     count = -1;
                     System.out.println("Thread Interrupted");
@@ -772,7 +772,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             }
         }
         if(e.getSource() == startButton) {
-           
             RemoveButtons();
             SwitchToDeckFrame();
         } else if(e.getSource() == loadButton) {
@@ -795,35 +794,33 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             if(deck.getPlayablePlants().size() == deck.getMaxPlants()){
                 RemoveButtons();
                 SwitchToGameFrame();
-                /*
-                 * if (!Load.getHasLoaded()){
-                 * System.out.println("Frame not loaded, loading other components...");
-                 * if (Load.load("testSave.ser")) {
-                 * mainlawn = Load.LoadHolder.lawn;
-                 * runzombie = Load.LoadHolder.zomSpawn;
-                 * ThreadManager.getInstance().addThread(runzombie);
-                 * ThreadManager.getInstance().addThread(Load.LoadHolder.genSun);
-                 * ThreadManager.getInstance().addThread(Load.LoadHolder.gameTimer);
-                 * } else {
-                 * 
-                 * }
-                 * } else {
-                 * System.out.println("already loaded frame");
-                 * }
-                 * 
-                 * 
-                 */
                 
-            mainlawn = new Lawn();
-            runzombie = new RunnableZombieSpawn(200, mainlawn);
-            ThreadManager.getInstance().addThread(new RunnableGenerateSun(100));
-            ThreadManager.getInstance().addThread(new RunnableGameTimer(200));
-            ThreadManager.getInstance().addThread(runzombie);
+                // if (!Load.getHasLoaded()){
+                //   System.out.println("Frame not loaded, loading other components...");
+                if (Load.load("testSave.ser")) {
+                    mainlawn = Load.LoadHolder.lawn;
+                    runzombie = Load.LoadHolder.zomSpawn;
+                    ThreadManager.getInstance().addThread(runzombie);
+                    ThreadManager.getInstance().addThread(Load.LoadHolder.genSun);
+                    ThreadManager.getInstance().addThread(Load.LoadHolder.gameTimer);
+                } else {
+                    System.out.println("Failed to load");
+                    mainlawn = new Lawn();
+                    runzombie = new RunnableZombieSpawn(200, mainlawn);
+                    ThreadManager.getInstance().addThread(new RunnableGenerateSun(100));
+                    ThreadManager.getInstance().addThread(new RunnableGameTimer(200));
+                    ThreadManager.getInstance().addThread(runzombie);
+                }
+                // } else {
+                //   System.out.println("already loaded frame");
+                // }
+                  
             System.out.println("Threads in manager (load): " + ThreadManager.getInstance().getList().size());
             System.out.println("Game timer in manager (load): " + ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime());
-            ThreadManager.getInstance().startAllThreads();;
+            ThreadManager.getInstance().startAllThreads();
 
-                new Sun();
+                // new Sun();
+                Sun.getInstance().initializeSun();
                 for (int i = 1; i < 7; i++) {
                     deckButtons.get(i).setEnabled(false);
                     startPlantCooldown(deck, i);
@@ -840,7 +837,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                     for (int i = 1; i < deckButtons.size(); i++) {
                                            // System.out.println(isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost()));
                                             if (!deckButtons.get(i).isEnabled()) {
-                                                if (deck.getPlayablePlants().get(i-1).getPlantingCooldown() == deck.getPlayablePlants().get(i-1).getPlantingSpeed()
+                                                if (deck.getPlayablePlants().get(i-1).getPlantingCooldown() == 0
                                                         && isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost())) {
                                                     deckButtons.get(i).setEnabled(true);
                                                 } else if (deck.getPlayablePlants().get(i - 1)
@@ -854,7 +851,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                             
                                         }
                                     }
-                                    numSun.setText(Integer.toString(Sun.getTotalSun()));
+                                    numSun.setText(Integer.toString(Sun.getInstance().getTotalSun()));
                                     for (Runnable r : ThreadManager.getInstance().getList()) {
                                         if (r instanceof RunnableGameTimer) {
                                             if (((RunnableGameTimer) r).getCurrentGameTime() != 0) {
@@ -867,6 +864,11 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                             }
 
                                         }
+                                    }
+                                    for (int i = 0; i < 6; i++) {
+                                        PlantVisitor visitor = new PlantVisitor(mainlawn, i);
+                                        Thread visitorThread = new Thread(visitor);
+                                        visitorThread.start();
                                     }
                                     for (int i = 0; i < mapButtons.size(); i++) {
                                         for (int j = 0; j < tempMapRow.size(); j++) {

@@ -6,14 +6,16 @@ import tile.*;
 import organism.plant.*;
 import organism.zombie.*;
 
-public class PlantVisitor extends Visitor{
+public class PlantVisitor extends Visitor implements Runnable{
     private ArrayList<Tile> row;
     
     public PlantVisitor(Lawn lawn, int row) {
         super(lawn);
         this.row = lawn.getLand().get(row);
     }
-
+    public void run() {
+        visit();
+    }
     public void visit() {
         int distance = 0;
         Tile zombieTile = row.get(10);
@@ -26,7 +28,6 @@ public class PlantVisitor extends Visitor{
                 distance = 0;
             }
             else distance++;
-
             // check jika ada plant
             if (row.get(i).hasPlant()) {
                 plant = row.get(i).getPlant();
@@ -36,12 +37,15 @@ public class PlantVisitor extends Visitor{
                 if (zombieTile.hasZombie() && 
                 plant.getAttackCooldown() <= 0 &&
                 (plant.getRange() == -1 || plant.getRange() >= distance)) {
-
                     // attack dan kill zombie
+                    System.out.println("duar");
                     plant.attack();
                     for (Zombie zombie : zombieTile.getZombies()) {
                         zombie.loseHealth(plant.getAttackDamage());
-                        if (zombie.isDead()) zombieTile.removeZombie(zombie);
+                        if (zombie.isDead()) {
+                            System.out.println("mati lu jombi");
+                            zombieTile.removeZombie(zombie);
+                        }
                     }
                 }
             }
