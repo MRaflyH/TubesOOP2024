@@ -26,9 +26,6 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.concurrent.Flow;
 
-import static organism.plant.Plant.getPlantingCooldown;
-import static organism.plant.Plant.getPlantingSpeed;
-
 import java.awt.*;
 
 
@@ -872,6 +869,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     count = 200;
                     rungame = true;
                     while(rungame){
+                        //System.out.println(Sun.getInstance().getTotalSun());
                                 SwingUtilities.invokeLater(() -> {
                                     for (int i = 1; i < deckButtons.size(); i++) {
                                         if (isPlantEnoughSun(deck.getPlayablePlants().get(i - 1).getCost())) {
@@ -908,6 +906,9 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                     }
                                     for (int i = 0; i < mapButtons.size(); i++) {
                                         for (int j = 0; j < tempMapRow.size(); j++) {
+                                            if(!mainlawn.getLand().get(i).get(j).hasPlant()){
+                                                mapButtons.get(i).get(j).removeAll();
+                                            }
                                             if (mainlawn.getLand().get(i).get(j).hasZombie()) {
                                                 setZombies(i, j);
                                                 // taro code moveZombies disini -Vald
@@ -1002,9 +1003,12 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                             setZombies(i, j - 1);
                                                         }
                                                         // System.out.println("=== After ===");
-                                                        if (!(mainlawn.getLand().get(i).get(j).hasZombie())) {
+                                                        if (!mainlawn.getLand().get(i).get(j).hasZombie()) {
                                                             removeZombies(i, j);
                                                         }
+                                                    }
+                                                    if (z.isDead()) {
+                                                        mainlawn.getLand().get(i).get(j).removeZombie(z);
                                                     }
                                                 }
                                             }

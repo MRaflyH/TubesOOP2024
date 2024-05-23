@@ -1,6 +1,8 @@
 package visitor;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+
 import grid.Lawn;
 import tile.*;
 import organism.plant.*;
@@ -9,12 +11,17 @@ import organism.zombie.*;
 public class PlantVisitor extends Visitor implements Runnable{
     private ArrayList<Tile> row;
     
-    public PlantVisitor(Lawn lawn, int row) {
+    public PlantVisitor(Lawn lawn, int idxrow) {
         super(lawn);
-        this.row = lawn.getLand().get(row);
+        this.row = lawn.getLand().get(idxrow);
     }
     public void run() {
-        visit();
+        try {
+            visit();
+        }
+        catch (ConcurrentModificationException e) {
+            e.getMessage();
+        }
     }
     public void visit() {
         int distance = 0;
@@ -32,7 +39,6 @@ public class PlantVisitor extends Visitor implements Runnable{
             if (row.get(i).hasPlant()) {
                 plant = row.get(i).getPlant();
                 plant.updateState();
-
                 // check jika bisa attack
                 if (zombieTile.hasZombie() && 
                 plant.getAttackCooldown() <= 0 &&
@@ -43,10 +49,19 @@ public class PlantVisitor extends Visitor implements Runnable{
                     for (Zombie zombie : zombieTile.getZombies()) {
                         zombie.loseHealth(plant.getAttackDamage());
                         if (zombie.isDead()) {
-                            System.out.println("mati lu jombi");
+                            System.out.println("mati jombi "+zombie.getName());
                             zombieTile.removeZombie(zombie);
+                            System.out.println(plant.getName()+" berhasil bunuh");
+                            if (plant instanceof Squash) {
+                                plant.loseHealth(100);
+                                System.out.println("kamikaze");
+                            }
                         }
                     }
+                }
+                if (plant.isDead()) {
+                    System.out.println("mati taneman "+plant.getName());
+                    row.get(i).removePlant();
                 }
             }
         }
