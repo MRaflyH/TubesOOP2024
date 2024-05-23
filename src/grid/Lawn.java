@@ -32,4 +32,11 @@ public class Lawn implements Serializable {
     public ArrayList<ArrayList<Tile>> getLand() {
         return land;
     }
+
+    public boolean TileHasLilypad(int i, int j){
+        if(this.getLand().get(i).get(j).getPlant().getName() == "Lilypad"){
+                return true;  
+        }
+        return false;
+    }
 }

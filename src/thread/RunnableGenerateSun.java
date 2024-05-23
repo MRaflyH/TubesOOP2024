@@ -1,7 +1,6 @@
 package thread;
 
 import java.util.Random;
-import gui.*;
 import sun.*;
 import java.io.*;
 
@@ -13,8 +12,6 @@ public class RunnableGenerateSun implements Runnable, Serializable {
     }
     @Override
     public void run() {
-        // TODO Auto-generated method stub
-        
             while(sundrop > 0){
                 try {
                 Random rand = new Random();

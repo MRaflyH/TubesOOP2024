@@ -1,6 +1,9 @@
 package grid;
 import java.util.ArrayList;
 import java.util.List;
+
+import exception.InvalidDeployException;
+
 import java.io.*;
 
 import organism.plant.PlantCard;
@@ -11,6 +14,9 @@ public class Deck implements Serializable {
     
     public Deck() {
         playablePlants = new ArrayList<>();
+        for(int i = 0; i < 6; i++){
+            playablePlants.add(null);
+        }
     }
 
     public List<PlantCard> getPlayablePlants() {
@@ -21,15 +27,39 @@ public class Deck implements Serializable {
         return MAX_PLANT;
     }
 
-    public void addPlantToMap(int slot, Lawn lawn, int x, int y) {
+    public void addPlantToMap(int slot, Lawn lawn, int x, int y) throws InvalidDeployException {
         try {
-            if (playablePlants.get(slot).getPlantingCooldown() == 0) {
-                lawn.getLand().get(x).get(y).addPlant(playablePlants.get(slot).getClassPlant().getDeclaredConstructor().newInstance());
-                //playablePlants.get(slot).afterPlant();
+            if(y != 0 || y != 10){
+                if (playablePlants.get(slot).getPlantingCooldown() == playablePlants.get(slot).getPlantingSpeed()) {
+                    if(playablePlants.get(slot).getIsAquatic()){
+                        if(x == 2 || x == 3){
+                            lawn.getLand().get(x).get(y)
+                                    .addPlant(playablePlants.get(slot).getClassPlant().getDeclaredConstructor()
+                                            .newInstance());
+                        } else {
+                            throw new InvalidDeployException("Plant aquatic tidak dapat ditanam pada tile yang dipilih!");
+                        }
+                    } else if(!playablePlants.get(slot).getIsAquatic() && x != 2 && x != 3){
+                        lawn.getLand().get(x).get(y)
+                                .addPlant(playablePlants.get(slot).getClassPlant().getDeclaredConstructor()
+                                        .newInstance());
+                    } else {
+                       if(x == 2 || x == 3 && lawn.TileHasLilypad(x, y)){
+                            lawn.getLand().get(x).get(y)
+                                   .addPlant(playablePlants.get(slot).getClassPlant().getDeclaredConstructor()
+                                           .newInstance());
+                       } else{
+                        throw new InvalidDeployException("Plant tidak dapat ditanam! Belum ada lilypad!");
+                       }
+                    }
+                } else {
+                throw new InvalidDeployException("Plant masih dalam cooldown!");
+                }
+            } else {
+                throw new InvalidDeployException("Plant tidak dapat ditanam di tile yang dipilih!");
             }
-            else {
-                // exception
-            }
+               
+           
         } catch (Exception e) {
             e.printStackTrace();
         }

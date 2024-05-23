@@ -4,6 +4,7 @@ import java.util.*;
 import gui.*;
 import grid.*;
 import tile.*;
+import organism.Organism;
 import organism.zombie.*;
 import java.io.*;
 

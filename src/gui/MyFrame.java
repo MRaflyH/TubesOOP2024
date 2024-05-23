@@ -23,11 +23,7 @@ import java.io.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.Flow;
 
 import static organism.plant.Plant.getPlantingCooldown;
@@ -39,9 +35,8 @@ import java.awt.*;
 public class MyFrame extends JFrame implements ActionListener, Serializable {
     private int currentFrame;
     private int count;
-    private List<Integer> deckAvailability = new ArrayList<Integer>();
-    private Stack<JButton> disabledPlant = new Stack<JButton>();
-    private Stack<Integer> plantOnDeck = new Stack<Integer>();
+    private ArrayList<Integer> deckAvailability = new ArrayList<Integer>();
+    private HashMap<Integer, Integer> plantStorage = new HashMap<Integer, Integer>();
     Thread GUIThread;
     Deck deck;
     Inventory inventory; 
@@ -97,8 +92,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
 
     // for saving purposes
     // Load.LoadHolder Load.LoadHolder = new Load.LoadHolder();
-    ThreadManager threadManager = ThreadManager.getInstance();
-    
+  
     class ImagePanel extends JComponent implements Serializable {
     private Image image;
     public ImagePanel(Image image) {
@@ -129,7 +123,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             imagepan.setImage(myImage);
             this.setContentPane(imagepan);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -158,7 +152,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             imagepan.setImage(myImage);
             setContentPane(imagepan);
         } catch (IOException e3) {
-            // TODO Auto-generated catch block
+            
             e3.printStackTrace();
         }
         currentFrame = 1;
@@ -166,6 +160,9 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         deckPanel.setVisible(true);
         inventoryPanel.setVisible(true);
         readyButton.setVisible(true);
+        for (int i = 0; i < 6; i++) {
+            plantStorage.put(i, -1);
+        }
 
     }
 
@@ -175,7 +172,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             imagepan.setImage(myImage);
             setContentPane(imagepan);
         } catch (IOException e3) {
-            // TODO Auto-generated catch block
+            
             e3.printStackTrace();
         }
         currentFrame = 2;
@@ -254,13 +251,13 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             }
             else{
                 deckButton = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH, TILE_HEIGHT, BORDER_DECK_COLOR, null, deckPanel, new ImageIcon("src/assets/decktile.png"));
-                deckButton.setLayout(new FlowLayout());
+                deckButton.setLayout(new GridBagLayout());
                 deckButtons.add(deckButton);
             }
         }
         //shovel button
         shovelButton = CreateButton(380, 10, TILE_WIDTH, TILE_HEIGHT, BORDER_DECK_COLOR, null, new ImageIcon("src/assets/decktile.png"));
-        shovelButton.setLayout(new FlowLayout());
+        shovelButton.setLayout(new GridBagLayout());
         JLabel shovel = new JLabel();
         ImageIcon img = new ImageIcon("src/assets/shovel.png");
         shovel.setBounds(0, 0, TILE_WIDTH, TILE_HEIGHT);
@@ -274,9 +271,9 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         
         for (int i = 0; i < 10; i++) {
 
-            inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel, new ImageIcon("src/assets/decktile.png")));
-            inventoryButtons.get(i).setLayout(new FlowLayout());
-            setPlants(true, getPlantSourceImg(inventory, i), i);
+            inventoryButtons.add(CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR, null, inventoryPanel, new ImageIcon(getPlantButtonSourceImg(inventory, i))));
+            inventoryButtons.get(i).setLayout(new GridBagLayout());
+           // setPlants(true, getPlantSourceImg(inventory, i), i);
             
         }
        
@@ -304,7 +301,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     tempMapRow.add(CreateButton(TILE_WIDTH * j, TILE_HEIGHT * i, TILE_WIDTH, TILE_HEIGHT, GRASS1_COLOR, null, mapPanel, 
                             new ImageIcon("src/assets/grasstile2.png")));
                 } 
-                tempMapRow.get(j).setLayout(new FlowLayout());
+                tempMapRow.get(j).setLayout(new GridBagLayout());
+            
             }
             mapButtons.add(tempMapRow);
             
@@ -358,36 +356,62 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         zombie.setVisible(true);
         zombie.setOpaque(false);
         zombie.setIcon(new ImageIcon(new ImageIcon(getZombieSourceImg(mainlawn, i, j)).getImage()
-                .getScaledInstance(40, 60, Image.SCALE_DEFAULT)));
-        mapButtons.get(i).get(j).add(zombie);
+                .getScaledInstance(40, 60, Image.SCALE_SMOOTH)));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0; // Overlay on the same cell as the button
+        gbc.anchor = GridBagConstraints.EAST;
+        mapButtons.get(i).get(j).add(zombie, gbc);
         mapButtons.get(i).get(j).revalidate();
         mapButtons.get(i).get(j).repaint();
     }
 
     public void setPlants(boolean onInventory, String srcfile, int i){
-        JLabel plant = new JLabel();
-        ImageIcon img = new ImageIcon(srcfile);
-        plant.setBounds(0,0, TILE_WIDTH, TILE_HEIGHT);
-        plant.setVisible(true);
-        plant.setIcon(new ImageIcon(img.getImage()
-                .getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
+       
         if(onInventory){
-            inventoryButtons.get(i).add(plant);
+            JButton inventorybuttonnew = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR,
+                            null, inventoryPanel, new ImageIcon(getPlantButtonSourceImg(inventory, i)));
+            inventoryButtons.set(i, inventorybuttonnew);
         } else {
-            deckButtons.get(i).add(plant);
-        }
-        
-        
+            //eckButtons.get(i).add(plant);
+            
+            JButton deckButtonnew = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH, TILE_HEIGHT, BORDER_DECK_COLOR, null,
+                    deckPanel, new ImageIcon(srcfile));
+            deckButtonnew.setVisible(true);
+            deckButtons.get(i).setVisible(false);
+            deckButtons.set(i, deckButtonnew);
+            deckButtons.get(i).revalidate();
+        } 
     }
 
-    public void setPlants(String srcfile, int i, int j) {
+    public void removePlant(String srcfile, int i){
+        JButton deckButtonnew = CreateButton(TILE_WIDTH * i + 10, 0, TILE_WIDTH, TILE_HEIGHT, BORDER_DECK_COLOR, null,
+                deckPanel, new ImageIcon(srcfile));
+        deckButtonnew.setVisible(true);
+        deckButtons.get(i).setVisible(false);
+        deckButtons.set(i, deckButtonnew);
+        deckButtons.get(i).revalidate();
+    }
+
+    public void setPlants(String srcfile, int i, int j, int idplant) throws InvalidDeployException{
         JLabel plant = new JLabel();
         ImageIcon img = new ImageIcon(srcfile);
         plant.setBounds(0, 0, TILE_WIDTH, TILE_HEIGHT);
         plant.setVisible(true);
         plant.setIcon(new ImageIcon(img.getImage()
                 .getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
-        mapButtons.get(i).get(j).add(plant);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0; 
+        gbc.anchor = GridBagConstraints.CENTER;
+        mapButtons.get(i).get(j).add(plant, gbc);
+
+        if(deck.getPlayablePlants().get(idplant).getClassPlant() == Lilypad.class){
+            mapButtons.get(i).get(j).setComponentZOrder(plant, 1);
+        } else {
+            mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+        }
+       
     }
     
     private String getPlantSourceImg(Deck deck, int i){
@@ -425,40 +449,76 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         return source;
     }
 
-    private String getPlantSourceImg(Inventory deck, int i) {
+    private String getPlantButtonSourceImg(Deck deck, int i) {
         String source = "";
-            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Sunflower")) {
-                source = "src/assets/sunflower.png";
-            }
-            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("CherryBomb")) {
-                source = "src/assets/cherrybomb.png";
-            }
-            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Chomper")) {
-                source = "src/assets/chomper.png";
-            }
-            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Lilypad")) {
-                source = "src/assets/lilypad.png";
-            }
-            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Squash")) {
-                source = "src/assets/squash.png";
-            }
-            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Peashooter")) {
-                source = "src/assets/peashooter.png";
-            }
-            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Repeater")) {
-                source = "src/assets/repeater.png";
-            }
-            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("SnowPea")) {
-                source = "src/assets/snowpea.png";
-            }
-            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("TangleKelp")) {
-                source = "src/assets/tanglekelp.png";
-            }
-            if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Wallnut")) {
-                source = "src/assets/wallnut.png";
-            }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Sunflower")) {
+            source = "src/assets/sunflowerbutton.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("CherryBomb")) {
+            source = "src/assets/cherrybombbutton.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Chomper")) {
+            source = "src/assets/chomperbutton.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Lilypad")) {
+            source = "src/assets/lilypadbutton.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Squash")) {
+            source = "src/assets/squashbutton.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Peashooter")) {
+            source = "src/assets/peashooterbutton.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Repeater")) {
+            source = "src/assets/repeaterbutton.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Snowpea")) {
+            source = "src/assets/snowpeabutton.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("TangleKelp")) {
+            source = "src/assets/tanglekelpbutton.png";
+        }
+        if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Wallnut")) {
+            source = "src/assets/wallnutbutton.png";
+        }
         return source;
     }
+
+    private String getPlantButtonSourceImg(Inventory deck, int i) {
+        String source = "";
+        if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Sunflower")) {
+            source = "src/assets/sunflowerbutton.png";
+        }
+        if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("CherryBomb")) {
+            source = "src/assets/cherrybombbutton.png";
+        }
+        if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Chomper")) {
+            source = "src/assets/chomperbutton.png";
+        }
+        if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Lilypad")) {
+            source = "src/assets/lilypadbutton.png";
+        }
+        if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Squash")) {
+            source = "src/assets/squashbutton.png";
+        }
+        if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Peashooter")) {
+            source = "src/assets/peashooterbutton.png";
+        }
+        if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Repeater")) {
+            source = "src/assets/repeaterbutton.png";
+        }
+        if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("SnowPea")) {
+            source = "src/assets/snowpeabutton.png";
+        }
+        if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("TangleKelp")) {
+            source = "src/assets/tanglekelpbutton.png";
+        }
+        if (deck.getAllPlants().get(i).getClassPlant().getSimpleName().equals("Wallnut")) {
+            source = "src/assets/wallnutbutton.png";
+        }
+        return source;
+    }
+    
     
     // INI GW NYOBA BUAT DEBUGGING ZOMBIE MOVE
     public void removeZombies(int i, int j) {
@@ -518,7 +578,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         return newButton;
 
     }
-
+    
     public JButton CreateButton(int x, int y, int width, int height, Color color, String text, JPanel panel, ImageIcon i) {
 
         JButton newButton = new JButton(i);
@@ -533,30 +593,12 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         return newButton;
 
     }
-    private void setDeckNotAvailable(){
-        int i = 0;
-        while(i < deckAvailability.size()){
-            if(deckAvailability.get(i) == 0){
-                i++;
-            } else {
-                deckAvailability.set(i, 0);
-                break;
-            }
-           
-        }
+    private void setDeckNotAvailable(int i){
+        deckAvailability.set(i, 0);
     }
     
-    private void setDeckAvailable() {
-        int i = deckAvailability.size()-1;
-        while (i >= 0) {
-            if (deckAvailability.get(i) == 1) {
-                i--;
-            } else {
-                deckAvailability.set(i, 1);
-                break;
-            }
-
-        }
+    private void setDeckAvailable(int i) {
+        deckAvailability.set(i, 1);
     }
     private int getDeckAvalibility(){
         int index = 0;
@@ -569,16 +611,24 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         return index;
     }
 
-    public void SetButtonDisabled(JButton button, JPanel panel, ImageIcon i) {
-        JButton newButton = CreateButton(button.getX(), button.getY(), button.getWidth(), button.getHeight(), null, null,panel, i);
-        button.setVisible(false);
-        newButton.setVisible(true);
-        disabledPlant.push(newButton);
+    public void SetButtonDisabled(int i, String srcfile) {
+        inventoryButtons.get(i).setVisible(false);
+        JButton inventorybuttonnew = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT,
+                GRASS2_COLOR,
+                null, inventoryPanel, new ImageIcon(srcfile));
+        inventorybuttonnew.setVisible(true);
+        inventoryButtons.set(i, inventorybuttonnew);
+        
     }
 
-    public void SetButtonEnabled(JButton button1, int Jbuttonindex) {
-        button1.setVisible(false);
-        inventoryButtons.get(Jbuttonindex).setVisible(true);
+    public void SetButtonEnabled(int i, String srcfile) {
+        inventoryButtons.get(i).setVisible(false);
+        JButton inventorybuttonnew = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT,
+                GRASS2_COLOR,
+                null, inventoryPanel, new ImageIcon(srcfile));
+        inventorybuttonnew.setVisible(true);
+        inventoryButtons.set(i, inventorybuttonnew);
+        
     }
     private void startPlantCooldown(Deck deck, int i){
         new Thread(new Runnable(){
@@ -592,7 +642,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                     terminator--;
@@ -617,38 +666,46 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         for(int i = 0; i < 10; i++){ //buat add plant
             try{
                 if(e.getSource() == inventoryButtons.get(i)){
-                setPlants(false, getPlantSourceImg(inventory, i), getDeckAvalibility() + 1);
-                inventory.addPlant(inventory.getAllPlants().get(i), deck);
-                plantOnDeck.push(i);
-                deckButtons.get(getDeckAvalibility() + 1).revalidate();
-                SetButtonDisabled(inventoryButtons.get(i), inventoryPanel, new ImageIcon("src/assets/decktiledisabled.png"));
-                setDeckNotAvailable();
+                System.out.println(deck.getPlayablePlants());
+                inventory.addPlant(inventory.getAllPlants().get(i), deck, getDeckAvalibility());
+                setPlants(false, getPlantButtonSourceImg(inventory, i), getDeckAvalibility() + 1);
+                
+                plantStorage.put(getDeckAvalibility(), i);
+                setDeckNotAvailable(getDeckAvalibility());
+                deckButtons.get(getDeckAvalibility()).revalidate();
+                SetButtonDisabled(i, "src/assets/decktiledisabled.png");
+                
+                
                 inventoryButtons.get(i).revalidate();
-                System.out.println(deck.getPlayablePlants().size());
             }
-            } catch(Exception e2){
-                e2.printStackTrace();
+            } catch(InvalidInventoryException e2){
+                e2.getMessage();
             }
             
         }
         if(currentFrame == 1){ // buat remove plant
             
             for(int i = 0; i < 6; i++){
-                if(e.getSource() == deckButtons.get(getDeckAvalibility())){
-                    setDeckAvailable();
+                if(e.getSource() == deckButtons.get(i+1)){
+                    setDeckAvailable(i);
                     try {
+                       
+                        System.out.println(deck.getPlayablePlants());
+                        SetButtonEnabled(plantStorage.get(i),
+                                getPlantButtonSourceImg(inventory, plantStorage.get(i)));
+                        plantStorage.put(i, -1);
+                        System.out.println(plantStorage);
+                        // deckButtons.get(getDeckAvalibility() + 1).removeAll();
+                        // deckButtons.get(getDeckAvalibility()).revalidate();
+                        removePlant("src/assets/decktile.png", i + 1);
                         inventory.removePlant(deck, getDeckAvalibility());
+                        System.out.println(deck.getPlayablePlants());
+                        
                     } catch (InvalidInventoryException e1) {
-                        // TODO Auto-generated catch block
+                        
                         e1.getMessage();
                     }
-                    System.out.println(deck.getPlayablePlants());
-                    SetButtonEnabled(disabledPlant.pop(), plantOnDeck.pop());
-                    deckButtons.get(getDeckAvalibility() + 1).removeAll();
-                    deckButtons.get(getDeckAvalibility()).revalidate();
-                    for(int j = 0; j < 10; j++){
-                        inventoryButtons.get(j).revalidate();
-                    }
+                    
                     
                 }
 
@@ -668,8 +725,12 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                         for (int k = 0; k < 11; k++) {
                             if (e.getSource() == mapButtons.get(j).get(k) && deckButtons.get(idxselectedplant).isEnabled()) {
                                 System.out.println("dipencet map : pada x : " + j + " y : " + k);
-                                deck.addPlantToMap(idxselectedplant-1, mainlawn, j, k);
-                                setPlants(getPlantSourceImg(deck, idxselectedplant-1), j, k);
+                                try {
+                                    setPlants(getPlantSourceImg(deck, idxselectedplant-1), j, k, idxselectedplant-1);
+                                    deck.addPlantToMap(idxselectedplant - 1, mainlawn, j, k);
+                                } catch (InvalidDeployException e1) {
+                                    e1.getMessage();
+                                }
                                 mapButtons.get(j).get(k).revalidate();
                                 startPlantCooldown(deck, idxselectedplant);
                                 deckButtons.get(idxselectedplant).setEnabled(false);
@@ -706,7 +767,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 imagepan.setImage(myImage);
                 this.setContentPane(imagepan);
             } catch (IOException e4) {
-                // TODO Auto-generated catch block
+                
                 e4.printStackTrace();
             }
         }
@@ -722,7 +783,15 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             dispose();
         }
         else if (e.getSource() == readyButton) {
+            try{
+                if(deck.getPlayablePlants().size() == deck.getMaxPlants()){
 
+                } else {
+                    throw new InvalidInventoryException("Deck Belum Penuh");
+                }
+            } catch(InvalidInventoryException eee){
+                System.out.println(eee);
+            }
             if(deck.getPlayablePlants().size() == deck.getMaxPlants()){
                 RemoveButtons();
                 SwitchToGameFrame();
@@ -769,7 +838,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     while(rungame){
                                 SwingUtilities.invokeLater(() -> {
                                     for (int i = 1; i < deckButtons.size(); i++) {
-                                            System.out.println(isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost()));
+                                           // System.out.println(isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost()));
                                             if (!deckButtons.get(i).isEnabled()) {
                                                 if (deck.getPlayablePlants().get(i-1).getPlantingCooldown() == deck.getPlayablePlants().get(i-1).getPlantingSpeed()
                                                         && isPlantEnoughSun(deck.getPlayablePlants().get(i-1).getCost())) {
@@ -930,6 +999,13 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     GUIThread.start();
                    
                 
+            } else {
+                try {
+                    throw new InvalidInventoryException("Deck Belum Penuh");
+                } catch (InvalidInventoryException e1) {
+                    
+                    e1.getMessage();
+                }
             }
           
         } 
