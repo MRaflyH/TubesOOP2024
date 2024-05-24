@@ -59,6 +59,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     JPanel mapPanel;
     JPanel deckPanel;
     JPanel inventoryPanel;
+    JPanel swapPanel;
 
     ArrayList<ArrayList<JButton>> mapButtons = new ArrayList<ArrayList<JButton>>();
     ArrayList<JButton> deckButtons = new ArrayList<JButton>(7);
@@ -78,6 +79,13 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     JButton previousArrowButton;
     JLabel numSun;
     boolean rungame;
+
+    JButton swap1;
+    JButton swap2;
+    JTextField swap11;
+    JTextField swap12;
+    JTextField swap21;
+    JTextField swap22;
 
     static final int FRAME_WIDTH = 638;
     static final int FRAME_HEIGHT = 480;
@@ -248,6 +256,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         deckPanel.setVisible(true);
         inventoryPanel.setVisible(true);
         readyButton.setVisible(true);
+        swapPanel.setVisible(true);
         for (int i = 0; i < 6; i++) {
             plantStorage.put(i, -1);
         }
@@ -284,6 +293,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             readyButton.setVisible(false); 
             shovelButton.setVisible(false);  
             backMenuButton.setVisible(false);
+            swapPanel.setVisible(false);
         }
         else if (currentFrame == 2) {
             menuButton.setVisible(false);
@@ -307,8 +317,9 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         menuPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
         plantListPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
         deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8 + 10, TILE_HEIGHT);
-        inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 5);
+        inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 4);
         mapPanel = CreatePanel(75, 90, TILE_WIDTH * 11, TILE_HEIGHT * 6);
+        swapPanel = CreatePanel(70, 80 + TILE_HEIGHT * 4, TILE_HEIGHT * 6 + 50, SMALL_HEIGHT);
     }
 
     public void SetButtons() {
@@ -416,6 +427,21 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             mapButtons.add(tempMapRow);
             
         }
+        swap1 = CreateButton(TILE_WIDTH * 2 + 20, 0, TILE_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "SWAP", swapPanel);
+        swap2 = CreateButton(TILE_WIDTH * 5 + 50, 0, TILE_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "SWAP", swapPanel);
+
+        swap11 = new JTextField();
+        swap11.setBounds(0, 0, TILE_WIDTH,SMALL_HEIGHT);
+        swapPanel.add(swap11);
+        swap12 = new JTextField();
+        swap12.setBounds(TILE_WIDTH + 10, 0, TILE_WIDTH,SMALL_HEIGHT);
+        swapPanel.add(swap12);
+        swap21 = new JTextField();
+        swap21.setBounds(TILE_WIDTH * 3 + 30, 0, TILE_WIDTH,SMALL_HEIGHT);
+        swapPanel.add(swap21);
+        swap22 = new JTextField();
+        swap22.setBounds(TILE_WIDTH * 4 + 40, 0, TILE_WIDTH,SMALL_HEIGHT);
+        swapPanel.add(swap22);
     }
     
     private String getZombieSourceImg(Lawn mainlawn, int i, int j) {
@@ -1223,6 +1249,32 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         
         if(e.getSource() != null) {
             // jika button apapun dipress
+        }
+        if (e.getSource() == swap1) {
+            try {
+                Integer n1 = Integer.parseInt(swap11.getText());
+                Integer n2 = Integer.parseInt(swap12.getText());
+
+                if (n1 >= 1 && n1 <= 6 && n2 >= 1 && n2 <= 6) {
+                    System.out.println(n1);                 
+                    System.out.println(n2);                 
+                }
+            }
+            catch (Exception err) {
+            }
+        }
+        if (e.getSource() == swap2) {
+            try {
+                Integer n1 = Integer.parseInt(swap21.getText());
+                Integer n2 = Integer.parseInt(swap22.getText());
+
+                if (n1 >= 1 && n1 <= 10 && n2 >= 1 && n2 <= 10) {
+                    System.out.println(n1);                 
+                    System.out.println(n2);                 
+                }
+            }
+            catch (Exception err) {
+            }
         }
         if(e.getSource() == plantsListButton){
             RemoveButtons();
