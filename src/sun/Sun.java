@@ -34,4 +34,9 @@ public class Sun implements Serializable {
     public void initializeSun(){
         totalsun = 50;
     }
+
+    // overloading above function if totalSun is provided
+    public void initializeSun(int totalSun){
+        totalsun = totalSun;
+    }
 }

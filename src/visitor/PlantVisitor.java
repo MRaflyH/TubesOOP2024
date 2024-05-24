@@ -7,6 +7,7 @@ import grid.Lawn;
 import tile.*;
 import organism.plant.*;
 import organism.zombie.*;
+import thread.*;
 
 public class PlantVisitor extends Visitor implements Runnable{
     private ArrayList<Tile> row;
@@ -20,11 +21,13 @@ public class PlantVisitor extends Visitor implements Runnable{
         this.idxrow = idxrow;
     }
     public void run() {
-        try {
-            visit();
-        }
-        catch (ConcurrentModificationException e) {
-            e.getMessage();
+        if (ThreadManager.getInstance().getList().size() > 0) {
+            try {
+                visit();
+            }
+            catch (ConcurrentModificationException e) {
+                e.getMessage();
+            }
         }
     }
     public void visit() {

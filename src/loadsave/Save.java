@@ -22,7 +22,7 @@ public class Save {
 
     public static void save(String fileName, Lawn mainlawn,
     ArrayList<Runnable> threads, Deck deck, Sun sun) {
-        try (FileOutputStream fileOut = new FileOutputStream(fileName);
+        try (FileOutputStream fileOut = new FileOutputStream("bin/main/saves/" + fileName);
              ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             System.out.println("Threads in manager (save): " + threads.size());
             out.writeObject(mainlawn);
