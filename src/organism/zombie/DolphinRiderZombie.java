@@ -2,6 +2,7 @@ package organism.zombie;
 
 import organism.plant.Lilypad;
 import organism.plant.Squash;
+import organism.plant.TangleKelp;
 import tile.Tile;
 
 public class DolphinRiderZombie extends Zombie implements VaultingInterface {
@@ -22,7 +23,7 @@ public class DolphinRiderZombie extends Zombie implements VaultingInterface {
             }
         }
         else {
-            if (!(land.getPlant() instanceof Squash)) land.removePlant();
+            if (!(land.getPlant() instanceof Squash) || !(land.getPlant() instanceof TangleKelp)) land.removePlant();
             else {
                 land.removePlant();
                 land.removeZombie(this);

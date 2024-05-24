@@ -53,7 +53,7 @@ public class PlantVisitor extends Visitor implements Runnable{
                             System.out.println("mati jombi "+zombie.getName());
                             zombieTile.removeZombie(zombie);
                             System.out.println(plant.getName()+" berhasil bunuh");
-                            if (plant instanceof Squash) {
+                            if (plant instanceof Squash || plant instanceof TangleKelp) {
                                 plant.loseHealth(100);
                                 System.out.println("kamikaze");
                             }

@@ -13,7 +13,7 @@ public class JackInTheBoxZombie extends Zombie implements organism.ExplosionInte
     }
 
     public boolean hasExploded(){
-            return hasExploded;
+        return hasExploded;
     }
 
 }

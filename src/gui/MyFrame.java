@@ -922,9 +922,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                     }
                                     for (int i = 0; i < 6; i++) {
                                         PlantVisitor visitor = new PlantVisitor(mainlawn, i);
-                                    Thread visitorThread = new Thread(visitor);
-                                    visitorThread.start();
-                                       
+                                        Thread visitorThread = new Thread(visitor);
+                                        visitorThread.start();
                                     }
                                     for (int i = 0; i < mapButtons.size(); i++) {
                                         for (int j = 0; j < tempMapRow.size(); j++) {
@@ -954,51 +953,23 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                                 v.vault(mainlawn.getLand().get(i).get(j),
                                                                         mainlawn.getLand().get(i).get(j - 1));
                                                                 setZombies(i, j - 1);
-                                                                if (mainlawn.getLand().get(i).get(j)
-                                                                        .getPlant() instanceof Squash) {
-                                                                    mainlawn.getLand().get(i).get(j - 1)
-                                                                            .removeZombie(z);
-                                                                }
                                                             }
-                                                        } else if (mainlawn.getLand().get(i).get(j - 1).hasPlant()) {
-                                                            if (z instanceof VaultingInterface) {
-                                                                VaultingInterface v = (VaultingInterface) z;
-                                                                // System.out.println(z.getName() + "is Vaulting Over "
-                                                                // +
-                                                                // mainlawn.getLand().get(i).get(j-1).getPlant().getName());
-                                                                if (!v.getHasVaulted()) {
-                                                                    System.out
-                                                                            .println(z.getName() + " vaulting 3 tile");
-                                                                    v.vault(mainlawn.getLand().get(i).get(j),
-                                                                            mainlawn.getLand().get(i).get(j - 2));
-                                                                    setZombies(i, j - 2);
-                                                                }
-                                                                // System.out.println("!!! END OF VAULTING TYPE !!!");
-                                                                else if (z.getAttackCooldown() == 0) {
-                                                                    mainlawn.getLand().get(i).get(j - 1).getPlant()
-                                                                            .loseHealth(z.getAttackDamage());
-                                                                    z.attack();
-                                                                    while(!mainlawn.getLand().get(i).get(j - 1).getPlant().isDead()){
-                                                                        
-                                                                    }
-                                                                    applyAttacked(i, j-1);
-                                                                }
-                                                            } else {
-                                                                if (z.getAttackCooldown() == 0) {
-                                                                    mainlawn.getLand().get(i).get(j - 1).getPlant()
-                                                                            .loseHealth(z.getAttackDamage());
-                                                                    z.attack();
-                                                                    applyAttacked(i, j - 1);
-                                                                }
+                                                            else if (z.getAttackCooldown() == 0) {
+                                                                mainlawn.getLand().get(i).get(j).getPlant()
+                                                                        .loseHealth(z.getAttackDamage());
+                                                                z.attack();
+                                                                applyAttacked(i, j);
                                                             }
                                                         } else {
-                                                            if (z.getMoveCooldown() == 0) {
-                                                                z.move(mainlawn.getLand().get(i).get(j),
-                                                                        mainlawn.getLand().get(i).get(j - 1));
-                                                                setZombies(i, j - 1);
+                                                            if (z.getAttackCooldown() == 0) {
+                                                                mainlawn.getLand().get(i).get(j).getPlant()
+                                                                        .loseHealth(z.getAttackDamage());
+                                                                z.attack();
+                                                                applyAttacked(i, j);
                                                             }
                                                         }
-                                                    } else if (mainlawn.getLand().get(i).get(j - 1).hasPlant()) {
+                                                    } 
+                                                    else if (mainlawn.getLand().get(i).get(j - 1).hasPlant()) {
                                                         if (z instanceof VaultingInterface) {
                                                             VaultingInterface v = (VaultingInterface) z;
                                                             // System.out.println(z.getName() + "is Vaulting Over " +
@@ -1008,11 +979,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                                 v.vault(mainlawn.getLand().get(i).get(j),
                                                                         mainlawn.getLand().get(i).get(j - 2));
                                                                 setZombies(i, j - 2);
-                                                                if (mainlawn.getLand().get(i).get(j - 1)
-                                                                        .getPlant() instanceof Squash) {
-                                                                    mainlawn.getLand().get(i).get(j - 2)
-                                                                            .removeZombie(z);
-                                                                }
                                                             }
                                                             // System.out.println("!!! END OF VAULTING TYPE !!!");
                                                             else if (z.getAttackCooldown() == 0) {
