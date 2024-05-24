@@ -538,24 +538,44 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         if (j != 0 && j != 10) {
                 if (deck.getPlayablePlants().get(idplant).getClassPlant() == Lilypad.class || deck.getPlayablePlants()
                         .get(idplant).getClassPlant() == TangleKelp.class) {
-                    if (i == 2 || i == 3) {
-                        mapButtons.get(i).get(j).add(plant, gbc);
-                        mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+                    if(!mainlawn.getLand().get(i).get(j).hasPlant()){
+                        if (i == 2 || i == 3) {
+                            mapButtons.get(i).get(j).add(plant, gbc);
+                            mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+                        } else {
+                            throw new InvalidDeployException(
+                                    "Plant aquatic tidak dapat ditanam pada tile yang dipilih!");
+                        }
                     } else {
-                        throw new InvalidDeployException("Plant aquatic tidak dapat ditanam pada tile yang dipilih!");
+                        throw new InvalidDeployException("Plant tidak dapat ditanam! slot sudah diisi");
                     }
+                   
                 } else if ((deck.getPlayablePlants().get(idplant).getClassPlant() != Lilypad.class
                         || deck.getPlayablePlants().get(idplant).getClassPlant() != TangleKelp.class) && i != 2 && i != 3) {
-                        mapButtons.get(i).get(j).add(plant, gbc);
-                        mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+                            if(!mainlawn.getLand().get(i).get(j).hasPlant()){
+                                mapButtons.get(i).get(j).add(plant, gbc);
+                                mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+                            } else {
+                                throw new InvalidDeployException("Plant tidak dapat ditanam! slot sudah diisi");
+                            }
                 } else {
-                    if ((i == 2 || i == 3) && mapButtons.get(i).get(j).getComponents().length > 0) {
-                        mapButtons.get(i).get(j).add(plant, gbc);
-                        mapButtons.get(i).get(j).setComponentZOrder(mapButtons.get(i).get(j).getComponent(0), 1);
-                        mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+                    if(mapButtons.get(i).get(j).getComponents().length == 1){
+                        if ((i == 2 || i == 3) && mapButtons.get(i).get(j).getComponents().length > 0) {
+                            if(deck.getPlayablePlants().get(idplant).getClassPlant() != TangleKelp.class){
+                                mapButtons.get(i).get(j).add(plant, gbc);
+                            mapButtons.get(i).get(j).setComponentZOrder(mapButtons.get(i).get(j).getComponent(0), 1);
+                            mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+                            } else{
+                                throw new InvalidDeployException("Tangklekelp tidak dapat ditanam pada Lilypad!");
+                            }
+                            
+                        } else {
+                            throw new InvalidDeployException("Plant tidak dapat ditanam! Belum ada lilypad!");
+                        }
                     } else {
-                        throw new InvalidDeployException("Plant tidak dapat ditanam! Belum ada lilypad!");
+                        throw new InvalidDeployException("Plant tidak dapat ditanam! slot sudah diisi");
                     }
+                    
                 }
             
         } else {
