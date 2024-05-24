@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.util.*;
 import java.util.concurrent.Flow;
 
@@ -359,9 +360,10 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         zombie.setIcon(new ImageIcon(new ImageIcon(getZombieSourceImg(mainlawn, i, j)).getImage()
                 .getScaledInstance(40, 60, Image.SCALE_SMOOTH)));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0; // Overlay on the same cell as the button
-        gbc.anchor = GridBagConstraints.EAST;
+        int componentCount = mapButtons.get(i).get(j).getComponentCount();
+        gbc.gridx = componentCount;
+        gbc.gridy = 0; 
+        gbc.anchor = GridBagConstraints.CENTER;
         mapButtons.get(i).get(j).add(zombie, gbc);
         mapButtons.get(i).get(j).revalidate();
         mapButtons.get(i).get(j).repaint();
@@ -401,6 +403,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         plant.setVisible(true);
         plant.setIcon(new ImageIcon(img.getImage()
                 .getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
+        
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0; 
@@ -431,6 +434,41 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         } else {
             throw new InvalidDeployException("Plant tidak dapat ditanam di tile yang dipilih!");
         }  
+    }
+
+    private void applyAttacked(int i, int j) {
+        // Get the original image icon
+        
+        JLabel label = (JLabel) mapButtons.get(i).get(j).getComponent(0);
+        ImageIcon originalIcon = (ImageIcon) label.getIcon();
+        if (originalIcon == null) {
+            // No plant present, do nothing
+            return;
+        }
+
+        // Convert ImageIcon to Image
+        Image originalImage = originalIcon.getImage();
+
+        // Create a BufferedImage for manipulation
+        BufferedImage bufferedImage = new BufferedImage(
+                originalIcon.getIconWidth(),
+                originalIcon.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the original image onto the BufferedImage
+        Graphics2D g2d = bufferedImage.createGraphics();
+        g2d.drawImage(originalImage, 0, 0, null);
+        g2d.dispose();
+
+        // Apply a red filter to the BufferedImage
+        RescaleOp op = new RescaleOp(new float[] { 1.5f, 0, 0, 1 }, new float[] { 0, 0, 0, 0 }, null);
+        BufferedImage redImage = op.filter(bufferedImage, null);
+
+        // Create a new ImageIcon from the red-filtered BufferedImage
+        ImageIcon redIcon = new ImageIcon(redImage);
+
+        // Set the red-filtered ImageIcon to the label
+        label.setIcon(redIcon);
     }
 
     private void removePlantsOnMap(int i, int j) throws InvalidDeployException{
@@ -883,7 +921,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     count = 200;
                     rungame = true;
                     while(rungame){
-                        //System.out.println(Sun.getInstance().getTotalSun());
                                 SwingUtilities.invokeLater(() -> {
                                     for (int i = 1; i < deckButtons.size(); i++) {
                                         if (isPlantEnoughSun(deck.getPlayablePlants().get(i - 1).getCost())) {
@@ -902,13 +939,17 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                     numSun.setText(Integer.toString(Sun.getInstance().getTotalSun()));
                                     for (Runnable r : ThreadManager.getInstance().getList()) {
                                         if (r instanceof RunnableGameTimer) {
-                                            if (((RunnableGameTimer) r).getCurrentGameTime() != 0) {
+                                            if (((RunnableGameTimer) r).getCurrentGameTime() > 100) {
                                                 this.setTitle("Game "
                                                         + String.valueOf(((RunnableGameTimer) r).getCurrentGameTime())
-                                                        + " seconds remaining");
+                                                        + " seconds remaining - DAY TIME");
                                                 count = ((RunnableGameTimer) r).getCurrentGameTime();
-                                            } else {
-                                                this.setTitle("Game paused");
+                                            } else if (((RunnableGameTimer) r).getCurrentGameTime() < 100){
+                                                this.setTitle("Game "
+                                                        + String.valueOf(((RunnableGameTimer) r).getCurrentGameTime())
+                                                        + " seconds remaining - NIGHT TIME");
+                                            } else if((((RunnableGameTimer) r).getCurrentGameTime() == 0)){
+                                                this.setTitle("Gametime run out! ");
                                             }
 
                                         }
@@ -920,7 +961,10 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                     }
                                     for (int i = 0; i < mapButtons.size(); i++) {
                                         for (int j = 0; j < tempMapRow.size(); j++) {
-                                            if(!mainlawn.getLand().get(i).get(j).hasPlant()){
+                                            if(mainlawn.getLand().get(i).get(j).hasPlant()){
+                                                
+                                            }
+                                            if(!mainlawn.getLand().get(i).get(j).hasPlant() || mainlawn.getLand().get(i).get(j).getPlant().isDead()){
                                                 mapButtons.get(i).get(j).removeAll();
                                             }
                                             if (mainlawn.getLand().get(i).get(j).hasZombie()) {
@@ -966,12 +1010,14 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                                     mainlawn.getLand().get(i).get(j - 1).getPlant()
                                                                             .loseHealth(z.getAttackDamage());
                                                                     z.attack();
+                                                                    applyAttacked(i, j-1);
                                                                 }
                                                             } else {
                                                                 if (z.getAttackCooldown() == 0) {
                                                                     mainlawn.getLand().get(i).get(j - 1).getPlant()
                                                                             .loseHealth(z.getAttackDamage());
                                                                     z.attack();
+                                                                    applyAttacked(i, j - 1);
                                                                 }
                                                             }
                                                         } else {
@@ -1002,12 +1048,14 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                                 mainlawn.getLand().get(i).get(j - 1).getPlant()
                                                                         .loseHealth(z.getAttackDamage());
                                                                 z.attack();
+                                                                applyAttacked(i, j - 1);
                                                             }
                                                         } else {
                                                             if (z.getAttackCooldown() == 0) {
                                                                 mainlawn.getLand().get(i).get(j - 1).getPlant()
                                                                         .loseHealth(z.getAttackDamage());
                                                                 z.attack();
+                                                                applyAttacked(i, j - 1);
                                                             }
                                                         }
                                                     } else {
@@ -1015,6 +1063,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                             z.move(mainlawn.getLand().get(i).get(j),
                                                                     mainlawn.getLand().get(i).get(j - 1));
                                                             setZombies(i, j - 1);
+                                                            removeZombies(i, j);
                                                         }
                                                         // System.out.println("=== After ===");
                                                         if (!mainlawn.getLand().get(i).get(j).hasZombie()) {
@@ -1023,6 +1072,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                     }
                                                     if (z.isDead()) {
                                                         mainlawn.getLand().get(i).get(j).removeZombie(z);
+                                                        removeZombies(i, j);
                                                     }
                                                 }
                                             }

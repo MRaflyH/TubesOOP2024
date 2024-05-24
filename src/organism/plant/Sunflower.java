@@ -1,6 +1,4 @@
 package organism.plant;
-import java.util.Random;
-
 import sun.Sun;
 import thread.*;
 public class Sunflower extends Plant {
