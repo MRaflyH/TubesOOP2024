@@ -8,6 +8,8 @@ import javax.swing.border.LineBorder;
 import org.w3c.dom.events.MouseEvent;
 
 import java.lang.reflect.*;
+
+import organism.ExplosionInterface;
 import organism.plant.*;
 import thread.RunnableGameTimer;
 import thread.RunnableGenerateSun;
@@ -153,7 +155,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         SwitchToMenuFrame();
         setVisible(true);
     }
-
 
     public void SwitchToMenuFrame() {
         try {
@@ -1090,7 +1091,25 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                     if(z.HasBeenAttacked()){
                                                         applyAttacked(i, j);
                                                     }
-                                                    if (mainlawn.getLand().get(i).get(j).hasPlant() && j>=1) {
+                                                    if (z instanceof ExplosionInterface) {
+                                                        ExplosionInterface c = (ExplosionInterface) z;
+                                                        if (!c.hasExploded()) {
+                                                            c.explode(mainlawn, i, j);
+                                                        }
+                                                        if (!c.hasExploded()) {
+                                                            if (z.getMoveCooldown() == 0  && j>=1) {
+                                                                z.move(mainlawn.getLand().get(i).get(j),
+                                                                        mainlawn.getLand().get(i).get(j - 1));
+                                                                setZombies(i, j - 1);
+                                                                removeZombies(i, j);
+                                                            }
+                                                            // System.out.println("=== After ===");
+                                                            if (!mainlawn.getLand().get(i).get(j).hasZombie()) {
+                                                                removeZombies(i, j);
+                                                            }
+                                                        }
+                                                    }
+                                                    else if (mainlawn.getLand().get(i).get(j).hasPlant() && j>=1) {
                                                         if (z instanceof VaultingInterface) {
                                                             VaultingInterface v = (VaultingInterface) z;
                                                             // System.out.println(z.getName() + "is Vaulting Over " +
@@ -1113,7 +1132,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                                         .loseHealth(z.getAttackDamage());
                                                                 z.attack();
                                                                 applyAttacked(i, j);
-                                                            }
+                                                }
                                                         }
                                                     } 
                                                     else if (mainlawn.getLand().get(i).get(j - 1).hasPlant()  && j>=1) {
