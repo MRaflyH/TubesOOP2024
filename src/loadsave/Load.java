@@ -42,8 +42,8 @@ public class Load {
             System.out.println("Load Success");
             return true;
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("Load Failed");
+            // e.printStackTrace();
+            System.out.println("No Saved File Found!");
             return false;
         }
     }
