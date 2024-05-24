@@ -395,7 +395,27 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         deckButtons.set(i, deckButtonnew);
         deckButtons.get(i).revalidate();
     }
+    private JLabel previousPea;
+    private void setPea(String srcfile, int i, int j, JLabel previousPea){
+        if (previousPea != null) {
+            mapButtons.get(previousPea.getX()).get(previousPea.getY()).remove(previousPea);
+        }
 
+        JLabel pea = new JLabel();
+        ImageIcon img = new ImageIcon(srcfile);
+        pea.setBounds(0, 0, TILE_WIDTH, TILE_HEIGHT);
+        pea.setVisible(true);
+        pea.setIcon(new ImageIcon(img.getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mapButtons.get(i).get(j).add(pea, gbc);
+
+      
+        this.previousPea = pea;
+    }
     private void setPlants(String srcfile, int i, int j, int idplant) throws InvalidDeployException{
         JLabel plant = new JLabel();
         ImageIcon img = new ImageIcon(srcfile);
@@ -468,7 +488,22 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         ImageIcon redIcon = new ImageIcon(redImage);
 
         // Set the red-filtered ImageIcon to the label
-        label.setIcon(redIcon);
+       
+        new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                label.setIcon(redIcon);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+           
+                    e.printStackTrace();
+                }
+                label.setIcon(originalIcon);
+            }
+
+        }).start();
     }
 
     private void removePlantsOnMap(int i, int j) throws InvalidDeployException{
@@ -780,14 +815,13 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                     }
                                     for (int i = 0; i < 6; i++) {
                                         PlantVisitor visitor = new PlantVisitor(mainlawn, i);
-                                        Thread visitorThread = new Thread(visitor);
-                                        visitorThread.start();
+                                    Thread visitorThread = new Thread(visitor);
+                                    visitorThread.start();
+                                       
                                     }
                                     for (int i = 0; i < mapButtons.size(); i++) {
                                         for (int j = 0; j < tempMapRow.size(); j++) {
-                                            if(mainlawn.getLand().get(i).get(j).hasPlant()){
-                                                
-                                            }
+                                            
                                             if(!mainlawn.getLand().get(i).get(j).hasPlant() || mainlawn.getLand().get(i).get(j).getPlant().isDead()){
                                                 mapButtons.get(i).get(j).removeAll();
                                             }
@@ -800,6 +834,9 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                 for (Zombie z : currentZombies) {
                                                     z.setMoveCooldown(z.getMoveCooldown() - 1);
                                                     z.setAttackCooldown(z.getAttackCooldown() - 1);
+                                                    if(z.HasBeenAttacked()){
+                                                        applyAttacked(i, j);
+                                                    }
                                                     if (mainlawn.getLand().get(i).get(j).hasPlant()) {
                                                         if (z instanceof VaultingInterface) {
                                                             VaultingInterface v = (VaultingInterface) z;
@@ -834,6 +871,9 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                                     mainlawn.getLand().get(i).get(j - 1).getPlant()
                                                                             .loseHealth(z.getAttackDamage());
                                                                     z.attack();
+                                                                    while(!mainlawn.getLand().get(i).get(j - 1).getPlant().isDead()){
+                                                                        
+                                                                    }
                                                                     applyAttacked(i, j-1);
                                                                 }
                                                             } else {

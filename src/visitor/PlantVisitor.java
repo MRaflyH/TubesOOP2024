@@ -48,6 +48,7 @@ public class PlantVisitor extends Visitor implements Runnable{
                     plant.attack();
                     for (Zombie zombie : zombieTile.getZombies()) {
                         zombie.loseHealth(plant.getAttackDamage());
+                        zombie.setHasBeenAttacked();
                         if (zombie.isDead()) {
                             System.out.println("mati jombi "+zombie.getName());
                             zombieTile.removeZombie(zombie);
