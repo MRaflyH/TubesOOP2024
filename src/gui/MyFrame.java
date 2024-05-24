@@ -340,7 +340,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8 + 10, TILE_HEIGHT);
         inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 4);
         mapPanel = CreatePanel(75, 90, TILE_WIDTH * 11, TILE_HEIGHT * 6);
-        swapPanel = CreatePanel(70, 80 + TILE_HEIGHT * 4, TILE_HEIGHT * 6 + 50, SMALL_HEIGHT);
+        swapPanel = CreatePanel(70, 80 + TILE_HEIGHT * 4, TILE_WIDTH * 4 + SMALL_WIDTH * 2 + 50, SMALL_HEIGHT);
         helpPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
     }
 
@@ -451,8 +451,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         }
 
         // swap
-        swap1 = CreateButton(TILE_WIDTH * 2 + 20, 0, TILE_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "SWAP", swapPanel);
-        swap2 = CreateButton(TILE_WIDTH * 5 + 50, 0, TILE_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "SWAP", swapPanel);
+        swap1 = CreateButton(TILE_WIDTH * 2 + 20, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "D Swap", swapPanel);
+        swap2 = CreateButton(TILE_WIDTH * 4 + SMALL_WIDTH + 50, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "Inv Swap", swapPanel);
 
         swap11 = new JTextField();
         swap11.setBounds(0, 0, TILE_WIDTH,SMALL_HEIGHT);
@@ -461,10 +461,10 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         swap12.setBounds(TILE_WIDTH + 10, 0, TILE_WIDTH,SMALL_HEIGHT);
         swapPanel.add(swap12);
         swap21 = new JTextField();
-        swap21.setBounds(TILE_WIDTH * 3 + 30, 0, TILE_WIDTH,SMALL_HEIGHT);
+        swap21.setBounds(TILE_WIDTH * 2 + SMALL_WIDTH + 30, 0, TILE_WIDTH,SMALL_HEIGHT);
         swapPanel.add(swap21);
         swap22 = new JTextField();
-        swap22.setBounds(TILE_WIDTH * 4 + 40, 0, TILE_WIDTH,SMALL_HEIGHT);
+        swap22.setBounds(TILE_WIDTH * 3 + SMALL_WIDTH + 40, 0, TILE_WIDTH,SMALL_HEIGHT);
         swapPanel.add(swap22);
 
         // help
@@ -1221,9 +1221,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                   
                     try {
                         if(e.getSource() == deckButtons.get(i+1) && plantStorage.get(i) != -1){
-                                setDeckAvailable(i);
-                                SetButtonEnabled(plantStorage.get(i),
-                            getPlantButtonSourceImg(inventory, plantStorage.get(i)));
+                            setDeckAvailable(i);
+                            SetButtonEnabled(plantStorage.get(i), getPlantButtonSourceImg(inventory, plantStorage.get(i)));
                             plantStorage.put(i, -1);
                             removePlant("src/assets/decktile.png", i + 1);
                             inventory.removePlant(deck, getDeckAvalibility());
@@ -1303,8 +1302,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         }
         if (e.getSource() == swap2) {
             try {
-                Integer n1 = Integer.parseInt(swap21.getText());
-                Integer n2 = Integer.parseInt(swap22.getText());
+                Integer n1 = Integer.parseInt(swap21.getText()) - 1;
+                Integer n2 = Integer.parseInt(swap22.getText()) - 1;
 
                 inventory.swapPlant(inventory.getAllPlants(), n1, n2);
             }
