@@ -55,6 +55,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
      */
     
     JPanel menuPanel;
+    JPanel plantListPanel;
     JPanel mapPanel;
     JPanel deckPanel;
     JPanel inventoryPanel;
@@ -72,6 +73,9 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     JButton readyButton;
     JButton deckButton;
     JButton shovelButton;
+    JButton backMenuButton;
+    JButton nextArrowButton;
+    JButton previousArrowButton;
     JLabel numSun;
     boolean rungame;
 
@@ -141,13 +145,95 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
 
 
     public void SwitchToMenuFrame() {
+        try {
+            myImage = ImageIO.read(new File("src/assets/backgroundmainmenu.png"));
+            imagepan.setImage(myImage);
+            this.setContentPane(imagepan);
+        } catch (IOException e) {
 
+            e.printStackTrace();
+        }
         currentFrame = 0;
         menuPanel.setVisible(true);
         menuButton.setVisible(true);
 
     }
 
+    public void SwitchToPlantListFrame(){
+        try {
+            myImage = ImageIO.read(new File("src/assets/plantlist.png"));
+            imagepan.setImage(myImage);
+            setContentPane(imagepan);
+           
+        } catch (IOException e3) {
+
+            e3.printStackTrace();
+        }
+        currentFrame = 3;
+        plantListPanel.setVisible(true);
+        backMenuButton.setVisible(true);
+        nextArrowButton.setVisible(true);
+        previousArrowButton.setVisible(true);
+        menuButton.setVisible(false);
+
+    }
+
+    public void SwitchToPlantListFrame2() {
+        try {
+            myImage = ImageIO.read(new File("src/assets/plantlist2.png"));
+            imagepan.setImage(myImage);
+            setContentPane(imagepan);
+
+        } catch (IOException e3) {
+
+            e3.printStackTrace();
+        }
+        currentFrame = 4;
+        plantListPanel.setVisible(true);
+        backMenuButton.setVisible(true);
+        nextArrowButton.setVisible(true);
+        previousArrowButton.setVisible(true);
+        menuButton.setVisible(false);
+
+    }
+
+    public void SwitchToZombieListFrame() {
+        try {
+            myImage = ImageIO.read(new File("src/assets/zombielist.png"));
+            imagepan.setImage(myImage);
+            setContentPane(imagepan);
+
+        } catch (IOException e3) {
+
+            e3.printStackTrace();
+        }
+        currentFrame = 5;
+        plantListPanel.setVisible(true);
+        backMenuButton.setVisible(true);
+        nextArrowButton.setVisible(true);
+        previousArrowButton.setVisible(true);
+        menuButton.setVisible(false);
+
+    }
+    
+    public void SwitchToZombieListFrame2() {
+        try {
+            myImage = ImageIO.read(new File("src/assets/zombielist2.png"));
+            imagepan.setImage(myImage);
+            setContentPane(imagepan);
+
+        } catch (IOException e3) {
+
+            e3.printStackTrace();
+        }
+        currentFrame = 6;
+        plantListPanel.setVisible(true);
+        backMenuButton.setVisible(true);
+        nextArrowButton.setVisible(true);
+        previousArrowButton.setVisible(true);
+        menuButton.setVisible(false);
+
+    }
     public void SwitchToDeckFrame() {
         try{
             myImage = ImageIO.read(new File("src/assets/deckmenu.png"));
@@ -189,6 +275,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         if (currentFrame == 0) {
             menuPanel.setVisible(false);
             exitButton.setVisible(false);
+            backMenuButton.setVisible(false);
             }
         else if (currentFrame == 1) {
             menuButton.setVisible(false);
@@ -196,18 +283,29 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             inventoryPanel.setVisible(false);
             readyButton.setVisible(false); 
             shovelButton.setVisible(false);  
+            backMenuButton.setVisible(false);
         }
         else if (currentFrame == 2) {
             menuButton.setVisible(false);
             mapPanel.setVisible(false);
             deckPanel.setVisible(false);
             shovelButton.setVisible(false);  
+            backMenuButton.setVisible(false);
+        } else if(currentFrame == 3 || currentFrame == 4 || currentFrame == 5 || currentFrame == 6){
+            menuButton.setVisible(false);
+            mapPanel.setVisible(false);
+            deckPanel.setVisible(false);
+            backMenuButton.setVisible(false);
+            shovelButton.setVisible(false);
+            nextArrowButton.setVisible(false);
+            previousArrowButton.setVisible(false);
         }
 
     }
 
     public void SetPanels() {
         menuPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
+        plantListPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
         deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8 + 10, TILE_HEIGHT);
         inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 5);
         mapPanel = CreatePanel(75, 90, TILE_WIDTH * 11, TILE_HEIGHT * 6);
@@ -229,6 +327,15 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
        
         menuButton = CreateButton(530, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, null, 
                 new ImageIcon("src/assets/exitbutton.png"));
+        backMenuButton = CreateButton(0, 20, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, null,
+                new ImageIcon("src/assets/backbutton.png"));
+        nextArrowButton = CreateButton(480, 330, SMALL_WIDTH, SMALL_WIDTH, BUTTON_COLOR, null,
+                new ImageIcon("src/assets/nextarrow.png"));
+        previousArrowButton = CreateButton(
+                360, 
+                330, SMALL_WIDTH, SMALL_WIDTH, BUTTON_COLOR, null,
+                new ImageIcon("src/assets/previousarrow.png"));
+
         readyButton = CreateButton(60, 390, LARGE_WIDTH, LARGE_HEIGHT, BUTTON_COLOR, null,
                 new ImageIcon("src/assets/readybutton.png"));
 
@@ -1100,7 +1207,34 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         //         e4.printStackTrace();
         //     }
         // }
-        
+        if(e.getSource() == plantsListButton){
+            RemoveButtons();
+            SwitchToPlantListFrame();
+        }
+        if (e.getSource() == zombieListButton) {
+            RemoveButtons();
+            SwitchToZombieListFrame();
+        }
+        if(e.getSource() == nextArrowButton && currentFrame == 3){
+            RemoveButtons();
+            SwitchToPlantListFrame2();
+        }
+        if (e.getSource() == previousArrowButton && currentFrame == 4) {
+            RemoveButtons();
+            SwitchToPlantListFrame();
+        }
+        if (e.getSource() == nextArrowButton && currentFrame == 5) {
+            RemoveButtons();
+            SwitchToZombieListFrame2();
+        }
+        if (e.getSource() == previousArrowButton && currentFrame == 6) {
+            RemoveButtons();
+            SwitchToZombieListFrame();
+        }
+        if (e.getSource() == backMenuButton) {
+            RemoveButtons();
+            SwitchToMenuFrame();
+        }
         if(e.getSource() == startButton) {
             RemoveButtons();
             SwitchToDeckFrame();
