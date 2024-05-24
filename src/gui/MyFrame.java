@@ -1090,7 +1090,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                     if(z.HasBeenAttacked()){
                                                         applyAttacked(i, j);
                                                     }
-                                                    if (mainlawn.getLand().get(i).get(j).hasPlant()) {
+                                                    if (mainlawn.getLand().get(i).get(j).hasPlant() && j>=1) {
                                                         if (z instanceof VaultingInterface) {
                                                             VaultingInterface v = (VaultingInterface) z;
                                                             // System.out.println(z.getName() + "is Vaulting Over " +
@@ -1116,7 +1116,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                             }
                                                         }
                                                     } 
-                                                    else if (mainlawn.getLand().get(i).get(j - 1).hasPlant()) {
+                                                    else if (mainlawn.getLand().get(i).get(j - 1).hasPlant()  && j>=1) {
                                                         if (z instanceof VaultingInterface) {
                                                             VaultingInterface v = (VaultingInterface) z;
                                                             // System.out.println(z.getName() + "is Vaulting Over " +
@@ -1143,7 +1143,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                             }
                                                         }
                                                     } else {
-                                                        if (z.getMoveCooldown() == 0) {
+                                                        if (z.getMoveCooldown() == 0  && j>=1) {
                                                             z.move(mainlawn.getLand().get(i).get(j),
                                                                     mainlawn.getLand().get(i).get(j - 1));
                                                             setZombies(i, j - 1);
