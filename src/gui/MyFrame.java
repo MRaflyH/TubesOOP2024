@@ -1218,6 +1218,10 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 for (Integer j : plantStorage.keySet()) {
                     System.out.print(j + ": " + plantStorage.get(j) + ", ");
                 }
+                System.out.println();
+                for (PlantCard j : deck.getPlayablePlants()) {
+                    System.out.print(j + ", ");
+                }
                 System.out.println("\n");
 
             }
@@ -1235,7 +1239,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                             SetButtonEnabled(plantStorage.get(i), getPlantButtonSourceImg(inventory, plantStorage.get(i)));
                             plantStorage.put(i, -1);
                             removePlant("src/assets/decktile.png", i + 1);
-                            inventory.removePlant(deck, getDeckAvalibility());
+                            inventory.removePlant(deck, i);
                             readyButton.setEnabled(false);
 
                             for (Integer j : deckAvailability) {
@@ -1245,7 +1249,11 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                             for (Integer j : plantStorage.keySet()) {
                                 System.out.print(j + ": " + plantStorage.get(j) + ", ");
                             }
-                            System.out.println("\n");            
+                            System.out.println();
+                            for (PlantCard j : deck.getPlayablePlants()) {
+                                System.out.print(j + ", ");
+                            }
+                            System.out.println("\n");
                         } 
 
                     } catch (InvalidInventoryException e1) {
@@ -1311,27 +1319,33 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         }
         if (e.getSource() == swap1) {
             try {
-                Integer n1 = Integer.parseInt(swap11.getText());
-                Integer n2 = Integer.parseInt(swap12.getText());
+                Integer n1 = Integer.parseInt(swap11.getText()) -1;
+                Integer n2 = Integer.parseInt(swap12.getText()) -1;
 
                 System.out.printf("%d %d\n", n1, n2);
 
-                for (Integer i : deckAvailability) {
-                    System.out.print(i + " ");
-                }
-                System.out.println();
-                for (Integer i : plantStorage.keySet()) {
-                    System.out.print(i + ": " + plantStorage.get(i) + ", ");
-                }
-                System.out.println();
-
-                if (deckAvailability.get(n1-1) == 0 && deckAvailability.get(n2-1) == 0) {
+                if (deckAvailability.get(n1) == 0 && deckAvailability.get(n2) == 0) {
                     int temp = plantStorage.get(n1);
                     plantStorage.put(n1, plantStorage.get(n2));
                     plantStorage.put(n2, temp);
-                    deckButtons.get(n1-1).revalidate();
-                    deckButtons.get(n2-1).revalidate();
+                    inventory.swapPlant(deck.getPlayablePlants(), n1, n2);
+                    deckButtons.get(n1).revalidate();
+                    deckButtons.get(n2).revalidate();
                 }
+
+                for (Integer j : deckAvailability) {
+                    System.out.print(j + " ");
+                }
+                System.out.println();
+                for (Integer j : plantStorage.keySet()) {
+                    System.out.print(j + ": " + plantStorage.get(j) + ", ");
+                }
+                System.out.println();
+                for (PlantCard j : deck.getPlayablePlants()) {
+                    System.out.print(j + ", ");
+                }
+                System.out.println("\n");
+
             }
             catch (Exception err) {
             }
