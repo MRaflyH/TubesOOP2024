@@ -1475,14 +1475,15 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             new ExitFrame();
             dispose();
         } else if(e.getSource() == menuButton){
-            if (currentFrame == 0) {
-                dispose();
-                System.exit(0);    
-            }
             if (currentFrame == 1) {
                 RemoveButtons();
                 SwitchToMenuFrame();
             }
+            else {
+                dispose();
+                System.exit(0);    
+            }
+
         }
         if (e.getSource() == readyButton) {
             if(deck.getPlayablePlants().size() == deck.getMaxPlants()){
