@@ -53,12 +53,10 @@ public abstract class Tile implements Serializable {
                 iterzombie.remove();
             }
         }
-        /*if (zombies.contains(zombie)) {
-            zombies.remove(zombie);
-        }
-        else {
-            // exception
-        }*/
+    }
+
+    public void removeAllZombie() {
+        zombies.clear();
     }
 
     public void moveZombie(Zombie zombie, Tile tile) {

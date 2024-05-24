@@ -10,10 +10,14 @@ import organism.zombie.*;
 
 public class PlantVisitor extends Visitor implements Runnable{
     private ArrayList<Tile> row;
+    private int idxrow;
+    private Lawn lawn;
     
     public PlantVisitor(Lawn lawn, int idxrow) {
         super(lawn);
+        this.lawn = lawn;
         this.row = lawn.getLand().get(idxrow);
+        this.idxrow = idxrow;
     }
     public void run() {
         try {
@@ -40,20 +44,52 @@ public class PlantVisitor extends Visitor implements Runnable{
                 plant = row.get(i).getPlant();
                 plant.updateState();
                 // check jika bisa attack
-                if (zombieTile.hasZombie() && 
-                plant.getAttackCooldown() <= 0 &&
-                (plant.getRange() == -1 || plant.getRange() >= distance)) {
-                    // attack dan kill zombie
-                    System.out.println("duar");
-                    plant.attack();
-                    for (Zombie zombie : zombieTile.getZombies()) {
-                        zombie.loseHealth(plant.getAttackDamage());
-                        zombie.setHasBeenAttacked();
-                        if (zombie.isDead()) {
-                            System.out.println("mati jombi "+zombie.getName());
-                            zombieTile.removeZombie(zombie);
-                            System.out.println(plant.getName()+" berhasil bunuh");
-                            if (plant instanceof Squash || plant instanceof TangleKelp) {
+                if (!(plant instanceof CherryBomb)) {
+                    if (zombieTile.hasZombie() && 
+                    plant.getAttackCooldown() <= 0 &&
+                    (plant.getRange() == -1 || plant.getRange() >= distance)) {
+                        // attack dan kill zombie
+                        System.out.println("duar");
+                        plant.attack();
+                        for (Zombie zombie : zombieTile.getZombies()) {
+                            zombie.loseHealth(plant.getAttackDamage());
+                            zombie.setHasBeenAttacked();
+                            if (zombie.isDead()) {
+                                System.out.println("mati jombi "+zombie.getName());
+                                zombieTile.removeZombie(zombie);
+                                System.out.println(plant.getName()+" berhasil bunuh");
+                                if (plant instanceof Squash || plant instanceof TangleKelp) {
+                                    plant.loseHealth(100);
+                                    System.out.println("kamikaze");
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (plant.getAttackCooldown() <= 0) {
+                        if (idxrow == 1) {
+
+                        } 
+                        else if (idxrow == 4) {
+                            
+                        } 
+                        else {
+                            if (lawn.getLand().get(idxrow-1).get(i).hasZombie() || lawn.getLand().get(idxrow+1).get(i).hasZombie()
+                            || lawn.getLand().get(idxrow-1).get(i+1).hasZombie() || lawn.getLand().get(idxrow+1).get(i+1).hasZombie()
+                            || lawn.getLand().get(idxrow-1).get(i-1).hasZombie() || lawn.getLand().get(idxrow+1).get(i-1).hasZombie()
+                            || row.get(i+1).hasZombie() || row.get(i-1).hasZombie() || row.get(i).hasZombie()) {
+                                // attack dan kill zombie
+                                System.out.println("duar");
+                                lawn.getLand().get(idxrow-1).get(i).removeAllZombie();
+                                lawn.getLand().get(idxrow+1).get(i).removeAllZombie();
+                                lawn.getLand().get(idxrow-1).get(i+1).removeAllZombie();
+                                lawn.getLand().get(idxrow+1).get(i+1).removeAllZombie();
+                                lawn.getLand().get(idxrow-1).get(i-1).removeAllZombie();
+                                lawn.getLand().get(idxrow+1).get(i-1).removeAllZombie();
+                                row.get(i+1).removeAllZombie();
+                                row.get(i-1).removeAllZombie();
+                                row.get(i).removeAllZombie();
                                 plant.loseHealth(100);
                                 System.out.println("kamikaze");
                             }
