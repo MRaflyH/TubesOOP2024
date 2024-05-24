@@ -73,6 +73,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     JLabel helpText;
     JLabel numSun;
     boolean rungame;
+    boolean winFlag;
 
     JButton swap1;
     JButton swap2;
@@ -97,9 +98,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     static final Color WATER_COLOR = new Color(0x59CBE8);
     static final Color BORDER_DECK_COLOR = new Color(0x855200);
     BufferedImage myImage;
-
-    // for saving purposes
-    // Load.LoadHolder Load.LoadHolder = new Load.LoadHolder();
   
     class ImagePanel extends JComponent implements Serializable {
     private Image image;
@@ -1000,6 +998,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             new Thread(()-> {
                 count = 200;
                 rungame = true;
+                winFlag = true;
                 try{
                     while(rungame){
                                 SwingUtilities.invokeLater(() -> {
@@ -1055,6 +1054,14 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                 ArrayList<Zombie> currentZombies = new ArrayList<>(
                                                         mainlawn.getLand().get(i).get(j).getZombies());
                                                 for (Zombie z : currentZombies) {
+                                                    if (z.isSlow() && (z.getcurrentSlow()-1 == 0)){
+                                                        System.out.println("Zombie: " + z.getName() + " is slow, CD: " + z.getMoveCooldown());
+                                                        z.reduceCurrentSlow(1);
+                                                        z.setMoveCooldown(z.getMoveCooldown()/2);
+                                                    } else if (z.isSlow()){
+                                                        z.reduceCurrentSlow(1);
+                                                    }
+                                                    // if (z.getcurrentSlow() == 0) z.setMoveCooldown(z.getMoveCooldown()/2);
                                                     z.setMoveCooldown(z.getMoveCooldown() - 1);
                                                     z.setAttackCooldown(z.getAttackCooldown() - 1);
                                                     if(z.HasBeenAttacked()){
@@ -1399,45 +1406,45 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 ThreadManager.getInstance().addThread(runzombie);
                 ThreadManager.getInstance().addThread(Load.LoadHolder.genSun);
                 ThreadManager.getInstance().addThread(Load.LoadHolder.gameTimer);
-            } else {
-                System.out.println("No Saved File Found!");
-                System.out.println("Start a new game");
-            }
+                System.out.println("Threads in manager (load): " + ThreadManager.getInstance().getList().size());
+                System.out.println("Game timer in manager (load): " + ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime());
+                ThreadManager.getInstance().startAllThreads();
 
-            System.out.println("Threads in manager (load): " + ThreadManager.getInstance().getList().size());
-            System.out.println("Game timer in manager (load): " + ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime());
-            ThreadManager.getInstance().startAllThreads();
-
-            for (int i = 0; i < deck.getPlayablePlants().size(); i++){
-                setPlants(false, getPlantButtonSourceImg(deck, i), getDeckAvalibility() + 1);
-                plantStorage.put(getDeckAvalibility(), i);
-                setDeckNotAvailable(getDeckAvalibility());
-                deckButtons.get(getDeckAvalibility()).revalidate();
-                if (deck.getPlayablePlants().get(i).getPlantingCooldown() != deck.getPlayablePlants().get(i).getPlantingSpeed()){
-                    SetButtonDisabled(i, "src/assets/decktiledisabled.png");
-                    startPlantCooldown(deck, i+1);
+                for (int i = 0; i < deck.getPlayablePlants().size(); i++){
+                    setPlants(false, getPlantButtonSourceImg(deck, i), getDeckAvalibility() + 1);
+                    plantStorage.put(getDeckAvalibility(), i);
+                    setDeckNotAvailable(getDeckAvalibility());
+                    deckButtons.get(getDeckAvalibility()).revalidate();
+                    if (deck.getPlayablePlants().get(i).getPlantingCooldown() != deck.getPlayablePlants().get(i).getPlantingSpeed()){
+                        SetButtonDisabled(i, "src/assets/decktiledisabled.png");
+                        startPlantCooldown(deck, i+1);
+                    }
                 }
-            }
 
-            for (int i = 0; i < mainlawn.getLand().size(); i++){
-                for (int j = 0; j < mainlawn.getLand().get(0).size(); j++){
-                    if (mainlawn.getLand().get(i).get(j).hasPlant()){
-                        Plant p = mainlawn.getLand().get(i).get(j).getPlant();
-                        String pc = p.getClass().getSimpleName();
-                        if (pc.equals("Lilypad") && ((Lilypad)p).hasPlant()){
-                            setPlants(getPlantSourceImg(pc), i, j);
-                            setPlants(getPlantSourceImg(((Lilypad)p).getPlant().getClass().getSimpleName()), i, j);
-                        } else {
-                            setPlants(getPlantSourceImg(pc), i, j);
+                for (int i = 0; i < mainlawn.getLand().size(); i++){
+                    for (int j = 0; j < mainlawn.getLand().get(0).size(); j++){
+                        if (mainlawn.getLand().get(i).get(j).hasPlant()){
+                            Plant p = mainlawn.getLand().get(i).get(j).getPlant();
+                            String pc = p.getClass().getSimpleName();
+                            if (pc.equals("Lilypad") && ((Lilypad)p).hasPlant()){
+                                setPlants(getPlantSourceImg(pc), i, j);
+                                setPlants(getPlantSourceImg(((Lilypad)p).getPlant().getClass().getSimpleName()), i, j);
+                            } else {
+                                setPlants(getPlantSourceImg(pc), i, j);
+                            }
                         }
                     }
                 }
+
+                RemoveButtons();
+                SwitchToGameFrame();
+
+                startGame();
+            } else {
+                // System.out.println("No Saved File Found!");
+                System.out.println("Please start a new game");
             }
 
-            RemoveButtons();
-            SwitchToGameFrame();
-
-            startGame();
         }
         if(e.getSource() == menuButton && currentFrame == 2) {
             Save.SaveHolder.lawn = mainlawn;

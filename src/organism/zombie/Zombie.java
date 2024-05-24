@@ -27,6 +27,7 @@ public abstract class Zombie extends Organism {
     public void move(Tile prev, Tile next) {
         prev.moveZombie(this, next);
         moveCooldown = 10;
+        // isSlow() ? moveCooldown = 20 : moveCooldown = 10;
     }
 
     public int getMoveCooldown() {
@@ -44,6 +45,7 @@ public abstract class Zombie extends Organism {
 
     public void setCurrentSlow(int slowValue) {
         currentSlow = slowValue;
+        moveCooldown *= 2;
     }
 
     public void reduceCurrentSlow(int reduceValue) {
