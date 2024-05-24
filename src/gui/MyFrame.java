@@ -1,13 +1,8 @@
 package gui;
 import javax.imageio.ImageIO;
-import javax.management.timer.Timer;
-import javax.sound.sampled.Line;
+
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 
-import org.w3c.dom.events.MouseEvent;
-
-import java.lang.reflect.*;
 
 import organism.ExplosionInterface;
 import organism.plant.*;
@@ -19,19 +14,14 @@ import thread.ThreadManager;
 import sun.Sun;
 import exception.*;
 import grid.*;
-
 import organism.zombie.*;
-
 import loadsave.*;
 import java.io.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.util.*;
-import java.util.concurrent.Flow;
 
 import java.awt.*;
 
@@ -39,6 +29,7 @@ import java.awt.*;
 public class MyFrame extends JFrame implements ActionListener, Serializable {
     private int currentFrame;
     private int count;
+    private boolean gamelose = false;
     private ArrayList<Integer> deckAvailability = new ArrayList<Integer>();
     private HashMap<Integer, Integer> plantStorage = new HashMap<Integer, Integer>();
     Thread GUIThread;
@@ -84,6 +75,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     JLabel helpText;
     JLabel numSun;
     boolean rungame;
+    boolean winFlag;
 
     JButton swap1;
     JButton swap2;
@@ -108,9 +100,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     static final Color WATER_COLOR = new Color(0x59CBE8);
     static final Color BORDER_DECK_COLOR = new Color(0x855200);
     BufferedImage myImage;
-
-    // for saving purposes
-    // Load.LoadHolder Load.LoadHolder = new Load.LoadHolder();
   
     class ImagePanel extends JComponent implements Serializable {
     private Image image;
@@ -452,8 +441,9 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         }
 
         // swap
-        swap1 = CreateButton(TILE_WIDTH * 2 + 20, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "D Swap", swapPanel);
-        swap2 = CreateButton(TILE_WIDTH * 4 + SMALL_WIDTH + 50, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "Inv Swap", swapPanel);
+        swap1 = CreateButton(TILE_WIDTH * 2 + 20, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "Deck Swap", swapPanel, new ImageIcon("src/assets/swapdeck.png"));
+        swap2 = CreateButton(TILE_WIDTH * 4 + SMALL_WIDTH + 50, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "Inv Swap", swapPanel, 
+                new ImageIcon("src/assets/swapinventory.png"));
 
         swap11 = new JTextField();
         swap11.setBounds(0, 0, TILE_WIDTH,SMALL_HEIGHT);
@@ -548,7 +538,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
        
         if(onInventory){
             JButton inventorybuttonnew = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR,
-                            null, inventoryPanel, new ImageIcon(getPlantButtonSourceImg(inventory, i)));
+                            null, inventoryPanel, new ImageIcon(srcfile));
             inventorybuttonnew.setVisible(true);
             inventoryButtons.get(i).setVisible(false);
             inventoryButtons.set(i, inventorybuttonnew);
@@ -571,27 +561,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         deckButtons.get(i).setVisible(false);
         deckButtons.set(i, deckButtonnew);
         deckButtons.get(i).revalidate();
-    }
-    private JLabel previousPea;
-    private void setPea(String srcfile, int i, int j, JLabel previousPea){
-        if (previousPea != null) {
-            mapButtons.get(previousPea.getX()).get(previousPea.getY()).remove(previousPea);
-        }
-
-        JLabel pea = new JLabel();
-        ImageIcon img = new ImageIcon(srcfile);
-        pea.setBounds(0, 0, TILE_WIDTH, TILE_HEIGHT);
-        pea.setVisible(true);
-        pea.setIcon(new ImageIcon(img.getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-        mapButtons.get(i).get(j).add(pea, gbc);
-
-      
-        this.previousPea = pea;
     }
 
     // original version
@@ -1031,6 +1000,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             new Thread(()-> {
                 count = 200;
                 rungame = true;
+                winFlag = true;
                 try{
                     while(rungame){
                                 SwingUtilities.invokeLater(() -> {
@@ -1072,7 +1042,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                         Thread visitorThread = new Thread(visitor);
                                         visitorThread.start();
                                     }
-                                    // visitorThread.interrupt();
+                                  
                                     for (int i = 0; i < mapButtons.size(); i++) {
                                         for (int j = 0; j < tempMapRow.size(); j++) {
                                             
@@ -1081,11 +1051,19 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                             }
                                             if (mainlawn.getLand().get(i).get(j).hasZombie()) {
                                                 setZombies(i, j);
-                                                // taro code moveZombies disini -Vald
+                                    
                                                 mapButtons.get(i).get(j).revalidate();
                                                 ArrayList<Zombie> currentZombies = new ArrayList<>(
                                                         mainlawn.getLand().get(i).get(j).getZombies());
                                                 for (Zombie z : currentZombies) {
+                                                    if (z.isSlow() && (z.getcurrentSlow()-1 == 0)){
+                                                        System.out.println("Zombie: " + z.getName() + " is slow, CD: " + z.getMoveCooldown());
+                                                        z.reduceCurrentSlow(1);
+                                                        z.setMoveCooldown(z.getMoveCooldown()/2);
+                                                    } else if (z.isSlow()){
+                                                        z.reduceCurrentSlow(1);
+                                                    }
+                                                    // if (z.getcurrentSlow() == 0) z.setMoveCooldown(z.getMoveCooldown()/2);
                                                     z.setMoveCooldown(z.getMoveCooldown() - 1);
                                                     z.setAttackCooldown(z.getAttackCooldown() - 1);
                                                     if(z.HasBeenAttacked()){
@@ -1112,8 +1090,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                     else if (mainlawn.getLand().get(i).get(j).hasPlant() && j>=1) {
                                                         if (z instanceof VaultingInterface) {
                                                             VaultingInterface v = (VaultingInterface) z;
-                                                            // System.out.println(z.getName() + "is Vaulting Over " +
-                                                            // mainlawn.getLand().get(i).get(j-1).getPlant().getName());
+                                                        
                                                             if (!v.getHasVaulted()) {
                                                                 System.out.println(z.getName() + " vaulting 2 tile");
                                                                 v.vault(mainlawn.getLand().get(i).get(j),
@@ -1173,10 +1150,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                             removeZombies(i, j);
                                                         }
                                                     }
-                                                    if (z.isDead()) {
-                                                        mainlawn.getLand().get(i).get(j).removeZombie(z);
-                                                        removeZombies(i, j);
-                                                    }
                                                 }
                                             }
                                         }
@@ -1191,24 +1164,30 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                 // Checking for endgame
                                 for (int i = 0; i < 6; i++) {
                                     if (mainlawn.getLand().get(i).get(0).hasZombie()) {
-                                        break;
+                                        gamelose = true;
+                                        rungame = false;
+                                        new AfterGameFrame(false);
+                                        dispose();
                                     }
                                 }
                                 if (count <= 0) {
                                     rungame = (runzombie.getZombieCount() > 0);
+                                    
                                 }
                                 if (ThreadManager.getInstance().getList().size() <= 0){
-                                    break;
+                                    rungame = false;
                                 }
                                 count--;
                     }
+                    if(!gamelose){
+                            new AfterGameFrame(true);
+                            dispose();
+                    }
+                    
                     System.out.println("Game ended normally");
                     ThreadManager.getInstance().stopAllThreads();
-                        // System.out.println("Rungame after and: " + rungame);
-                        // System.out.println("=====================");
                 } catch (Exception e) {
                     System.out.println("GUIThread masuk exception");
-                    // GUIThread.interrupt();
                 }
             });
         GUIThread.start();
@@ -1336,68 +1315,46 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         }
         if (e.getSource() == swap1) {
             try {
-                Integer n1 = Integer.parseInt(swap11.getText()) -1;
-                Integer n2 = Integer.parseInt(swap12.getText()) -1;
+                Integer n1 = Integer.parseInt(swap11.getText())-1;
+                Integer n2 = Integer.parseInt(swap12.getText())-1;
 
                 // System.out.printf("%d %d\n", n1, n2);
-
-                if (deckAvailability.get(n1) == 0 && deckAvailability.get(n2) == 0) {
+                if (deckAvailability.get(n1) == 0 && deckAvailability.get(n2) == 0 && n1 < 6 && n2 < 6) {
                     int temp = plantStorage.get(n1);
                     plantStorage.put(n1, plantStorage.get(n2));
                     plantStorage.put(n2, temp);
                     inventory.swapPlant(deck.getPlayablePlants(), n1, n2);
-                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n1)), n1);
-                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n2)), n2);
+                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n1)), n1+1);
+                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n2)), n2+1);
+                } else {
+                    throw new InvalidInventoryException("Index kelebihan!");
                 }
 
-                // for (Integer j : deckAvailability) {
-                //     System.out.print(j + " ");
-                // }
-                // System.out.println();
-                // for (Integer j : plantStorage.keySet()) {
-                //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
-                // }
-                // System.out.println();
-                // for (PlantCard j : deck.getPlayablePlants()) {
-                //     System.out.print(j + ", ");
-                // }
-                // System.out.println("\n");
-
             }
-            catch (Exception err) {
+            catch (InvalidInventoryException e1) {
+                System.out.println(e1.getMessage());
             }
         }
         if (e.getSource() == swap2) {
             try {
                 Integer n1 = Integer.parseInt(swap21.getText()) - 1;
                 Integer n2 = Integer.parseInt(swap22.getText()) - 1;
-
+                boolean deckempty = false;
                 // inventory.swapPlant(inventory.getAllPlants(), n1, n2);
-
-                if (!plantStorage.containsValue(n1) && !plantStorage.containsValue(n2)) {
-                    inventory.swapPlant(inventory.getAllPlants(), n1, n2);
-                    setPlants(true, getPlantButtonSourceImg(inventory, n1+1), n1);
-                    setPlants(true, getPlantButtonSourceImg(inventory, n2+1), n2);
+                for(int i = 0; i < plantStorage.size(); i++){
+                    if(plantStorage.get(i) != -1){
+                        deckempty = true;
+                        break;
+                    }
                 }
-
-                // for (Integer j : deckAvailability) {
-                //     System.out.print(j + " ");
-                // }
-                // System.out.println();
-                // for (Integer j : plantStorage.keySet()) {
-                //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
-                // }
-                // System.out.println();
-                // for (PlantCard j : deck.getPlayablePlants()) {
-                //     System.out.print(j + ", ");
-                // }
-                // System.out.println();
-                // for (PlantCard j : inventory.getAllPlants()) {
-                //     System.out.print(j + ", ");
-                // }
-                // System.out.println("\n");
+                if (!deckempty) {
+                    inventory.swapPlant(inventory.getAllPlants(), n1, n2);
+                    setPlants(true, getPlantButtonSourceImg(inventory, n1), n1);
+                    setPlants(true, getPlantButtonSourceImg(inventory, n2), n2);
+                }
             }
-            catch (Exception err) {
+            catch (InvalidInventoryException e1) {
+                System.out.println(e1.getMessage());
             }
         }
         if(e.getSource() == plantsListButton){
@@ -1446,45 +1403,45 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 ThreadManager.getInstance().addThread(runzombie);
                 ThreadManager.getInstance().addThread(Load.LoadHolder.genSun);
                 ThreadManager.getInstance().addThread(Load.LoadHolder.gameTimer);
-            } else {
-                System.out.println("No Saved File Found!");
-                System.out.println("Start a new game");
-            }
+                System.out.println("Threads in manager (load): " + ThreadManager.getInstance().getList().size());
+                System.out.println("Game timer in manager (load): " + ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime());
+                ThreadManager.getInstance().startAllThreads();
 
-            System.out.println("Threads in manager (load): " + ThreadManager.getInstance().getList().size());
-            System.out.println("Game timer in manager (load): " + ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime());
-            ThreadManager.getInstance().startAllThreads();
-
-            for (int i = 0; i < deck.getPlayablePlants().size(); i++){
-                setPlants(false, getPlantButtonSourceImg(deck, i), getDeckAvalibility() + 1);
-                plantStorage.put(getDeckAvalibility(), i);
-                setDeckNotAvailable(getDeckAvalibility());
-                deckButtons.get(getDeckAvalibility()).revalidate();
-                if (deck.getPlayablePlants().get(i).getPlantingCooldown() != deck.getPlayablePlants().get(i).getPlantingSpeed()){
-                    SetButtonDisabled(i, "src/assets/decktiledisabled.png");
-                    startPlantCooldown(deck, i+1);
+                for (int i = 0; i < deck.getPlayablePlants().size(); i++){
+                    setPlants(false, getPlantButtonSourceImg(deck, i), getDeckAvalibility() + 1);
+                    plantStorage.put(getDeckAvalibility(), i);
+                    setDeckNotAvailable(getDeckAvalibility());
+                    deckButtons.get(getDeckAvalibility()).revalidate();
+                    if (deck.getPlayablePlants().get(i).getPlantingCooldown() != deck.getPlayablePlants().get(i).getPlantingSpeed()){
+                        SetButtonDisabled(i, "src/assets/decktiledisabled.png");
+                        startPlantCooldown(deck, i+1);
+                    }
                 }
-            }
 
-            for (int i = 0; i < mainlawn.getLand().size(); i++){
-                for (int j = 0; j < mainlawn.getLand().get(0).size(); j++){
-                    if (mainlawn.getLand().get(i).get(j).hasPlant()){
-                        Plant p = mainlawn.getLand().get(i).get(j).getPlant();
-                        String pc = p.getClass().getSimpleName();
-                        if (pc.equals("Lilypad") && ((Lilypad)p).hasPlant()){
-                            setPlants(getPlantSourceImg(pc), i, j);
-                            setPlants(getPlantSourceImg(((Lilypad)p).getPlant().getClass().getSimpleName()), i, j);
-                        } else {
-                            setPlants(getPlantSourceImg(pc), i, j);
+                for (int i = 0; i < mainlawn.getLand().size(); i++){
+                    for (int j = 0; j < mainlawn.getLand().get(0).size(); j++){
+                        if (mainlawn.getLand().get(i).get(j).hasPlant()){
+                            Plant p = mainlawn.getLand().get(i).get(j).getPlant();
+                            String pc = p.getClass().getSimpleName();
+                            if (pc.equals("Lilypad") && ((Lilypad)p).hasPlant()){
+                                setPlants(getPlantSourceImg(pc), i, j);
+                                setPlants(getPlantSourceImg(((Lilypad)p).getPlant().getClass().getSimpleName()), i, j);
+                            } else {
+                                setPlants(getPlantSourceImg(pc), i, j);
+                            }
                         }
                     }
                 }
+
+                RemoveButtons();
+                SwitchToGameFrame();
+
+                startGame();
+            } else {
+                // System.out.println("No Saved File Found!");
+                System.out.println("Please start a new game");
             }
 
-            RemoveButtons();
-            SwitchToGameFrame();
-
-            startGame();
         }
         if(e.getSource() == menuButton && currentFrame == 2) {
             Save.SaveHolder.lawn = mainlawn;
