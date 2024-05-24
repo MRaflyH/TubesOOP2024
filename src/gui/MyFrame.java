@@ -241,7 +241,52 @@ public class MyFrame extends JFrame implements ActionListener {
 =======
 
     }
+<<<<<<< Updated upstream
     public void setZombies(int i, int j){
+=======
+    
+    private String getZombieSourceImg(Lawn mainlawn, int i, int j) {
+        String source = "";
+        for(int k = 0; k < mainlawn.getLand().get(i).get(j).getZombies().size(); k++){
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof NormalZombie) {
+                source = "src/assets/normalzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof ConeheadZombie) {
+                source = "src/assets/coneheadzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof BucketheadZombie) {
+                source = "src/assets/bucketheadzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof NewspaperZombie) {
+                source = "src/assets/newspaperzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof PoleVaultingZombie) {
+                source = "src/assets/polevaultingzombie.png";
+            }
+
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof JackInTheBoxZombie) {
+                source = "src/assets/jackintheboxzombie.png";
+            }
+
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof SnorkelZombie) {
+                source = "src/assets/snorkelingzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof DolphinRiderZombie) {
+                source = "src/assets/dolphinriderzombie.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof Gargantuar) {
+                source = "src/assets/gargantuar.png";
+            }
+            if (mainlawn.getLand().get(i).get(j).getZombies().get(k) instanceof DuckyTubeZombie) {
+                source = "src/assets/duckytubezombie.png";
+            }
+            
+            
+        }
+        return source;
+    }
+    private void setZombies(int i, int j){
+>>>>>>> Stashed changes
         JLabel zombie = new JLabel();
         zombie.setBounds(TILE_WIDTH, TILE_HEIGHT, 18, 30);
         zombie.setHorizontalTextPosition(JLabel.CENTER);
@@ -670,6 +715,11 @@ public class MyFrame extends JFrame implements ActionListener {
                                 for (int i = 0; i < 6; i++) {
                                     if (mainlawn.getLand().get(i).get(0).hasZombie()) {
                                         rungame = false;
+<<<<<<< Updated upstream
+=======
+                                        
+                                        break;
+>>>>>>> Stashed changes
                                     }
                                 }
                                 // System.out.println("Checking endgame");
@@ -680,6 +730,18 @@ public class MyFrame extends JFrame implements ActionListener {
                                 }
                                 count--;
                     }
+<<<<<<< Updated upstream
+=======
+                    if(!gamelose){
+                            new AfterGameFrame(true);
+                            dispose();
+                    } else {
+                            new AfterGameFrame(false);
+                            dispose();
+                    }
+                    
+                    System.out.println("Game ended normally");
+>>>>>>> Stashed changes
                     ThreadManager.getInstance().stopAllThreads();
                         // System.out.println("Rungame after and: " + rungame);
                         // System.out.println("=====================");
