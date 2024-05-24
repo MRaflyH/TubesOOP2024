@@ -26,7 +26,7 @@ public class Load {
     }
 
     public static boolean load(String fileName) {
-        try (FileInputStream fileIn = new FileInputStream(fileName);
+        try (FileInputStream fileIn = new FileInputStream("bin/main/saves/" + fileName);
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
             Load.LoadHolder.lawn = (Lawn) in.readObject();
             // Load.LoadHolder.threadManager = (ThreadManager) in.readObject();

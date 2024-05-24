@@ -20,10 +20,7 @@ public class Sunflower extends Plant {
             @Override
             public void run() {
                 try {
-                    while(remainingTime > 0 && isSunflowerExist){
-                        System.out.println("This is from sunflower");
-                        System.out.println("remaining time: " + remainingTime);
-                        if (ThreadManager.getInstance().getList().size() > 0) {
+                    while(remainingTime > 0 && isSunflowerExist){                        if (ThreadManager.getInstance().getList().size() > 0) {
                             for(Runnable run : ThreadManager.getInstance().getList()){
                                 if(run instanceof RunnableGenerateSun){
                                     remainingTime = ((RunnableGenerateSun)run).getCurrentSundrop();

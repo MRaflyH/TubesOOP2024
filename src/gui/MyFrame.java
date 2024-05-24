@@ -523,6 +523,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
       
         this.previousPea = pea;
     }
+
+    // original version
     private void setPlants(String srcfile, int i, int j, int idplant) throws InvalidDeployException{
         JLabel plant = new JLabel();
         ImageIcon img = new ImageIcon(srcfile);
@@ -583,6 +585,23 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         }  
     }
 
+    // overloaded for loading
+    private void setPlants(String srcfile, int i, int j) {
+        JLabel plant = new JLabel();
+        ImageIcon img = new ImageIcon(srcfile);
+        plant.setBounds(0, 0, TILE_WIDTH, TILE_HEIGHT);
+        plant.setVisible(true);
+        plant.setIcon(new ImageIcon(img.getImage()
+                .getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0; 
+        gbc.anchor = GridBagConstraints.CENTER;
+        mapButtons.get(i).get(j).add(plant, gbc);
+        mapButtons.get(i).get(j).setComponentZOrder(plant, 0);
+    }
+
     private void applyAttacked(int i, int j) {
         // Get the original image icon
         
@@ -641,6 +660,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         }
     }
     
+    // original version
     private String getPlantSourceImg(Deck deck, int i){
         String source = "";
         if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Sunflower")) {
@@ -671,6 +691,42 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             source = "src/assets/tanglekelp.png";
         }
         if (deck.getPlayablePlants().get(i).getClassPlant().getSimpleName().equals("Wallnut")) {
+            source = "src/assets/wallnut.png";
+        }
+        return source;
+    }
+
+    // overloaded version for loading
+    private String getPlantSourceImg(String plantClass){
+        String source = "";
+        if (plantClass.equals("Sunflower")) {
+            source = "src/assets/sunflower.png";
+        }
+        if (plantClass.equals("CherryBomb")) {
+            source = "src/assets/cherrybomb.png";
+        }
+        if (plantClass.equals("Chomper")) {
+            source = "src/assets/chomper.png";
+        }
+        if (plantClass.equals("Lilypad")) {
+            source = "src/assets/lilypad.png";
+        }
+        if (plantClass.equals("Squash")) {
+            source = "src/assets/squash.png";
+        }
+        if (plantClass.equals("Peashooter")) {
+            source = "src/assets/peashooter.png";
+        }
+        if (plantClass.equals("Repeater")) {
+            source = "src/assets/repeater.png";
+        }
+        if (plantClass.equals("SnowPea")) {
+            source = "src/assets/snowpea.png";
+        }
+        if (plantClass.equals("TangleKelp")) {
+            source = "src/assets/tanglekelp.png";
+        }
+        if (plantClass.equals("Wallnut")) {
             source = "src/assets/wallnut.png";
         }
         return source;
@@ -940,11 +996,13 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
 
                                         }
                                     }
+                                    // Thread visitorThread = null;
                                     for (int i = 0; i < 6; i++) {
                                         PlantVisitor visitor = new PlantVisitor(mainlawn, i);
                                         Thread visitorThread = new Thread(visitor);
                                         visitorThread.start();
                                     }
+                                    // visitorThread.interrupt();
                                     for (int i = 0; i < mapButtons.size(); i++) {
                                         for (int j = 0; j < tempMapRow.size(); j++) {
                                             
@@ -1042,19 +1100,21 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                     e1.printStackTrace();
                                 }
 
+                                // Checking for endgame
                                 for (int i = 0; i < 6; i++) {
                                     if (mainlawn.getLand().get(i).get(0).hasZombie()) {
-                                        rungame = false;
+                                        break;
                                     }
                                 }
-                                // System.out.println("Checking endgame");
-                                // System.out.println("Rungame before and: " + rungame);
-                                // System.out.println("ZombieCount: " + runzombie.getZombieCount());
                                 if (count <= 0) {
-                                    rungame = rungame && (count <= 0 && runzombie.getZombieCount() > 0);
+                                    rungame = (runzombie.getZombieCount() > 0);
+                                }
+                                if (ThreadManager.getInstance().getList().size() <= 0){
+                                    break;
                                 }
                                 count--;
                     }
+                    System.out.println("Game ended normally");
                     ThreadManager.getInstance().stopAllThreads();
                         // System.out.println("Rungame after and: " + rungame);
                         // System.out.println("=====================");
@@ -1164,35 +1224,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         if(e.getSource() != null) {
             // jika button apapun dipress
         }
-        // if (e.getSource() == menuButton && currentFrame == 2) {
-            
-        //     new Thread(new Runnable() {
-
-        //         @Override
-        //         public void run() {
-        //             rungame = false;
-        //             System.out.println("Threads in manager (save): " + ThreadManager.getInstance().getList().size());
-        //             Save.save("testSave.ser", mainlawn, ThreadManager.getInstance().getList(), deck, Sun.getInstance());                    
-        //             System.out.println("Save executed");
-        //             // Save.saveFrame("testSaveFrame.ser", Save.SaveHolder.myFrame);                    
-        //             // System.out.println("SaveFrame executed");
-        //             ThreadManager.getInstance().stopAllThreads();
-        //             count = -1;
-        //             System.out.println("Thread Interrupted");
-        //         }
-
-        //     }).start();
-        //     RemoveButtons();
-        //     SwitchToMenuFrame();
-        //     try {
-        //         myImage = ImageIO.read(new File("src/assets/backgroundmainmenu.png"));
-        //         imagepan.setImage(myImage);
-        //         this.setContentPane(imagepan);
-        //     } catch (IOException e4) {
-                
-        //         e4.printStackTrace();
-        //     }
-        // }
         if(e.getSource() == plantsListButton){
             RemoveButtons();
             SwitchToPlantListFrame();
@@ -1227,23 +1258,47 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             readyButton.setEnabled(false);
         } if(e.getSource() == loadButton) {
             if (Load.load("testSave.ser")) {
+                deck = Load.LoadHolder.gameDeck;
+                Sun.getInstance().initializeSun(Load.LoadHolder.gameSun.getTotalSun());
                 mainlawn = Load.LoadHolder.lawn;
                 runzombie = Load.LoadHolder.zomSpawn;
                 ThreadManager.getInstance().addThread(runzombie);
                 ThreadManager.getInstance().addThread(Load.LoadHolder.genSun);
                 ThreadManager.getInstance().addThread(Load.LoadHolder.gameTimer);
             } else {
-                // System.out.println("Failed to load");
-                mainlawn = new Lawn();
-                runzombie = new RunnableZombieSpawn(200, mainlawn);
-                ThreadManager.getInstance().addThread(new RunnableGenerateSun(100));
-                ThreadManager.getInstance().addThread(new RunnableGameTimer(200));
-                ThreadManager.getInstance().addThread(runzombie);
+                System.out.println("No Saved File Found!");
+                System.out.println("Start a new game");
             }
 
             System.out.println("Threads in manager (load): " + ThreadManager.getInstance().getList().size());
             System.out.println("Game timer in manager (load): " + ThreadManager.getInstance().getRunnableGameTimer().getCurrentGameTime());
             ThreadManager.getInstance().startAllThreads();
+
+            for (int i = 0; i < deck.getPlayablePlants().size(); i++){
+                setPlants(false, getPlantButtonSourceImg(deck, i), getDeckAvalibility() + 1);
+                plantStorage.put(getDeckAvalibility(), i);
+                setDeckNotAvailable(getDeckAvalibility());
+                deckButtons.get(getDeckAvalibility()).revalidate();
+                if (deck.getPlayablePlants().get(i).getPlantingCooldown() != deck.getPlayablePlants().get(i).getPlantingSpeed()){
+                    SetButtonDisabled(i, "src/assets/decktiledisabled.png");
+                    startPlantCooldown(deck, i+1);
+                }
+            }
+
+            for (int i = 0; i < mainlawn.getLand().size(); i++){
+                for (int j = 0; j < mainlawn.getLand().get(0).size(); j++){
+                    if (mainlawn.getLand().get(i).get(j).hasPlant()){
+                        Plant p = mainlawn.getLand().get(i).get(j).getPlant();
+                        String pc = p.getClass().getSimpleName();
+                        if (pc.equals("Lilypad") && ((Lilypad)p).hasPlant()){
+                            setPlants(getPlantSourceImg(pc), i, j);
+                            setPlants(getPlantSourceImg(((Lilypad)p).getPlant().getClass().getSimpleName()), i, j);
+                        } else {
+                            setPlants(getPlantSourceImg(pc), i, j);
+                        }
+                    }
+                }
+            }
 
             RemoveButtons();
             SwitchToGameFrame();
@@ -1255,7 +1310,12 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             Save.SaveHolder.threads = ThreadManager.getInstance().getList();
             Save.SaveHolder.gameDeck = deck;
             Save.SaveHolder.gameSun = Sun.getInstance();
-            GUIThread.interrupt();
+
+            for (int i = 0; i < deck.getPlayablePlants().size(); i++){
+                System.out.println("Plant at " + i + "'s cooldown is: " + deck.getPlayablePlants().get(i).getPlantingCooldown());
+            }
+
+            // GUIThread.interrupt();
             new ExitFrame();
             dispose();
         } else if(e.getSource() == menuButton){
