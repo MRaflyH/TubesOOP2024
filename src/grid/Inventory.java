@@ -37,7 +37,7 @@ public class Inventory {
     }
 
     public void swapPlant(List<PlantCard> arrayplant, int slot1, int slot2) throws InvalidInventoryException {
-        if (arrayplant.get(slot1) != null && arrayplant.get(slot2) != null && slot1<6 && slot2<6) {
+        if (arrayplant.get(slot1) != null && arrayplant.get(slot2) != null && slot1<11 && slot2<11) {
             if (slot1 != slot2) {
                 PlantCard temp = arrayplant.get(slot1);
                 arrayplant.set(slot1, arrayplant.get(slot2));

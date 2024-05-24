@@ -442,8 +442,9 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         }
 
         // swap
-        swap1 = CreateButton(TILE_WIDTH * 2 + 20, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "D Swap", swapPanel);
-        swap2 = CreateButton(TILE_WIDTH * 4 + SMALL_WIDTH + 50, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "Inv Swap", swapPanel);
+        swap1 = CreateButton(TILE_WIDTH * 2 + 20, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "Deck Swap", swapPanel, new ImageIcon("src/assets/swapdeck.png"));
+        swap2 = CreateButton(TILE_WIDTH * 4 + SMALL_WIDTH + 50, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "Inv Swap", swapPanel, 
+                new ImageIcon("src/assets/swapinventory.png"));
 
         swap11 = new JTextField();
         swap11.setBounds(0, 0, TILE_WIDTH,SMALL_HEIGHT);
@@ -538,7 +539,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
        
         if(onInventory){
             JButton inventorybuttonnew = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR,
-                            null, inventoryPanel, new ImageIcon(getPlantButtonSourceImg(inventory, i)));
+                            null, inventoryPanel, new ImageIcon(srcfile));
             inventorybuttonnew.setVisible(true);
             inventoryButtons.get(i).setVisible(false);
             inventoryButtons.set(i, inventorybuttonnew);
@@ -1289,68 +1290,46 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         }
         if (e.getSource() == swap1) {
             try {
-                Integer n1 = Integer.parseInt(swap11.getText()) -1;
-                Integer n2 = Integer.parseInt(swap12.getText()) -1;
+                Integer n1 = Integer.parseInt(swap11.getText())-1;
+                Integer n2 = Integer.parseInt(swap12.getText())-1;
 
                 // System.out.printf("%d %d\n", n1, n2);
-
-                if (deckAvailability.get(n1) == 0 && deckAvailability.get(n2) == 0) {
+                if (deckAvailability.get(n1) == 0 && deckAvailability.get(n2) == 0 && n1 < 6 && n2 < 6) {
                     int temp = plantStorage.get(n1);
                     plantStorage.put(n1, plantStorage.get(n2));
                     plantStorage.put(n2, temp);
                     inventory.swapPlant(deck.getPlayablePlants(), n1, n2);
-                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n1)), n1);
-                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n2)), n2);
+                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n1)), n1+1);
+                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n2)), n2+1);
+                } else {
+                    throw new InvalidInventoryException("Index kelebihan!");
                 }
 
-                // for (Integer j : deckAvailability) {
-                //     System.out.print(j + " ");
-                // }
-                // System.out.println();
-                // for (Integer j : plantStorage.keySet()) {
-                //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
-                // }
-                // System.out.println();
-                // for (PlantCard j : deck.getPlayablePlants()) {
-                //     System.out.print(j + ", ");
-                // }
-                // System.out.println("\n");
-
             }
-            catch (Exception err) {
+            catch (InvalidInventoryException e1) {
+                System.out.println(e1.getMessage());
             }
         }
         if (e.getSource() == swap2) {
             try {
                 Integer n1 = Integer.parseInt(swap21.getText()) - 1;
                 Integer n2 = Integer.parseInt(swap22.getText()) - 1;
-
+                boolean deckempty = false;
                 // inventory.swapPlant(inventory.getAllPlants(), n1, n2);
-
-                if (!plantStorage.containsValue(n1) && !plantStorage.containsValue(n2)) {
-                    inventory.swapPlant(inventory.getAllPlants(), n1, n2);
-                    setPlants(true, getPlantButtonSourceImg(inventory, n1+1), n1);
-                    setPlants(true, getPlantButtonSourceImg(inventory, n2+1), n2);
+                for(int i = 0; i < plantStorage.size(); i++){
+                    if(plantStorage.get(i) != -1){
+                        deckempty = true;
+                        break;
+                    }
                 }
-
-                // for (Integer j : deckAvailability) {
-                //     System.out.print(j + " ");
-                // }
-                // System.out.println();
-                // for (Integer j : plantStorage.keySet()) {
-                //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
-                // }
-                // System.out.println();
-                // for (PlantCard j : deck.getPlayablePlants()) {
-                //     System.out.print(j + ", ");
-                // }
-                // System.out.println();
-                // for (PlantCard j : inventory.getAllPlants()) {
-                //     System.out.print(j + ", ");
-                // }
-                // System.out.println("\n");
+                if (!deckempty) {
+                    inventory.swapPlant(inventory.getAllPlants(), n1, n2);
+                    setPlants(true, getPlantButtonSourceImg(inventory, n1), n1);
+                    setPlants(true, getPlantButtonSourceImg(inventory, n2), n2);
+                }
             }
-            catch (Exception err) {
+            catch (InvalidInventoryException e1) {
+                System.out.println(e1.getMessage());
             }
         }
         if(e.getSource() == plantsListButton){
