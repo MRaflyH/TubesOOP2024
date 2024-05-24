@@ -1313,10 +1313,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 }
             }
         }
-        
-        if(e.getSource() != null) {
-            // jika button apapun dipress
-        }
         if (e.getSource() == swap1) {
             try {
                 Integer n1 = Integer.parseInt(swap11.getText()) -1;
@@ -1329,6 +1325,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     plantStorage.put(n1, plantStorage.get(n2));
                     plantStorage.put(n2, temp);
                     inventory.swapPlant(deck.getPlayablePlants(), n1, n2);
+                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n1)), n1+1);
+                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n2)), n2+1);
                     deckButtons.get(n1).revalidate();
                     deckButtons.get(n2).revalidate();
                 }
