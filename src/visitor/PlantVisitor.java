@@ -54,6 +54,13 @@ public class PlantVisitor extends Visitor implements Runnable{
                         // attack dan kill zombie
                         System.out.println("duar");
                         plant.attack();
+
+                        if (plant instanceof SnowPea) {
+                            for (Zombie zombie : zombieTile.getZombies()) {
+                                zombie.setCurrentSlow(3);
+                            }
+                        }
+
                         for (Zombie zombie : zombieTile.getZombies()) {
                             zombie.loseHealth(plant.getAttackDamage());
                             zombie.setHasBeenAttacked();
