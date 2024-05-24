@@ -8,7 +8,7 @@ public class ThreadManager {
 
     // Private constructor to prevent instantiation
     private ThreadManager() {
-        threadList = new ArrayList<>();
+        threadList = new ArrayList<Runnable>();
     }
 
     // Public method to provide access to the singleton instance
@@ -50,6 +50,8 @@ public class ThreadManager {
             }
         }
         threadList.clear();
+        System.out.println("Threads stopped");
+        // System.out.println("Threads in manager: " + threadList.size());
     }
 
     public RunnableGameTimer getRunnableGameTimer() {

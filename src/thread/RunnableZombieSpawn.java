@@ -85,7 +85,7 @@ public class RunnableZombieSpawn implements Runnable, Serializable {
                                     }
                                 }
                                 if (spawn instanceof Gargantuar) {
-                                    if (!(gargantuarCount < (max_zombies / 2))){
+                                    if (!(gargantuarCount < 2)){
                                         while (spawn instanceof Gargantuar) {
                                             spawn = selectZombie((randSelector.nextInt(maxSelection - minSelection + 1) + minSelection));
                                         }
@@ -108,7 +108,7 @@ public class RunnableZombieSpawn implements Runnable, Serializable {
                         // System.out.println("flag: " + flag);
                         // System.out.println();
                     }
-                    Thread.sleep(1000);
+                    Thread.sleep(3000);
                 }
                
                 

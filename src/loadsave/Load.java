@@ -43,6 +43,7 @@ public class Load {
             return true;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            System.out.println("Load Failed");
             return false;
         }
     }
