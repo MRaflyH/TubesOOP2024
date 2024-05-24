@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+import loadsave.*;
+import thread.*;
+
 class ImagePanel extends JComponent {
     private Image image;
 
@@ -86,11 +89,30 @@ public class ExitFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == saveWithoutExitButton) {
+            ThreadManager.getInstance().stopAllThreads();
             new MyFrame();
             dispose();
-            
+            System.out.println("No Save");
         } else if (e.getSource() == saveWithExitButton) {
             //taro code save disini
+
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    // rungame = false;
+                    System.out.println("Threads in manager (save): " + Save.SaveHolder.threads.size());
+                    Save.save("testSave.ser", Save.SaveHolder.lawn, Save.SaveHolder.threads, Save.SaveHolder.gameDeck, Save.SaveHolder.gameSun);                    
+                    System.out.println("Save executed");
+                    ThreadManager.getInstance().stopAllThreads();
+                    // count = -1;
+                    // System.out.println("Thread Interrupted");
+                    // Save.saveFrame("testSaveFrame.ser", Save.SaveHolder.myFrame);                    
+                    // System.out.println("SaveFrame executed");
+                }
+
+            }).start();
+
             new MyFrame();
             dispose(); 
         }

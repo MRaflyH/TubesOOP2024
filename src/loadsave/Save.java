@@ -13,9 +13,12 @@ import java.util.*;
 public class Save {
     // private static boolean hasSaved = false;
 
-    // public static class SaveHolder {
-    //     public static MyFrame myFrame = null;
-    // }
+    public static class SaveHolder {
+        public static Lawn lawn = null;
+        public static ArrayList<Runnable> threads = null;
+        public static Deck gameDeck = null;
+        public static Sun gameSun = null;
+    }
 
     public static void save(String fileName, Lawn mainlawn,
     ArrayList<Runnable> threads, Deck deck, Sun sun) {
