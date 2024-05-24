@@ -71,11 +71,11 @@ public class PlantVisitor extends Visitor implements Runnable{
                 }
                 else {
                     if (plant.getAttackCooldown() <= 0) {
-                        if (idxrow == 1) {
+                        if (idxrow == 0) {
 
                         } 
-                        else if (idxrow == 4) {
-                            
+                        else if (idxrow == 5) {
+
                         } 
                         else {
                             if (lawn.getLand().get(idxrow-1).get(i).hasZombie() || lawn.getLand().get(idxrow+1).get(i).hasZombie()
