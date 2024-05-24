@@ -548,6 +548,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         if(onInventory){
             JButton inventorybuttonnew = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR,
                             null, inventoryPanel, new ImageIcon(getPlantButtonSourceImg(inventory, i)));
+            inventorybuttonnew.setVisible(true);
+            inventoryButtons.get(i).setVisible(false);
             inventoryButtons.set(i, inventorybuttonnew);
         } else {
             //eckButtons.get(i).add(plant);
@@ -1325,10 +1327,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     plantStorage.put(n1, plantStorage.get(n2));
                     plantStorage.put(n2, temp);
                     inventory.swapPlant(deck.getPlayablePlants(), n1, n2);
-                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n1)), n1+1);
-                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n2)), n2+1);
-                    deckButtons.get(n1).revalidate();
-                    deckButtons.get(n2).revalidate();
+                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n1)), n1);
+                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n2)), n2);
                 }
 
                 // for (Integer j : deckAvailability) {
@@ -1355,13 +1355,11 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
 
                 // inventory.swapPlant(inventory.getAllPlants(), n1, n2);
 
-                // if (!plantStorage.containsValue(n1) && !plantStorage.containsValue(n2)) {
-                //     inventory.swapPlant(inventory.getAllPlants(), n1, n2);
-                //     setPlants(true, getPlantButtonSourceImg(inventory, n1), n1);
-                //     setPlants(true, getPlantButtonSourceImg(inventory, n2), n2);
-                //     inventoryButtons.get(n1).revalidate();
-                //     inventoryButtons.get(n2).revalidate();
-                // }
+                if (!plantStorage.containsValue(n1) && !plantStorage.containsValue(n2)) {
+                    inventory.swapPlant(inventory.getAllPlants(), n1, n2);
+                    setPlants(true, getPlantButtonSourceImg(inventory, n1+1), n1);
+                    setPlants(true, getPlantButtonSourceImg(inventory, n2+1), n2);
+                }
 
                 // for (Integer j : deckAvailability) {
                 //     System.out.print(j + " ");
