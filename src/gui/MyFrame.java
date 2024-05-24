@@ -50,6 +50,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     JPanel mapPanel;
     JPanel deckPanel;
     JPanel inventoryPanel;
+    JPanel swapPanel;
+    JPanel helpPanel;
 
     ArrayList<ArrayList<JButton>> mapButtons = new ArrayList<ArrayList<JButton>>();
     ArrayList<JButton> deckButtons = new ArrayList<JButton>(7);
@@ -67,8 +69,17 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     JButton backMenuButton;
     JButton nextArrowButton;
     JButton previousArrowButton;
+    JButton helpButton;
+    JLabel helpText;
     JLabel numSun;
     boolean rungame;
+
+    JButton swap1;
+    JButton swap2;
+    JTextField swap11;
+    JTextField swap12;
+    JTextField swap21;
+    JTextField swap22;
 
     static final int FRAME_WIDTH = 638;
     static final int FRAME_HEIGHT = 480;
@@ -225,6 +236,21 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         menuButton.setVisible(false);
 
     }
+
+    public void SwitchToHelpFrame() {
+        try {
+            myImage = ImageIO.read(new File("src/assets/backgroundmainmenu.png"));
+            imagepan.setImage(myImage);
+            this.setContentPane(imagepan);
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+        currentFrame = 7;
+        helpPanel.setVisible(true);
+        backMenuButton.setVisible(true);
+    }
+
     public void SwitchToDeckFrame() {
         try{
             myImage = ImageIO.read(new File("src/assets/deckmenu.png"));
@@ -239,6 +265,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         deckPanel.setVisible(true);
         inventoryPanel.setVisible(true);
         readyButton.setVisible(true);
+        swapPanel.setVisible(true);
         for (int i = 0; i < 6; i++) {
             plantStorage.put(i, -1);
         }
@@ -275,6 +302,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             readyButton.setVisible(false); 
             shovelButton.setVisible(false);  
             backMenuButton.setVisible(false);
+            swapPanel.setVisible(false);
         }
         else if (currentFrame == 2) {
             menuButton.setVisible(false);
@@ -290,16 +318,21 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             shovelButton.setVisible(false);
             nextArrowButton.setVisible(false);
             previousArrowButton.setVisible(false);
+        } else if (currentFrame == 7) {
+            helpPanel.setVisible(false);
+            backMenuButton.setVisible(false);
         }
 
     }
 
     public void SetPanels() {
-        menuPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
+        menuPanel = CreatePanel(160, 210, LARGE_WIDTH + 10 + SMALL_WIDTH, LARGE_HEIGHT*4 + 30);
         plantListPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
         deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8 + 10, TILE_HEIGHT);
-        inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 5);
+        inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 4);
         mapPanel = CreatePanel(75, 90, TILE_WIDTH * 11, TILE_HEIGHT * 6);
+        swapPanel = CreatePanel(70, 80 + TILE_HEIGHT * 4, TILE_WIDTH * 4 + SMALL_WIDTH * 2 + 50, SMALL_HEIGHT);
+        helpPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
     }
 
     public void SetButtons() {
@@ -315,7 +348,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
 
         exitButton = CreateButton(10, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "EXIT", menuPanel, 
                 new ImageIcon("src/assets/exitbutton.png"));
-       
+        helpButton = CreateButton(LARGE_WIDTH + 10, (LARGE_HEIGHT + 10) * 3, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "HELP", menuPanel);
         menuButton = CreateButton(530, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, null, 
                 new ImageIcon("src/assets/exitbutton.png"));
         backMenuButton = CreateButton(0, 20, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, null,
@@ -407,6 +440,40 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             mapButtons.add(tempMapRow);
             
         }
+
+        // swap
+        swap1 = CreateButton(TILE_WIDTH * 2 + 20, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "D Swap", swapPanel);
+        swap2 = CreateButton(TILE_WIDTH * 4 + SMALL_WIDTH + 50, 0, SMALL_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "Inv Swap", swapPanel);
+
+        swap11 = new JTextField();
+        swap11.setBounds(0, 0, TILE_WIDTH,SMALL_HEIGHT);
+        swapPanel.add(swap11);
+        swap12 = new JTextField();
+        swap12.setBounds(TILE_WIDTH + 10, 0, TILE_WIDTH,SMALL_HEIGHT);
+        swapPanel.add(swap12);
+        swap21 = new JTextField();
+        swap21.setBounds(TILE_WIDTH * 2 + SMALL_WIDTH + 30, 0, TILE_WIDTH,SMALL_HEIGHT);
+        swapPanel.add(swap21);
+        swap22 = new JTextField();
+        swap22.setBounds(TILE_WIDTH * 3 + SMALL_WIDTH + 40, 0, TILE_WIDTH,SMALL_HEIGHT);
+        swapPanel.add(swap22);
+
+        // help
+        helpText = new JLabel();
+        helpText.setBounds(0, 0, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
+        helpText.setBackground(BACKGROUND_COLOR);
+        helpText.setOpaque(true);
+        helpText.setText("<html>Selamat datang di \"Michael vs. Lalapan\", sebuah game parodi yang menggabungkan kegembiraan dari Plant Vs. Zombie dengan sentuhan lokal yang unik! Dalam game ini, Anda akan membantu Michael, seorang juru masak yang gigih, untuk melindungi restoran lalapannya dari serangan para hama lapar yang tak terhentikan. <br/><br/>" +
+        "START: choose deck and \"SIKAT LALAPAN\" to start<br/>" + 
+        "LOAD: load saved game <br/>" + 
+        "PLANTS LIST: show plant list <br/>" + 
+        "ZOMBIE LIST: show zombie list <br/>" + 
+        "</html>");
+        helpText.setHorizontalTextPosition(SwingConstants.CENTER);
+        helpText.setVerticalTextPosition(SwingConstants.CENTER);
+        helpText.setVisible(true);
+        helpPanel.add(helpText);
+
     }
     
     private String getZombieSourceImg(Lawn mainlawn, int i, int j) {
@@ -472,6 +539,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         if(onInventory){
             JButton inventorybuttonnew = CreateButton(TILE_WIDTH * (i % 5), i / 5 * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT, GRASS2_COLOR,
                             null, inventoryPanel, new ImageIcon(getPlantButtonSourceImg(inventory, i)));
+            inventorybuttonnew.setVisible(true);
+            inventoryButtons.get(i).setVisible(false);
             inventoryButtons.set(i, inventorybuttonnew);
         } else {
             //eckButtons.get(i).add(plant);
@@ -991,7 +1060,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                     if(z.HasBeenAttacked()){
                                                         applyAttacked(i, j);
                                                     }
-                                                    if (mainlawn.getLand().get(i).get(j).hasPlant()) {
+                                                    if (mainlawn.getLand().get(i).get(j).hasPlant() && j>=1) {
                                                         if (z instanceof VaultingInterface) {
                                                             VaultingInterface v = (VaultingInterface) z;
                                                         
@@ -1016,7 +1085,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                             }
                                                         }
                                                     } 
-                                                    else if (mainlawn.getLand().get(i).get(j - 1).hasPlant()) {
+                                                    else if (mainlawn.getLand().get(i).get(j - 1).hasPlant()  && j>=1) {
                                                         if (z instanceof VaultingInterface) {
                                                             VaultingInterface v = (VaultingInterface) z;
                                                             // System.out.println(z.getName() + "is Vaulting Over " +
@@ -1043,7 +1112,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                             }
                                                         }
                                                     } else {
-                                                        if (z.getMoveCooldown() == 0) {
+                                                        if (z.getMoveCooldown() == 0  && j>=1) {
                                                             z.move(mainlawn.getLand().get(i).get(j),
                                                                     mainlawn.getLand().get(i).get(j - 1));
                                                             setZombies(i, j - 1);
@@ -1115,6 +1184,20 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 SetButtonDisabled(i, "src/assets/decktiledisabled.png");
                 inventoryButtons.get(i).revalidate();
                 updateReadyButton();
+
+                // for (Integer j : deckAvailability) {
+                //     System.out.print(j + " ");
+                // }
+                // System.out.println();
+                // for (Integer j : plantStorage.keySet()) {
+                //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
+                // }
+                // System.out.println();
+                // for (PlantCard j : deck.getPlayablePlants()) {
+                //     System.out.print(j + ", ");
+                // }
+                // System.out.println("\n");
+
             }
             } catch(InvalidInventoryException e2){
                 e2.getMessage();
@@ -1126,13 +1209,25 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                   
                     try {
                         if(e.getSource() == deckButtons.get(i+1) && plantStorage.get(i) != -1){
-                                setDeckAvailable(i);
-                                SetButtonEnabled(plantStorage.get(i),
-                            getPlantButtonSourceImg(inventory, plantStorage.get(i)));
+                            setDeckAvailable(i);
+                            SetButtonEnabled(plantStorage.get(i), getPlantButtonSourceImg(inventory, plantStorage.get(i)));
                             plantStorage.put(i, -1);
                             removePlant("src/assets/decktile.png", i + 1);
                             inventory.removePlant(deck, i);
                             readyButton.setEnabled(false);
+
+                            // for (Integer j : deckAvailability) {
+                            //     System.out.print(j + " ");
+                            // }
+                            // System.out.println();
+                            // for (Integer j : plantStorage.keySet()) {
+                            //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
+                            // }
+                            // System.out.println();
+                            // for (PlantCard j : deck.getPlayablePlants()) {
+                            //     System.out.print(j + ", ");
+                            // }
+                            // System.out.println("\n");
                         } 
 
                     } catch (InvalidInventoryException e1) {
@@ -1192,9 +1287,71 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 }
             }
         }
-        
-        if(e.getSource() != null) {
-            // jika button apapun dipress
+        if (e.getSource() == swap1) {
+            try {
+                Integer n1 = Integer.parseInt(swap11.getText()) -1;
+                Integer n2 = Integer.parseInt(swap12.getText()) -1;
+
+                // System.out.printf("%d %d\n", n1, n2);
+
+                if (deckAvailability.get(n1) == 0 && deckAvailability.get(n2) == 0) {
+                    int temp = plantStorage.get(n1);
+                    plantStorage.put(n1, plantStorage.get(n2));
+                    plantStorage.put(n2, temp);
+                    inventory.swapPlant(deck.getPlayablePlants(), n1, n2);
+                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n1)), n1);
+                    setPlants(false, getPlantButtonSourceImg(inventory, plantStorage.get(n2)), n2);
+                }
+
+                // for (Integer j : deckAvailability) {
+                //     System.out.print(j + " ");
+                // }
+                // System.out.println();
+                // for (Integer j : plantStorage.keySet()) {
+                //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
+                // }
+                // System.out.println();
+                // for (PlantCard j : deck.getPlayablePlants()) {
+                //     System.out.print(j + ", ");
+                // }
+                // System.out.println("\n");
+
+            }
+            catch (Exception err) {
+            }
+        }
+        if (e.getSource() == swap2) {
+            try {
+                Integer n1 = Integer.parseInt(swap21.getText()) - 1;
+                Integer n2 = Integer.parseInt(swap22.getText()) - 1;
+
+                // inventory.swapPlant(inventory.getAllPlants(), n1, n2);
+
+                if (!plantStorage.containsValue(n1) && !plantStorage.containsValue(n2)) {
+                    inventory.swapPlant(inventory.getAllPlants(), n1, n2);
+                    setPlants(true, getPlantButtonSourceImg(inventory, n1+1), n1);
+                    setPlants(true, getPlantButtonSourceImg(inventory, n2+1), n2);
+                }
+
+                // for (Integer j : deckAvailability) {
+                //     System.out.print(j + " ");
+                // }
+                // System.out.println();
+                // for (Integer j : plantStorage.keySet()) {
+                //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
+                // }
+                // System.out.println();
+                // for (PlantCard j : deck.getPlayablePlants()) {
+                //     System.out.print(j + ", ");
+                // }
+                // System.out.println();
+                // for (PlantCard j : inventory.getAllPlants()) {
+                //     System.out.print(j + ", ");
+                // }
+                // System.out.println("\n");
+            }
+            catch (Exception err) {
+            }
         }
         if(e.getSource() == plantsListButton){
             RemoveButtons();
@@ -1228,7 +1385,12 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             RemoveButtons();
             SwitchToDeckFrame();
             readyButton.setEnabled(false);
-        } if(e.getSource() == loadButton) {
+        } 
+        if (e.getSource() == helpButton) {
+            RemoveButtons();
+            SwitchToHelpFrame();
+        }
+        if(e.getSource() == loadButton) {
             if (Load.load("testSave.ser")) {
                 deck = Load.LoadHolder.gameDeck;
                 Sun.getInstance().initializeSun(Load.LoadHolder.gameSun.getTotalSun());
@@ -1291,9 +1453,15 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             new ExitFrame();
             dispose();
         } else if(e.getSource() == menuButton){
-            dispose();
-            System.out.println("This is exit?");
-            System.exit(0);
+            if (currentFrame == 1) {
+                RemoveButtons();
+                SwitchToMenuFrame();
+            }
+            else {
+                dispose();
+                System.exit(0);    
+            }
+
         }
         if (e.getSource() == readyButton) {
             if(deck.getPlayablePlants().size() == deck.getMaxPlants()){

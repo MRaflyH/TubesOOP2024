@@ -54,6 +54,13 @@ public class PlantVisitor extends Visitor implements Runnable{
                         // attack dan kill zombie
                         System.out.println("duar");
                         plant.attack();
+
+                        if (plant instanceof SnowPea) {
+                            for (Zombie zombie : zombieTile.getZombies()) {
+                                zombie.setCurrentSlow(3);
+                            }
+                        }
+
                         for (Zombie zombie : zombieTile.getZombies()) {
                             zombie.loseHealth(plant.getAttackDamage());
                             zombie.setHasBeenAttacked();
@@ -71,11 +78,39 @@ public class PlantVisitor extends Visitor implements Runnable{
                 }
                 else {
                     if (plant.getAttackCooldown() <= 0) {
-                        if (idxrow == 1) {
-
+                        if (idxrow == 0) {
+                            if (lawn.getLand().get(idxrow+1).get(i).hasZombie()
+                            || lawn.getLand().get(idxrow+1).get(i+1).hasZombie()
+                            || lawn.getLand().get(idxrow+1).get(i-1).hasZombie()
+                            || row.get(i+1).hasZombie() || row.get(i-1).hasZombie() || row.get(i).hasZombie()) {
+                                // attack dan kill zombie
+                                System.out.println("duar");
+                                lawn.getLand().get(idxrow+1).get(i).removeAllZombie();
+                                lawn.getLand().get(idxrow+1).get(i+1).removeAllZombie();
+                                lawn.getLand().get(idxrow+1).get(i-1).removeAllZombie();
+                                row.get(i+1).removeAllZombie();
+                                row.get(i-1).removeAllZombie();
+                                row.get(i).removeAllZombie();
+                                plant.loseHealth(100);
+                                System.out.println("kamikaze");
+                            }
                         } 
-                        else if (idxrow == 4) {
-                            
+                        else if (idxrow == 5) {
+                            if (lawn.getLand().get(idxrow-1).get(i).hasZombie()
+                            || lawn.getLand().get(idxrow-1).get(i+1).hasZombie()
+                            || lawn.getLand().get(idxrow-1).get(i-1).hasZombie()
+                            || row.get(i+1).hasZombie() || row.get(i-1).hasZombie() || row.get(i).hasZombie()) {
+                                // attack dan kill zombie
+                                System.out.println("duar");
+                                lawn.getLand().get(idxrow-1).get(i).removeAllZombie();
+                                lawn.getLand().get(idxrow-1).get(i+1).removeAllZombie();
+                                lawn.getLand().get(idxrow-1).get(i-1).removeAllZombie();
+                                row.get(i+1).removeAllZombie();
+                                row.get(i-1).removeAllZombie();
+                                row.get(i).removeAllZombie();
+                                plant.loseHealth(100);
+                                System.out.println("kamikaze");
+                            }
                         } 
                         else {
                             if (lawn.getLand().get(idxrow-1).get(i).hasZombie() || lawn.getLand().get(idxrow+1).get(i).hasZombie()
