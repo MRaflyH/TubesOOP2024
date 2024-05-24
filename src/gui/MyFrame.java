@@ -1211,18 +1211,18 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 inventoryButtons.get(i).revalidate();
                 updateReadyButton();
 
-                for (Integer j : deckAvailability) {
-                    System.out.print(j + " ");
-                }
-                System.out.println();
-                for (Integer j : plantStorage.keySet()) {
-                    System.out.print(j + ": " + plantStorage.get(j) + ", ");
-                }
-                System.out.println();
-                for (PlantCard j : deck.getPlayablePlants()) {
-                    System.out.print(j + ", ");
-                }
-                System.out.println("\n");
+                // for (Integer j : deckAvailability) {
+                //     System.out.print(j + " ");
+                // }
+                // System.out.println();
+                // for (Integer j : plantStorage.keySet()) {
+                //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
+                // }
+                // System.out.println();
+                // for (PlantCard j : deck.getPlayablePlants()) {
+                //     System.out.print(j + ", ");
+                // }
+                // System.out.println("\n");
 
             }
             } catch(InvalidInventoryException e2){
@@ -1242,18 +1242,18 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                             inventory.removePlant(deck, i);
                             readyButton.setEnabled(false);
 
-                            for (Integer j : deckAvailability) {
-                                System.out.print(j + " ");
-                            }
-                            System.out.println();
-                            for (Integer j : plantStorage.keySet()) {
-                                System.out.print(j + ": " + plantStorage.get(j) + ", ");
-                            }
-                            System.out.println();
-                            for (PlantCard j : deck.getPlayablePlants()) {
-                                System.out.print(j + ", ");
-                            }
-                            System.out.println("\n");
+                            // for (Integer j : deckAvailability) {
+                            //     System.out.print(j + " ");
+                            // }
+                            // System.out.println();
+                            // for (Integer j : plantStorage.keySet()) {
+                            //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
+                            // }
+                            // System.out.println();
+                            // for (PlantCard j : deck.getPlayablePlants()) {
+                            //     System.out.print(j + ", ");
+                            // }
+                            // System.out.println("\n");
                         } 
 
                     } catch (InvalidInventoryException e1) {
@@ -1318,7 +1318,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 Integer n1 = Integer.parseInt(swap11.getText()) -1;
                 Integer n2 = Integer.parseInt(swap12.getText()) -1;
 
-                System.out.printf("%d %d\n", n1, n2);
+                // System.out.printf("%d %d\n", n1, n2);
 
                 if (deckAvailability.get(n1) == 0 && deckAvailability.get(n2) == 0) {
                     int temp = plantStorage.get(n1);
@@ -1331,18 +1331,18 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                     deckButtons.get(n2).revalidate();
                 }
 
-                for (Integer j : deckAvailability) {
-                    System.out.print(j + " ");
-                }
-                System.out.println();
-                for (Integer j : plantStorage.keySet()) {
-                    System.out.print(j + ": " + plantStorage.get(j) + ", ");
-                }
-                System.out.println();
-                for (PlantCard j : deck.getPlayablePlants()) {
-                    System.out.print(j + ", ");
-                }
-                System.out.println("\n");
+                // for (Integer j : deckAvailability) {
+                //     System.out.print(j + " ");
+                // }
+                // System.out.println();
+                // for (Integer j : plantStorage.keySet()) {
+                //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
+                // }
+                // System.out.println();
+                // for (PlantCard j : deck.getPlayablePlants()) {
+                //     System.out.print(j + ", ");
+                // }
+                // System.out.println("\n");
 
             }
             catch (Exception err) {
@@ -1355,22 +1355,30 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
 
                 // inventory.swapPlant(inventory.getAllPlants(), n1, n2);
 
-                // inventory.addPlant(inventory.getAllPlants().get(i), deck, getDeckAvalibility());
-                // setPlants(false, getPlantButtonSourceImg(inventory, i), getDeckAvalibility() + 1);
-                
-                // plantStorage.put(getDeckAvalibility(), i);
-                // setDeckNotAvailable(getDeckAvalibility());
-                // deckButtons.get(getDeckAvalibility()).revalidate();
-                // SetButtonDisabled(i, "src/assets/decktiledisabled.png");
-                // inventoryButtons.get(i).revalidate();
-                // updateReadyButton();
-    
-                // setDeckAvailable(i);
-                // SetButtonEnabled(plantStorage.get(i), getPlantButtonSourceImg(inventory, plantStorage.get(i)));
-                // plantStorage.put(i, -1);
-                // removePlant("src/assets/decktile.png", i + 1);
-                // inventory.removePlant(deck, getDeckAvalibility());
-                // readyButton.setEnabled(false);
+                // if (!plantStorage.containsValue(n1) && !plantStorage.containsValue(n2)) {
+                //     inventory.swapPlant(inventory.getAllPlants(), n1, n2);
+                //     setPlants(true, getPlantButtonSourceImg(inventory, n1), n1);
+                //     setPlants(true, getPlantButtonSourceImg(inventory, n2), n2);
+                //     inventoryButtons.get(n1).revalidate();
+                //     inventoryButtons.get(n2).revalidate();
+                // }
+
+                // for (Integer j : deckAvailability) {
+                //     System.out.print(j + " ");
+                // }
+                // System.out.println();
+                // for (Integer j : plantStorage.keySet()) {
+                //     System.out.print(j + ": " + plantStorage.get(j) + ", ");
+                // }
+                // System.out.println();
+                // for (PlantCard j : deck.getPlayablePlants()) {
+                //     System.out.print(j + ", ");
+                // }
+                // System.out.println();
+                // for (PlantCard j : inventory.getAllPlants()) {
+                //     System.out.print(j + ", ");
+                // }
+                // System.out.println("\n");
             }
             catch (Exception err) {
             }
