@@ -3,6 +3,6 @@ package organism;
 import grid.Lawn;
 
 public interface ExplosionInterface {
-    public void explode(Lawn lawn, int idxrow, int i);
+    public void explode();
     public boolean hasExploded();
 }

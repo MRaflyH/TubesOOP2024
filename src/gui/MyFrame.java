@@ -1070,9 +1070,9 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                         applyAttacked(i, j);
                                                     }
                                                     if (z instanceof ExplosionInterface) {
-                                                        ExplosionInterface c = (ExplosionInterface) z;
+                                                        JackInTheBoxZombie c = (JackInTheBoxZombie) z;
                                                         if (!c.hasExploded()) {
-                                                            c.explode(mainlawn, i, j);
+                                                            c.exploded(mainlawn, i, j);
                                                         }
                                                         if (!c.hasExploded()) {
                                                             if (z.getMoveCooldown() == 0  && j>=1) {

@@ -8,8 +8,13 @@ public class JackInTheBoxZombie extends Zombie implements organism.ExplosionInte
     public JackInTheBoxZombie(){
         super("Jack In The Box Zombie", 175, 10000, 1, false, true);
     }
+    
+    public void explode() {
+        hasExploded = true;
+        this.loseHealth(this.getHealth());
+    }
 
-    public void explode(Lawn lawn, int idxrow, int i) {
+    public void exploded(Lawn lawn, int idxrow, int i) {
         if (idxrow == 0 && i<10) {
             if (i>1) {
                 if (lawn.getLand().get(idxrow+1).get(i).hasPlant()
@@ -22,8 +27,7 @@ public class JackInTheBoxZombie extends Zombie implements organism.ExplosionInte
                     lawn.getLand().get(idxrow).get(i+1).removePlant();
                     lawn.getLand().get(idxrow).get(i-1).removePlant();
                     lawn.getLand().get(idxrow).get(i).removePlant();
-                    hasExploded = true;
-                    this.loseHealth(this.getHealth());
+                    this.explode();
                 }
             }
             else {
@@ -34,8 +38,7 @@ public class JackInTheBoxZombie extends Zombie implements organism.ExplosionInte
                     lawn.getLand().get(idxrow+1).get(i+1).removePlant();
                     lawn.getLand().get(idxrow).get(i+1).removePlant();
                     lawn.getLand().get(idxrow).get(i).removePlant();
-                    hasExploded = true;
-                    this.loseHealth(this.getHealth());
+                    this.explode();
                 }
             }
         } 
@@ -51,8 +54,7 @@ public class JackInTheBoxZombie extends Zombie implements organism.ExplosionInte
                     lawn.getLand().get(idxrow).get(i+1).removePlant();
                     lawn.getLand().get(idxrow).get(i-1).removePlant();
                     lawn.getLand().get(idxrow).get(i).removePlant();
-                    hasExploded = true;
-                    this.loseHealth(this.getHealth());
+                    this.explode();
                 }
             }
             else {
@@ -63,8 +65,7 @@ public class JackInTheBoxZombie extends Zombie implements organism.ExplosionInte
                     lawn.getLand().get(idxrow-1).get(i+1).removePlant();
                     lawn.getLand().get(idxrow).get(i+1).removePlant();
                     lawn.getLand().get(idxrow).get(i).removePlant();
-                    hasExploded = true;
-                    this.loseHealth(this.getHealth());
+                    this.explode();
                 }
             }
         } 
@@ -83,8 +84,7 @@ public class JackInTheBoxZombie extends Zombie implements organism.ExplosionInte
                     lawn.getLand().get(idxrow).get(i+1).removePlant();
                     lawn.getLand().get(idxrow).get(i-1).removePlant();
                     lawn.getLand().get(idxrow).get(i).removePlant();
-                    hasExploded = true;
-                    this.loseHealth(this.getHealth());
+                    this.explode();
                 }
             }
             else {
@@ -97,8 +97,7 @@ public class JackInTheBoxZombie extends Zombie implements organism.ExplosionInte
                     lawn.getLand().get(idxrow+1).get(i+1).removePlant();
                     lawn.getLand().get(idxrow).get(i+1).removePlant();
                     lawn.getLand().get(idxrow).get(i).removePlant();
-                    hasExploded = true;
-                    this.loseHealth(this.getHealth());
+                    this.explode();
                 }
             }
         }
