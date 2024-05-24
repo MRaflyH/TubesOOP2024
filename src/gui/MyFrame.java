@@ -1296,10 +1296,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 Integer n1 = Integer.parseInt(swap11.getText());
                 Integer n2 = Integer.parseInt(swap12.getText());
 
-                if (n1 >= 1 && n1 <= 6 && n2 >= 1 && n2 <= 6) {
-                    System.out.println(n1);                 
-                    System.out.println(n2);                 
-                }
+                inventory.swapPlant(deck.getPlayablePlants(), n1, n2);
             }
             catch (Exception err) {
             }
@@ -1309,10 +1306,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                 Integer n1 = Integer.parseInt(swap21.getText());
                 Integer n2 = Integer.parseInt(swap22.getText());
 
-                if (n1 >= 1 && n1 <= 10 && n2 >= 1 && n2 <= 10) {
-                    System.out.println(n1);                 
-                    System.out.println(n2);                 
-                }
+                inventory.swapPlant(inventory.getAllPlants(), n1, n2);
             }
             catch (Exception err) {
             }
