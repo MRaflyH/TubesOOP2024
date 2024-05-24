@@ -1147,23 +1147,22 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                     if (mainlawn.getLand().get(i).get(0).hasZombie()) {
                                         gamelose = true;
                                         rungame = false;
+                                        new AfterGameFrame(false);
+                                        dispose();
                                     }
                                 }
                                 if (count <= 0) {
                                     rungame = (runzombie.getZombieCount() > 0);
-                                   
+                                    
                                 }
                                 if (ThreadManager.getInstance().getList().size() <= 0){
                                     rungame = false;
                                 }
                                 count--;
                     }
-                    if(gamelose){
-                        new AfterGameFrame(false);
-                        dispose();
-                    } else {
-                        new AfterGameFrame(true);
-                        dispose();
+                    if(!gamelose){
+                            new AfterGameFrame(true);
+                            dispose();
                     }
                     
                     System.out.println("Game ended normally");
