@@ -1,13 +1,8 @@
 package gui;
 import javax.imageio.ImageIO;
-import javax.management.timer.Timer;
-import javax.sound.sampled.Line;
+
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 
-import org.w3c.dom.events.MouseEvent;
-
-import java.lang.reflect.*;
 import organism.plant.*;
 import thread.RunnableGameTimer;
 import thread.RunnableGenerateSun;
@@ -17,19 +12,14 @@ import thread.ThreadManager;
 import sun.Sun;
 import exception.*;
 import grid.*;
-
 import organism.zombie.*;
-
 import loadsave.*;
 import java.io.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.util.*;
-import java.util.concurrent.Flow;
 
 import java.awt.*;
 
@@ -37,6 +27,7 @@ import java.awt.*;
 public class MyFrame extends JFrame implements ActionListener, Serializable {
     private int currentFrame;
     private int count;
+    private boolean gamelose = false;
     private ArrayList<Integer> deckAvailability = new ArrayList<Integer>();
     private HashMap<Integer, Integer> plantStorage = new HashMap<Integer, Integer>();
     Thread GUIThread;
@@ -501,27 +492,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         deckButtons.get(i).setVisible(false);
         deckButtons.set(i, deckButtonnew);
         deckButtons.get(i).revalidate();
-    }
-    private JLabel previousPea;
-    private void setPea(String srcfile, int i, int j, JLabel previousPea){
-        if (previousPea != null) {
-            mapButtons.get(previousPea.getX()).get(previousPea.getY()).remove(previousPea);
-        }
-
-        JLabel pea = new JLabel();
-        ImageIcon img = new ImageIcon(srcfile);
-        pea.setBounds(0, 0, TILE_WIDTH, TILE_HEIGHT);
-        pea.setVisible(true);
-        pea.setIcon(new ImageIcon(img.getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-        mapButtons.get(i).get(j).add(pea, gbc);
-
-      
-        this.previousPea = pea;
     }
 
     // original version
@@ -1002,7 +972,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                         Thread visitorThread = new Thread(visitor);
                                         visitorThread.start();
                                     }
-                                    // visitorThread.interrupt();
+                                  
                                     for (int i = 0; i < mapButtons.size(); i++) {
                                         for (int j = 0; j < tempMapRow.size(); j++) {
                                             
@@ -1011,7 +981,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                             }
                                             if (mainlawn.getLand().get(i).get(j).hasZombie()) {
                                                 setZombies(i, j);
-                                                // taro code moveZombies disini -Vald
+                                    
                                                 mapButtons.get(i).get(j).revalidate();
                                                 ArrayList<Zombie> currentZombies = new ArrayList<>(
                                                         mainlawn.getLand().get(i).get(j).getZombies());
@@ -1024,8 +994,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                     if (mainlawn.getLand().get(i).get(j).hasPlant()) {
                                                         if (z instanceof VaultingInterface) {
                                                             VaultingInterface v = (VaultingInterface) z;
-                                                            // System.out.println(z.getName() + "is Vaulting Over " +
-                                                            // mainlawn.getLand().get(i).get(j-1).getPlant().getName());
+                                                        
                                                             if (!v.getHasVaulted()) {
                                                                 System.out.println(z.getName() + " vaulting 2 tile");
                                                                 v.vault(mainlawn.getLand().get(i).get(j),
@@ -1085,10 +1054,6 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                                             removeZombies(i, j);
                                                         }
                                                     }
-                                                    if (z.isDead()) {
-                                                        mainlawn.getLand().get(i).get(j).removeZombie(z);
-                                                        removeZombies(i, j);
-                                                    }
                                                 }
                                             }
                                         }
@@ -1103,24 +1068,31 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                                 // Checking for endgame
                                 for (int i = 0; i < 6; i++) {
                                     if (mainlawn.getLand().get(i).get(0).hasZombie()) {
-                                        break;
+                                        gamelose = true;
+                                        rungame = false;
                                     }
                                 }
                                 if (count <= 0) {
                                     rungame = (runzombie.getZombieCount() > 0);
+                                   
                                 }
                                 if (ThreadManager.getInstance().getList().size() <= 0){
-                                    break;
+                                    rungame = false;
                                 }
                                 count--;
                     }
+                    if(gamelose){
+                        new AfterGameFrame(false);
+                        dispose();
+                    } else {
+                        new AfterGameFrame(true);
+                        dispose();
+                    }
+                    
                     System.out.println("Game ended normally");
                     ThreadManager.getInstance().stopAllThreads();
-                        // System.out.println("Rungame after and: " + rungame);
-                        // System.out.println("=====================");
                 } catch (Exception e) {
                     System.out.println("GUIThread masuk exception");
-                    // GUIThread.interrupt();
                 }
             });
         GUIThread.start();
@@ -1159,7 +1131,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
                             getPlantButtonSourceImg(inventory, plantStorage.get(i)));
                             plantStorage.put(i, -1);
                             removePlant("src/assets/decktile.png", i + 1);
-                            inventory.removePlant(deck, getDeckAvalibility());
+                            inventory.removePlant(deck, i);
                             readyButton.setEnabled(false);
                         } 
 

@@ -60,20 +60,6 @@ public abstract class Tile implements Serializable {
     }
 
     public void moveZombie(Zombie zombie, Tile tile) {
-        // Timer spawn = new Timer();
-        // TimerTask spawnTask = new TimerTask(){
-
-        //     @Override
-        //     public void run() {
-        //         // TODO Auto-generated method stub
-        //         tile.addZombie(zombie);
-        //         removeZombie(zombie);
-        //     }
-            
-        // };
-        // spawn.schedule(spawnTask, 0, 5000);
-
-        // ini aku comment out karena ga make sense?? -dama
 
         tile.addZombie(zombie);
         this.removeZombie(zombie);
