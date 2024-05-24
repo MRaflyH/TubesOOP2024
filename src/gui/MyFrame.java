@@ -60,6 +60,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     JPanel deckPanel;
     JPanel inventoryPanel;
     JPanel swapPanel;
+    JPanel helpPanel;
 
     ArrayList<ArrayList<JButton>> mapButtons = new ArrayList<ArrayList<JButton>>();
     ArrayList<JButton> deckButtons = new ArrayList<JButton>(7);
@@ -77,6 +78,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
     JButton backMenuButton;
     JButton nextArrowButton;
     JButton previousArrowButton;
+    JButton helpButton;
+    JLabel helpText;
     JLabel numSun;
     boolean rungame;
 
@@ -242,6 +245,21 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         menuButton.setVisible(false);
 
     }
+
+    public void SwitchToHelpFrame() {
+        try {
+            myImage = ImageIO.read(new File("src/assets/backgroundmainmenu.png"));
+            imagepan.setImage(myImage);
+            this.setContentPane(imagepan);
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+        currentFrame = 7;
+        helpPanel.setVisible(true);
+        backMenuButton.setVisible(true);
+    }
+
     public void SwitchToDeckFrame() {
         try{
             myImage = ImageIO.read(new File("src/assets/deckmenu.png"));
@@ -309,17 +327,21 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             shovelButton.setVisible(false);
             nextArrowButton.setVisible(false);
             previousArrowButton.setVisible(false);
+        } else if (currentFrame == 7) {
+            helpPanel.setVisible(false);
+            backMenuButton.setVisible(false);
         }
 
     }
 
     public void SetPanels() {
-        menuPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
+        menuPanel = CreatePanel(160, 210, LARGE_WIDTH + 10 + SMALL_WIDTH, LARGE_HEIGHT*4 + 30);
         plantListPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
         deckPanel = CreatePanel(10, 10, TILE_WIDTH * 8 + 10, TILE_HEIGHT);
         inventoryPanel = CreatePanel(70, 80, TILE_WIDTH * 5, TILE_HEIGHT * 4);
         mapPanel = CreatePanel(75, 90, TILE_WIDTH * 11, TILE_HEIGHT * 6);
         swapPanel = CreatePanel(70, 80 + TILE_HEIGHT * 4, TILE_HEIGHT * 6 + 50, SMALL_HEIGHT);
+        helpPanel = CreatePanel(160, 210, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
     }
 
     public void SetButtons() {
@@ -335,7 +357,7 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
 
         exitButton = CreateButton(10, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "EXIT", menuPanel, 
                 new ImageIcon("src/assets/exitbutton.png"));
-       
+        helpButton = CreateButton(LARGE_WIDTH + 10, (LARGE_HEIGHT + 10) * 3, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, "HELP", menuPanel);
         menuButton = CreateButton(530, 10, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, null, 
                 new ImageIcon("src/assets/exitbutton.png"));
         backMenuButton = CreateButton(0, 20, SMALL_WIDTH, SMALL_HEIGHT, BUTTON_COLOR, null,
@@ -427,6 +449,8 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             mapButtons.add(tempMapRow);
             
         }
+
+        // swap
         swap1 = CreateButton(TILE_WIDTH * 2 + 20, 0, TILE_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "SWAP", swapPanel);
         swap2 = CreateButton(TILE_WIDTH * 5 + 50, 0, TILE_WIDTH, SMALL_HEIGHT, BACKGROUND_COLOR, "SWAP", swapPanel);
 
@@ -442,6 +466,23 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
         swap22 = new JTextField();
         swap22.setBounds(TILE_WIDTH * 4 + 40, 0, TILE_WIDTH,SMALL_HEIGHT);
         swapPanel.add(swap22);
+
+        // help
+        helpText = new JLabel();
+        helpText.setBounds(0, 0, LARGE_WIDTH, LARGE_HEIGHT*4 + 30);
+        helpText.setBackground(BACKGROUND_COLOR);
+        helpText.setOpaque(true);
+        helpText.setText("<html>Selamat datang di \"Michael vs. Lalapan\", sebuah game parodi yang menggabungkan kegembiraan dari Plant Vs. Zombie dengan sentuhan lokal yang unik! Dalam game ini, Anda akan membantu Michael, seorang juru masak yang gigih, untuk melindungi restoran lalapannya dari serangan para hama lapar yang tak terhentikan. <br/><br/>" +
+        "START: choose deck and \"SIKAT LALAPAN\" to start<br/>" + 
+        "LOAD: load saved game <br/>" + 
+        "PLANTS LIST: show plant list <br/>" + 
+        "ZOMBIE LIST: show zombie list <br/>" + 
+        "</html>");
+        helpText.setHorizontalTextPosition(SwingConstants.CENTER);
+        helpText.setVerticalTextPosition(SwingConstants.CENTER);
+        helpText.setVisible(true);
+        helpPanel.add(helpText);
+
     }
     
     private String getZombieSourceImg(Lawn mainlawn, int i, int j) {
@@ -1308,7 +1349,12 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             RemoveButtons();
             SwitchToDeckFrame();
             readyButton.setEnabled(false);
-        } if(e.getSource() == loadButton) {
+        } 
+        if (e.getSource() == helpButton) {
+            RemoveButtons();
+            SwitchToHelpFrame();
+        }
+        if(e.getSource() == loadButton) {
             if (Load.load("testSave.ser")) {
                 deck = Load.LoadHolder.gameDeck;
                 Sun.getInstance().initializeSun(Load.LoadHolder.gameSun.getTotalSun());
@@ -1371,9 +1417,14 @@ public class MyFrame extends JFrame implements ActionListener, Serializable {
             new ExitFrame();
             dispose();
         } else if(e.getSource() == menuButton){
-            dispose();
-            System.out.println("This is exit?");
-            System.exit(0);
+            if (currentFrame == 0) {
+                dispose();
+                System.exit(0);    
+            }
+            if (currentFrame == 1) {
+                RemoveButtons();
+                SwitchToMenuFrame();
+            }
         }
         if (e.getSource() == readyButton) {
             if(deck.getPlayablePlants().size() == deck.getMaxPlants()){
